@@ -38,11 +38,11 @@ public class ChartCanvas extends Canvas {
      */
     public ChartCanvas(TowerTableModel tableModel) {
         TimeSeriesCollection seriesCol = tableModel.getSeriesCol();
-        chart = ChartFactory.createTimeSeriesChart(Configuration.getChartTitle(), Configuration.getXAxisTitle(), Configuration.getYAxisTitle(), seriesCol, 
+        chart = ChartFactory.createTimeSeriesChart(Configuration.getChartTitle(), Configuration.getXAxisTitle(), Configuration.getYAxisTitle(), seriesCol,
                 true, false, false);
         chart.getXYPlot().setRenderer(new XYLineAndShapeRenderer());
     }
-
+    
     
     /**
      * Paints <code>chart</code> onto this canvas

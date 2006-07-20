@@ -15,5 +15,5 @@ import java.lang.annotation.RetentionPolicy;
  * @author james
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Configure {    
+public @interface Configure {
 }

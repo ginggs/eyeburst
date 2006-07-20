@@ -22,7 +22,7 @@ public @interface Column {
      * Indicates the column number of the annotated property accessor
      */
     public int number();
-
+    
     /**
      * Indicates the column name of the annotated property accessor
      */

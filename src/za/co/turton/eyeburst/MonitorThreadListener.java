@@ -10,8 +10,8 @@ package za.co.turton.eyeburst;
 import java.util.EventListener;
 
 /**
- * Defines the contract for <code>MonitorThreadListener</code>s.  When a 
- * <code>MonitorThreadListener</code> is registered with a monitor thread, said 
+ * Defines the contract for <code>MonitorThreadListener</code>s.  When a
+ * <code>MonitorThreadListener</code> is registered with a monitor thread, said
  * thread will invoke the methods in this interface at the appropriate times.
  *
  * @author james

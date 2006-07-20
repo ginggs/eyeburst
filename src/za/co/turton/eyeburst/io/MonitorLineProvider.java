@@ -13,7 +13,7 @@ import java.io.IOException;
  * @author james
  */
 public interface MonitorLineProvider {
-            
+    
     /**
      * Connect this provider to its underlying data source
      * @throws java.io.IOException if an exceptional circumstance arises while trying to connect
@@ -38,10 +38,10 @@ public interface MonitorLineProvider {
      * @throws java.io.IOException if an exceptional circumstance arises while trying to read a line from the underlying data source
      */
     String readLine() throws IOException;
-             
+    
     /**
      * Request the underlying data source to write out the currently aligned iBurst tower
      * @throws java.io.IOException if an exceptional circumstance arises while trying to prompt the underlying data source
      */
-    void requestCurrentTower() throws IOException; 
+    void requestCurrentTower() throws IOException;
 }

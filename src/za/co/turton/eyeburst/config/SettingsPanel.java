@@ -8,8 +8,6 @@ package za.co.turton.eyeburst.config;
 
 import java.util.logging.Level;
 import javax.swing.ComboBoxModel;
-import javax.swing.JDialog;
-import javax.swing.event.ListDataListener;
 
 /**
  * Panel for user configuration of eyeBurst settings
@@ -172,14 +170,14 @@ public class SettingsPanel extends javax.swing.JPanel {
             Configuration.transformAndSet(lowerBoundLabel.getName(), lowerBound.getValue().toString());
             Configuration.transformAndSet(utdAddressLabel.getName(), utdIPAddress.getText()+":"+utdPort.getText());
             Configuration.transformAndSet(promptLabel.getName(), promptInterval.getValue().toString());
-        
+            
         } catch (ConfigurationException e) {
             Configuration.getLogger().log(Level.WARNING, "Could not perform configuration", e);
         }
         
         getTopLevelAncestor().setVisible(false);
     }//GEN-LAST:event_okButtonActionPerformed
-        
+    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;

@@ -8,27 +8,12 @@
 package za.co.turton.eyeburst;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
 import za.co.turton.eyeburst.config.Configuration;
 import za.co.turton.eyeburst.io.MonitorLineProvider;
 
@@ -78,7 +63,7 @@ public class MonitorThread extends Thread {
         try {
             lineProvider.connect();
             fireConnected();
-            Configuration.getLogger().log(Level.FINE, this+" running");            
+            Configuration.getLogger().log(Level.FINE, this+" running");
             
             new LineWriterThread().start();
             
@@ -158,7 +143,7 @@ public class MonitorThread extends Thread {
                 Configuration.getLogger().log(Level.WARNING, "Error while trying to disconnect", e);
             }
             
-            Configuration.getLogger().log(Level.FINE, "Monitor thread finishing");            
+            Configuration.getLogger().log(Level.FINE, "Monitor thread finishing");
             fireDisconnected();
         }
     }
@@ -230,7 +215,7 @@ public class MonitorThread extends Thread {
      */
     public void requestStop() {
         mustRun = false;
-    }        
+    }
     
     /**
      * Thread to write the 'current tower' prompt to the configured line provider at regular intervals

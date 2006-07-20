@@ -7,16 +7,12 @@
 
 package za.co.turton.eyeburst.io;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import za.co.turton.eyeburst.*;
 import za.co.turton.eyeburst.config.Configuration;
 
 /**
@@ -34,26 +30,26 @@ public class FileMonitorLineProvider implements MonitorLineProvider {
     private LineNumberReader lineReader;
     
     private boolean connected;
-                    
+    
     /** Creates a new instance of FileMonitorLineProvider */
     public FileMonitorLineProvider() {
         super();
         connected = false;
     }
-
+    
     /**
-     * 
+     *
      * @see MonitorLineProvider#connect()
      */
     public void connect() throws IOException {
-        in = new FileInputStream(Configuration.getResourcePath());                
+        in = new FileInputStream(Configuration.getResourcePath());
         reader = new InputStreamReader(in);
         lineReader = new LineNumberReader(reader);
         connected = true;
     }
-
+    
     /**
-     * 
+     *
      * @see MonitorLineProvider#disconnect()
      */
     public void disconnect() throws IOException {
@@ -69,17 +65,17 @@ public class FileMonitorLineProvider implements MonitorLineProvider {
         connected = false;
         Configuration.getLogger().log(Level.FINE, in+" closed");
     }
-
+    
     /**
-     * 
+     *
      * @see MonitorLineProvider#isConnected()
      */
     public boolean isConnected() {
         return connected;
     }
-
+    
     /**
-     * 
+     *
      * @see MonitorLineProvider#readLine
      */
     public String readLine() throws IOException {
@@ -89,10 +85,10 @@ public class FileMonitorLineProvider implements MonitorLineProvider {
         }
         
         return lineReader.readLine();
-    }    
-
+    }
+    
     /**
-     * 
+     *
      * @see MonitorLineProvider#requestCurrentTower
      */
     public void requestCurrentTower() throws IOException {

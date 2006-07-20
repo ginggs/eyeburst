@@ -7,33 +7,21 @@
 
 package za.co.turton.eyeburst.config;
 
-import java.beans.Beans;
 import java.beans.Introspector;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.logging.Formatter;
-import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-import java.util.logging.StreamHandler;
 
 /**
- * Central registry of configuration properties that can be set with Strings by 
+ * Central registry of configuration properties that can be set with Strings by
  * means of appropriate <code>PropertyTypeAdapter</code>s and can configure all
  * of its properties from a properties file.
  *
@@ -88,9 +76,9 @@ public class Configuration {
     private static final String CONFIG_PROPERTIES = "conf/config.properties";
     
     /**
-     * Loads configuration properties from the CONFIG_PROPERTIES file and attempts 
+     * Loads configuration properties from the CONFIG_PROPERTIES file and attempts
      * to set all of this class's properties from it.  Each property string value read
-     * in is passed through the registered type adapter for the argument type of 
+     * in is passed through the registered type adapter for the argument type of
      * the setter for the relevant property
      *
      * @throws za.co.turton.eyeburst.config.ConfigurationException if there is an error while loading configuration
@@ -98,11 +86,11 @@ public class Configuration {
     public static void configure() throws ConfigurationException {
         
         logger.getParent().getHandlers()[0].setLevel(Level.FINEST);
-        loadAdapters();        
+        loadAdapters();
         Properties config = new Properties();
         InputStream in = null;
         
-        try {            
+        try {
             in = new FileInputStream(CONFIG_PROPERTIES);
             config.load(in);
             
@@ -116,7 +104,7 @@ public class Configuration {
             
             if (!method.isAnnotationPresent(Configure.class))
                 continue;
-                        
+            
             if (!method.getName().startsWith("set") || method.getParameterTypes().length != 1)
                 throw new ConfigurationException("@Configure annotation is only allowed on one-argument setters");
             
@@ -135,11 +123,11 @@ public class Configuration {
     }
     
     /**
-     * Transforms and injects a property value 
+     * Transforms and injects a property value
      *
      * @param value the string property value to be transformed and injected
      * @param method the setter identified for the property in question
-     * @throws za.co.turton.eyeburst.config.ConfigurationException 
+     * @throws za.co.turton.eyeburst.config.ConfigurationException
      */
     private static void transformAndSet(String value, Method method) throws ConfigurationException {
         
@@ -163,11 +151,11 @@ public class Configuration {
     
     /**
      * Transforms and injects a property value
-     * 
+     *
      * @param name the name of the property to transformAndSet into
      * @param value the string property value to be transformed and injected
      * @throws za.co.turton.eyeburst.config.ConfigurationException if an error occurs while trying to set a property
-     */    
+     */
     public static void transformAndSet(String name, String value) throws ConfigurationException {
         
         String setterName = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -199,190 +187,190 @@ public class Configuration {
     }
     
     @Configure
-    public static void setAppTitle(String aAppTitle) {
+            public static void setAppTitle(String aAppTitle) {
         appTitle = aAppTitle;
     }
     
     @Configure
-    public static void setSignalLowerBound(Integer aSignalLowerBound) {
+            public static void setSignalLowerBound(Integer aSignalLowerBound) {
         signalLowerBound = aSignalLowerBound;
     }
     
     @Configure
-    public static void setChartTitle(String aChartTitle) {
+            public static void setChartTitle(String aChartTitle) {
         chartTitle = aChartTitle;
     }
     
     @Configure
-    public static void setXAxisTitle(String aXAxisTitle) {
+            public static void setXAxisTitle(String aXAxisTitle) {
         xAxisTitle = aXAxisTitle;
     }
     
     @Configure
-    public static void setYAxisTitle(String aYAxisTitle) {
+            public static void setYAxisTitle(String aYAxisTitle) {
         yAxisTitle = aYAxisTitle;
     }
     
     @Configure
-    public static void setUtdDebugMarker(String aUtdDebugMarker) {
+            public static void setUtdDebugMarker(String aUtdDebugMarker) {
         utdDebugMarker = aUtdDebugMarker;
     }
     
     @Configure
-    public static void setAlignedCode(String aAlignedCode) {
+            public static void setAlignedCode(String aAlignedCode) {
         alignedCode = aAlignedCode;
     }
     
     @Configure
-    public static void setDataCode(String aDataCode) {
+            public static void setDataCode(String aDataCode) {
         dataCode = aDataCode;
     }
     
     @Configure
-    public static void setLineProvider(Class aLineProvider) {
+            public static void setLineProvider(Class aLineProvider) {
         lineProvider = aLineProvider;
     }
     
     @Configure
-    public static void setWriterSleep(Integer aWriterSleep) {
+            public static void setWriterSleep(Integer aWriterSleep) {
         writerSleep = aWriterSleep;
     }
     
     @Configure
-    public static void setResourcePath(String aResourcePath) {
+            public static void setResourcePath(String aResourcePath) {
         resourcePath = aResourcePath;
     }
     
     @Configure
-    public static void setConnectTimeout(Integer aConnectTimeout) {
+            public static void setConnectTimeout(Integer aConnectTimeout) {
         connectTimeout = aConnectTimeout;
     }
     
     @Configure
-    public static void setReadTimeout(Integer aReadTimeout) {
+            public static void setReadTimeout(Integer aReadTimeout) {
         readTimeout = aReadTimeout;
     }
     
     @Configure
-    public static void setUtdCurrentTower(String aUtdCurrentTower) {
+            public static void setUtdCurrentTower(String aUtdCurrentTower) {
         utdCurrentTower = aUtdCurrentTower;
     }
     
     @Configure
-    public static void setUtdDebugOn(String aUtdDebugOn) {
+            public static void setUtdDebugOn(String aUtdDebugOn) {
         utdDebugOn = aUtdDebugOn;
     }
     
     @Configure
-    public static void setUtdDebugOff(String aUtdDebugOff) {
+            public static void setUtdDebugOff(String aUtdDebugOff) {
         utdDebugOff = aUtdDebugOff;
     }
     
     @Configure
-    public static void setUtdIPAddress(InetSocketAddress aUtdIPAddress) {
+            public static void setUtdIPAddress(InetSocketAddress aUtdIPAddress) {
         utdIPAddress = aUtdIPAddress;
     }
     
     @Configure
-    public static void setChartDataExpiry(Integer aChartDataExpiry) {
+            public static void setChartDataExpiry(Integer aChartDataExpiry) {
         chartDataExpiry = aChartDataExpiry;
     }
     
     @Configure
-    public static void setFileLineProviderInterval(Integer aFileLineProviderInterval) {
+            public static void setFileLineProviderInterval(Integer aFileLineProviderInterval) {
         fileLineProviderInterval = aFileLineProviderInterval;
     }
     
     @Configure
-    public static void setLoggerLevel(Level aLoggerLevel) {
+            public static void setLoggerLevel(Level aLoggerLevel) {
         logger.setLevel(aLoggerLevel);
     }
     
     @Configure
-    public static void setTowerNames(Properties aTowerNames) {
+            public static void setTowerNames(Properties aTowerNames) {
         towerNames = aTowerNames;
     }
-
+    
     public static Logger getLogger() {
         return logger;
     }
-
+    
     public static String getAppTitle() {
         return appTitle;
     }
-
+    
     public static int getSignalLowerBound() {
         return signalLowerBound;
     }
-
+    
     public static String getChartTitle() {
         return chartTitle;
     }
-
+    
     public static String getXAxisTitle() {
         return xAxisTitle;
     }
-
+    
     public static String getYAxisTitle() {
         return yAxisTitle;
     }
-
+    
     public static String getUtdDebugMarker() {
         return utdDebugMarker;
     }
-
+    
     public static String getAlignedCode() {
         return alignedCode;
     }
-
+    
     public static String getDataCode() {
         return dataCode;
     }
-
+    
     public static Class getLineProvider() {
         return lineProvider;
     }
-
+    
     public static int getWriterSleep() {
         return writerSleep;
     }
-
+    
     public static String getResourcePath() {
         return resourcePath;
     }
-
+    
     public static int getConnectTimeout() {
         return connectTimeout;
     }
-
+    
     public static int getReadTimeout() {
         return readTimeout;
     }
-
+    
     public static String getUtdCurrentTower() {
         return utdCurrentTower;
     }
-
+    
     public static String getUtdDebugOn() {
         return utdDebugOn;
     }
-
+    
     public static String getUtdDebugOff() {
         return utdDebugOff;
     }
-
+    
     public static InetSocketAddress getUtdIPAddress() {
         return utdIPAddress;
     }
-
+    
     public static int getChartDataExpiry() {
         return chartDataExpiry;
     }
-
+    
     public static int getFileLineProviderInterval() {
         return fileLineProviderInterval;
     }
-
+    
     public static Properties getTowerNames() {
         return towerNames;
     }

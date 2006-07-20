@@ -6,55 +6,14 @@
 
 package za.co.turton.eyeburst;
 
-import java.awt.Canvas;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.geom.Rectangle2D;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.TreeMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.event.TreeModelListener;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileView;
-import javax.swing.plaf.FileChooserUI;
-import javax.swing.table.JTableHeader;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.LegendItemCollection;
-import org.jfree.chart.LegendItemSource;
-import org.jfree.chart.axis.AxisSpace;
-import org.jfree.chart.axis.AxisState;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.plot.PlotRenderingInfo;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.title.LegendTitle;
-import org.jfree.data.time.Second;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
-import org.jfree.data.time.TimeSeriesDataItem;
 import za.co.turton.eyeburst.config.Configuration;
 import za.co.turton.eyeburst.config.ConfigurationException;
-import za.co.turton.eyeburst.config.SettingsPanel;
 
 /**
  * This is the main Swing frame of the application
@@ -189,7 +148,7 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-        
+    
     private void resetButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resetButtonMouseClicked
         towerTableModel.clear();
         chartCanvas.repaint();
@@ -217,7 +176,7 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
     }//GEN-LAST:event_connectButtonHandler
     
     /**
-     * 
+     *
      * @see MonitorThreadListener#towerDatum
      */
     public void towerDatum(final MonitorThreadEvent event) {
@@ -235,7 +194,7 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
     }
     
     /**
-     * 
+     *
      * @see MonitorThreadListener#disconnected
      */
     public void disconnected(final MonitorThreadEvent e) {
@@ -248,7 +207,7 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
     }
     
     /**
-     * 
+     *
      * @see MonitorThreadListener#currentTower
      */
     public void currentTower(final MonitorThreadEvent e) {
@@ -261,7 +220,7 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
     }
     
     /**
-     * 
+     *
      * @see MonitorThreadListener#connected
      */
     public void connected(final MonitorThreadEvent e) {
@@ -274,7 +233,7 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
     }
     
     /**
-     * 
+     *
      * @see MonitorThreadListener#connectFailed
      */
     public void connectFailed(final MonitorThreadEvent e) {
@@ -285,9 +244,9 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
                 JOptionPane.showMessageDialog(dialogParent, e.getThreadException(), "Error", JOptionPane.ERROR_MESSAGE);
                 connectButton.setEnabled(true);
             }
-        });        
+        });
     }
-        
+    
     
     /**
      * Application execution entry point
@@ -305,7 +264,7 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
             });
         } catch (ConfigurationException e) {
             Configuration.getLogger().log(Level.SEVERE, "Could not configure eyeBurst", e);
-        }        
+        }
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

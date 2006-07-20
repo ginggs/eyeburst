@@ -15,11 +15,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import za.co.turton.eyeburst.config.Configuration;
 
 /**
@@ -27,7 +25,7 @@ import za.co.turton.eyeburst.config.Configuration;
  * @author james
  */
 public class SocketMonitorLineProvider implements MonitorLineProvider {
-        
+    
     private Socket socket;
     
     private InputStream in;
@@ -38,7 +36,7 @@ public class SocketMonitorLineProvider implements MonitorLineProvider {
     private Writer writer;
     
     private boolean connected;
-            
+    
     /** Creates a new instance of SocketDebugLineProvider */
     public SocketMonitorLineProvider() {
         super();
@@ -53,7 +51,7 @@ public class SocketMonitorLineProvider implements MonitorLineProvider {
     }
     
     /**
-     * 
+     *
      * @see MonitorLineProvider#connect()
      */
     public void connect() throws IOException {
@@ -70,7 +68,7 @@ public class SocketMonitorLineProvider implements MonitorLineProvider {
     }
     
     /**
-     * 
+     *
      * @see MonitorLineProvider#disconnect()
      */
     public void disconnect() throws IOException {
@@ -100,7 +98,7 @@ public class SocketMonitorLineProvider implements MonitorLineProvider {
     }
     
     /**
-     * 
+     *
      * @see MonitorLineProvider#isConnected()
      */
     public boolean isConnected() {
@@ -108,7 +106,7 @@ public class SocketMonitorLineProvider implements MonitorLineProvider {
     }
     
     /**
-     * 
+     *
      * @see MonitorLineProvider#readLine()
      */
     public String readLine() throws IOException {
@@ -118,16 +116,16 @@ public class SocketMonitorLineProvider implements MonitorLineProvider {
     }
     
     /**
-     * 
+     *
      * @see MonitorLineProvider#writeLine(String)
      */
-    public void writeLine(String line) throws IOException {        
+    public void writeLine(String line) throws IOException {
         out.write((line+"\n").getBytes());
         Configuration.getLogger().log(Level.FINE, "Wrote: "+line);
     }
-
+    
     /**
-     * 
+     *
      * @see MonitorLineProvider#requestCurrentTower()
      */
     public void requestCurrentTower() throws IOException {

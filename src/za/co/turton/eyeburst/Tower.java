@@ -6,16 +6,12 @@
  */
 package za.co.turton.eyeburst;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Documented;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesDataItem;
-import org.omg.CORBA.UNKNOWN;
 import za.co.turton.eyeburst.config.Configuration;
 
 /**
@@ -224,5 +220,5 @@ public class Tower implements Comparable {
     public int compareTo(Object o) {
         Tower other = (Tower) o;
         return getAvg().compareTo(other.getAvg());
-    }   
+    }
 }
