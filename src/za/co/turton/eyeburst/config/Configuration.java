@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.UIManager;
 
 /**
  * Central registry of configuration properties that can be set with Strings by
@@ -84,8 +85,16 @@ public class Configuration {
      * @throws za.co.turton.eyeburst.config.ConfigurationException if there is an error while loading configuration
      */
     public static void configure() throws ConfigurationException {
-        
+                
         logger.getParent().getHandlers()[0].setLevel(Level.FINEST);
+        logger.setLevel(Level.CONFIG);
+        
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Could not set system look and feel", e);
+        }
+        
         loadAdapters();
         Properties config = new Properties();
         InputStream in = null;
