@@ -22,15 +22,27 @@ import java.util.logging.Level;
  * @author james
  */
 public interface PropertyTypeAdapter {
+    /**
+     * Transforms from a string to another configuration type
+     * @param property the string value to be transformed
+     * @throws za.co.turton.eyeburst.config.AdapterException if an exception is encountered during transformation
+     * @return the transformed configuration property
+     */
     public Object transform(String property) throws AdapterException;
 }
 
+/**
+ * The identity transformation
+ */
 class StringAdapter implements PropertyTypeAdapter {
     public String transform(String property) {
         return property;
     }
 }
 
+/**
+ * Parses an Integer
+ */
 class IntegerAdapter implements PropertyTypeAdapter {
     public Integer transform(String property) throws AdapterException {
         try {
@@ -41,6 +53,9 @@ class IntegerAdapter implements PropertyTypeAdapter {
     }
 }
 
+/**
+ * Loads a named class
+ */
 class ClassAdapter implements PropertyTypeAdapter {
     public Class transform(String property) throws AdapterException {
         try {
@@ -51,6 +66,9 @@ class ClassAdapter implements PropertyTypeAdapter {
     }
 }
 
+/**
+ * Parses an IP address in the format DOTTED_QUAD:PORT
+ */
 class InetSocketAddressAdapter implements PropertyTypeAdapter {
     public InetSocketAddress transform(String property) {
         String[] addr = property.split(":");
@@ -58,6 +76,9 @@ class InetSocketAddressAdapter implements PropertyTypeAdapter {
     }
 }
 
+/**
+ * Loads the named properties file into a new <code>Properties</code> object
+ */
 class PropertiesAdapter implements PropertyTypeAdapter {
     public Properties transform(String property) throws AdapterException {
         try {
@@ -71,6 +92,9 @@ class PropertiesAdapter implements PropertyTypeAdapter {
     }
 }
 
+/**
+ * Parses a logger level
+ */
 class LoggerLevelAdapter implements PropertyTypeAdapter {
     public Level transform(String property) {
         return Level.parse(property);
