@@ -28,7 +28,7 @@ import javax.swing.UIManager;
  *
  * @author james
  */
-public class Configuration {
+public abstract class Configuration {
     
     private static final Logger logger = Logger.getLogger("eyeBurst");
     
@@ -75,7 +75,7 @@ public class Configuration {
     private static Map<Class, PropertyTypeAdapter> adapters;
     
     private static final String CONFIG_PROPERTIES = "conf/config.properties";
-    
+        
     /**
      * Loads configuration properties from the CONFIG_PROPERTIES file and attempts
      * to set all of this class's properties from it.  Each property string value read

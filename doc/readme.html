@@ -1,0 +1,22 @@
+You must have the Java Runtime Environment (JRE) 5.0 installed in order to run
+eyeBurst.  It can be downloaded for free from <a href="http://java.sun.com/javase/downloads/index.jsp">
+Sun</a> for a number of platforms including Windows and Linux.  On Mac OS X the JRE is
+distributed with the standard Software Update from Apple.
+<p>
+The configuration of eyeBurst is read from the file 'config.properties' in the 'conf'
+folder.  The other properties files in the 'conf' folder contain mappings of 
+iBurst tower (base station) codes to names of locations per region
+for display in eyeBurst.  Which towers properties file is loaded by eyeBurst is 
+specified in 'config.properties', and should be set by you according to your location.
+<p>
+If towers properties file for you region does already not exist in the 'conf' folder 
+then you can create your own containing the relevant mappings for your region if you can
+obtain this information.  Java properties files format is detailed <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/Properties.html#load(java.io.InputStream)">
+here.
+Otherwise you can configure eyeBurst to load the file 'empty.towers.properties' which
+contains no mappings at all.
+<p>
+Launch eyeBurst by double-clicking on 'eyeBurst.jar' in the same folder as this
+file.  If this shortcut is not supported on your platform you may need to open
+a command shell and navigate to the directory containing this file and issue the 
+command 'java -jar eyeBurst.jar'.

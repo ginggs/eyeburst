@@ -65,6 +65,7 @@ public class SocketMonitorLineProvider implements MonitorLineProvider {
         writeLine(Configuration.getUtdDebugOn());
         
         connected = true;
+        Configuration.getLogger().info("Connection open");
     }
     
     /**
@@ -94,7 +95,7 @@ public class SocketMonitorLineProvider implements MonitorLineProvider {
             socket.close();
         
         connected = false;
-        Configuration.getLogger().log(Level.INFO, "UTD socket closed");
+        Configuration.getLogger().info("Connection closed");
     }
     
     /**
@@ -111,7 +112,7 @@ public class SocketMonitorLineProvider implements MonitorLineProvider {
      */
     public String readLine() throws IOException {
         String line = lineReader.readLine();
-        Configuration.getLogger().log(Level.FINE, "Read: "+ line);
+        Configuration.getLogger().fine("Read: "+ line);
         return line;
     }
     
@@ -121,7 +122,7 @@ public class SocketMonitorLineProvider implements MonitorLineProvider {
      */
     public void writeLine(String line) throws IOException {
         out.write((line+"\n").getBytes());
-        Configuration.getLogger().log(Level.FINE, "Wrote: "+line);
+        Configuration.getLogger().fine("Wrote: "+line);
     }
     
     /**

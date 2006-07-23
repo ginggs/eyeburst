@@ -114,16 +114,14 @@ public class MonitorThread extends Thread {
                             
                             fireTowerDatum(towerDatum);
                         }
-                    } catch (NumberFormatException e) {
-                        Configuration.getLogger().log(Level.INFO, "Threw away malformed line: "+line);
-                    } catch (NoSuchElementException e) {
-                        Configuration.getLogger().log(Level.INFO, "Threw away malformed line: "+line);
+                    } catch (Exception e) {
+                        Configuration.getLogger().info("Unintelligible: "+line);
                     }
                 } catch (SocketTimeoutException e) {
                     if (this.mustRun)
                         Configuration.getLogger().log(Level.INFO, "Socket read timed out", e);
                     else
-                        Configuration.getLogger().log(Level.FINE, "Socket read timed out after disconnect requested", e);
+                        Configuration.getLogger().log(Level.FINE, "Socket read timed out", e);
                     
                 } catch (IOException e) {
                     Configuration.getLogger().log(Level.WARNING, "Could not read data from UTD", e);
