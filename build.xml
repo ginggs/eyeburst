@@ -73,5 +73,9 @@
         <copy todir="${dist.dir}/conf">
             <fileset dir="conf"/>
         </copy>
+        
+        <copy todir="${dist.dir}/doc">
+            <fileset dir="doc"/>
+        </copy>
     </target>
 </project>
