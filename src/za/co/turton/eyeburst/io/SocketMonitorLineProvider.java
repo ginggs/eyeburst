@@ -24,7 +24,7 @@ import za.co.turton.eyeburst.config.Configuration;
  * Line provider connected to a UTD through a TCP/IP socket
  * @author james
  */
-public class SocketMonitorLineProvider implements MonitorLineProvider {
+public class SocketMonitorLineProvider extends MonitorLineProvider {
     
     private Socket socket;
     

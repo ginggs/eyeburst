@@ -21,7 +21,7 @@ import za.co.turton.eyeburst.config.Configuration;
  *
  * @author james
  */
-public class FileMonitorLineProvider implements MonitorLineProvider {
+public class FileMonitorLineProvider extends MonitorLineProvider {
     
     private InputStream in;
     

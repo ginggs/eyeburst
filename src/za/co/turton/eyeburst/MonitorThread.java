@@ -29,7 +29,7 @@ public class MonitorThread extends Thread {
     
     private boolean mustRun;
     
-    private static final String DELIM = " ";
+    private static final String DELIM = " ";        
     
     /**
      * Creates a new instance of MonitorThread
@@ -191,18 +191,7 @@ public class MonitorThread extends Thread {
         } catch (Exception e) {
             Configuration.getLogger().log(Level.SEVERE, "Could not instantiate line provider: "+Configuration.getLineProvider(), e);
             fireConnectFailed(e);
-        }
-        
-        Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Hook Disconnect") {
-            public void run() {
-                if (lineProvider.isConnected())
-                    try {
-                        lineProvider.disconnect();
-                    } catch (IOException e) {
-                        Configuration.getLogger().log(Level.WARNING, "Could not disconnect", e);
-                    }
-            }
-        });
+        }                
         
         this.mustRun = true;
         super.start();
