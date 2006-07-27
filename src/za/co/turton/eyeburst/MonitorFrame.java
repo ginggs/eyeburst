@@ -38,7 +38,10 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
 //        settingsDialog.pack();
         setTitle(Configuration.getAppTitle());
         this.towerTableModel = new TowerTableModel();
-        towerTable.setModel(towerTableModel);
+        TableSorter sorter = new TableSorter(towerTableModel);
+        sorter.setTableHeader(towerTable.getTableHeader());
+        towerTable.getTableHeader().setToolTipText("Click to specify sorting; Control-Click to specify secondary sorting");
+        towerTable.setModel(sorter);
         towerTableModel.addTableModelListener(towerTable);
         chartCanvas = new ChartCanvas(towerTableModel);
         graphPanel.add(chartCanvas);
