@@ -46,6 +46,7 @@ public class FileMonitorLineProvider extends MonitorLineProvider {
         reader = new InputStreamReader(in);
         lineReader = new LineNumberReader(reader);
         connected = true;
+        Configuration.getLogger().fine("Reading from "+in);
     }
     
     /**
@@ -63,7 +64,7 @@ public class FileMonitorLineProvider extends MonitorLineProvider {
             in.close();
         
         connected = false;
-        Configuration.getLogger().log(Level.FINE, in+" closed");
+        Configuration.getLogger().fine(in+" closed");
     }
     
     /**
