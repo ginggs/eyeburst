@@ -1,0 +1,3 @@
+Split configuration files
+Made table columns sortable
+Corrected location of registration of shutdown hook to disconnect on exit
