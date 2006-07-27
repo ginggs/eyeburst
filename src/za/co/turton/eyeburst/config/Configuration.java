@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 
 /**
@@ -76,6 +77,8 @@ public abstract class Configuration {
     
     private static final String CONFIG_PROPERTIES = "conf/config.properties";
         
+    private static final String DEV_CONFIG_PROPERTIES = "conf/dev.config.properties";
+    
     /**
      * Loads configuration properties from the CONFIG_PROPERTIES file and attempts
      * to set all of this class's properties from it.  Each property string value read
@@ -90,7 +93,7 @@ public abstract class Configuration {
         logger.setLevel(Level.CONFIG);
         
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());                    
         } catch (Exception e) {
             logger.log(Level.WARNING, "Could not set system look and feel", e);
         }
@@ -101,13 +104,16 @@ public abstract class Configuration {
         
         try {
             in = new FileInputStream(CONFIG_PROPERTIES);
-            config.load(in);
+            config.load(in);            
             
+            in = new FileInputStream(DEV_CONFIG_PROPERTIES);
+            config.load(in);
+        
         } catch (FileNotFoundException e) {
-            throw new ConfigurationException("Could find properties file "+CONFIG_PROPERTIES, e);
+            throw new ConfigurationException("Could load configuration proeprties from disk", e);
         } catch (IOException e) {
-            throw new ConfigurationException("Could not read properties from "+in, e);
-        }
+            throw new ConfigurationException("Could not read configuration properties from "+in, e);
+        }        
         
         for (Method method : Configuration.class.getDeclaredMethods()) {
             
