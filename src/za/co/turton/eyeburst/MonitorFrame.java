@@ -88,7 +88,7 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
         displayPanel.setAutoscrolls(true);
         displayPanel.setMinimumSize(new java.awt.Dimension(400, 200));
         displayPanel.setOpaque(false);
-        displayPanel.setPreferredSize(new java.awt.Dimension(500, 300));
+        displayPanel.setPreferredSize(new java.awt.Dimension(500, 400));
         jSplitPane1.setDividerLocation(250);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         graphPanel.setLayout(new javax.swing.BoxLayout(graphPanel, javax.swing.BoxLayout.X_AXIS));
