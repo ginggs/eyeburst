@@ -17,7 +17,7 @@ import za.co.turton.eyeburst.config.Configuration;
 public abstract class MonitorLineProvider {
     
     public MonitorLineProvider() {
-       Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Hook Disconnect") {
+        Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Hook Disconnect") {
             public void run() {
                 if (isConnected())
                     try {
@@ -26,8 +26,9 @@ public abstract class MonitorLineProvider {
                         Configuration.getLogger().log(Level.WARNING, "Could not disconnect", e);
                     }
             }
-        });    
+        });
     }
+    
     /**
      * Connect this provider to its underlying data source
      * @throws java.io.IOException if an exceptional circumstance arises while trying to connect
