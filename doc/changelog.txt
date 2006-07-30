@@ -1,3 +1,9 @@
+Version 0.95
+
 Split configuration files
 Made table columns sortable
 Corrected location of registration of shutdown hook to disconnect on exit
+
+Version 0.9
+
+First release.
