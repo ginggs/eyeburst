@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="eyeBurst" default="default" basedir="..">
+    <description>Builds, tests, and runs the project eyeBurst.</description>
+    
+    <property name="eyeburst.name" value="eyeBurst" />
+    <property name="eyeburst.version" value="0.9" />
+    <property name="jfreechart.name" value="jfreechart"/>
+    <property name="jfreechart.version" value="1.0.1"/>
+    <property name="jcommon.name" value="jcommon"/>
+    <property name="jcommon.version" value="1.0.0"/>
+    
+    <target name="compile" description="Compile eyeBurst">
+        <mkdir dir="${basedir}/build"/>
+        <javac srcdir="${basedir}/src" destdir="${basedir}/build" debug="true" deprecation="true">
+            <classpath>            
+                <pathelement location="${basedir}/lib/${jcommon.name}-${jcommon.version}.jar"/>
+                <pathelement location="${basedir}/lib/${jfreechart.name}-${jfreechart.version}.jar"/>
+            </classpath>
+            <include name="**"/>
+        </javac>
+    </target>
+    
+    <target name="build" description="Build eyeBurst" depends="compile">
+        <mkdir dir="${basedir}/dist"/>        
+        <mkdir dir="${basedir}/dist/conf"/>
+        <mkdir dir="${basedir}/dist/doc"/>
+        <mkdir dir="${basedir}/dist/lib"/>
+            
+        <jar jarfile="${basedir}/dist/${eyeburst.name}.jar"
+            basedir="${basedir}/build">
+            <manifest>
+                <attribute name="Class-Path" value="lib/${jcommon.name}-${jcommon.version}.jar lib/${jfreechart.name}-${jfreechart.version}.jar"/>
+                <attribute name="Main-Class" value="za.co.turton.eyeburst.MonitorFrame"/>
+            </manifest>
+        </jar>
+        
+        <copy todir="${basedir}/dist/conf">
+            <fileset dir="conf"/>
+        </copy>
+        
+        <copy todir="${basedir}/dist/doc">
+            <fileset dir="doc"/>
+        </copy>
+        
+        <copy todir="${basedir}/dist/lib">
+            <fileset dir="lib"/>
+        </copy>
+        
+        <delete file="${basedir}/dist/**/.DS_Store"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${basedir}/dist"/>
+        <delete dir="${basedir}/build"/>
+    </target>
+</project>
