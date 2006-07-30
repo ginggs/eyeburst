@@ -1,3 +1,5 @@
+eyeBurst Usage Overview
+<p>
 You must have the Java Runtime Environment (JRE) 5.0 installed in order to run
 eyeBurst.  It can be <a href="http://java.sun.com/javase/downloads/index.jsp">downloaded for free from 
 Sun</a> for a number of platforms including Windows and Linux.  On Mac OS X the JRE is
@@ -16,20 +18,22 @@ here</a>.
 Otherwise you can configure eyeBurst to load the file 'empty.towers.properties' which
 contains no mappings at all.
 <p>
-Unfortunately, some network configuration is required to allow eyeBurst to access your UTD.
+Unfortunately, some network configuration is required to allow eyeBurst to access your iBurst hardware.
 The UTD has a fixed IP address of 192.168.250.10 / 24 which must be reachable from the computer on which you run
 eyeBurst.  This means that you can run eyeBurst through any number of network indirections, such as 
-an ethernet hub, or a wireless access point, or carrier pigeon, provided that your IP configuration is correct.  
-For most of us, it should be sufficient to set our computer's IP address to 192.168.250.1, subnet 255.255.255.0 and make
-sure that our UTD is connected to the same LAN (or WLAN) as our computer, which can be as simple as just connectnig the UTD directly to
+an ethernet hub, or a wireless access point, or <a href='http://www.blug.linux.no/rfc1149/'>carrier pigeon</a>, provided that your IP configuration is correct.  
+For most of us, it should be sufficient to set our computer's network interface IP address to 192.168.250.1, subnet 255.255.255.0 and make
+sure that our UTD is connected to the same LAN (or WLAN) as the network interface that we have just configured, which can be as simple as just connecting the UTD directly to
 your computer's ethernet socket.  It general you cannot run eyeBurst with the UTD connected to the 'WAN' socket 
 of a PPPOE dialer / router device, as it might be when you normally connect to the internet, because the WAN socket
-is not in general visible to the internal LAN.  You can test your network configuration by opening a telnet session to
+is not in general visible to the internal LAN.  
+<p>
+Although I have not tested this my understanding is that for UTC devices and devices connected via USB, the iBurst driver, at least on Windows, creates a new network interface specifically for the device.  In this case, you would perform the network configuration described above on this network interface.  You can test your network configuration by opening a telnet session to
 192.168.250.10 port 1234 and looking for the UTD prompt that will be displayed if all is well.
 <p>
 Launch eyeBurst by double-clicking on 'eyeBurst.jar' in the same folder as this
 file.  If this shortcut is not supported on your platform you may need to open
-a command shell and navigate to the directory containing this file and issue the 
+a command shell and navigate to the directory where you installed eyeBurst and issue the 
 command 'java -jar eyeBurst.jar'.  All eyeBurst logging is written to
 stdout.
 <p>
