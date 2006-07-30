@@ -2,6 +2,8 @@ Version 0.95
 
 Split configuration files
 Made table columns sortable
+Enlarged table default size
+Put in explicit call to set Swing look and feel to current platform default
 Corrected location of registration of shutdown hook to disconnect on exit
 
 Version 0.9
