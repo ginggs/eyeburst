@@ -20,7 +20,7 @@
         </javac>
     </target>
     
-    <target name="build" description="Build eyeBurst" depends="compile">
+    <target name="build" description="Build eyeBurst" depends="clean,compile">
         <mkdir dir="${basedir}/dist"/>        
         <mkdir dir="${basedir}/dist/conf"/>
         <mkdir dir="${basedir}/dist/doc"/>
