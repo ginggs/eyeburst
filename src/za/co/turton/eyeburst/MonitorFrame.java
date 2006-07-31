@@ -39,6 +39,7 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
         setTitle(Configuration.getAppTitle());
         this.towerTableModel = new TowerTableModel();
         TableSorter sorter = new TableSorter(towerTableModel);
+        sorter.setSortingStatus(0, TableSorter.ASCENDING);
         sorter.setTableHeader(towerTable.getTableHeader());
         towerTable.getTableHeader().setToolTipText("Click to specify sorting; Control-Click to specify secondary sorting");
         towerTable.setModel(sorter);
