@@ -1,3 +1,5 @@
+Added keyboard mnemonics for buttons
+
 Version 0.95
 
 Split configuration files

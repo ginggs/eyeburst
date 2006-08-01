@@ -130,19 +130,21 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
 
         getContentPane().add(jPanel1);
 
+        connectButton.setMnemonic('c');
         connectButton.setText("Connect");
-        connectButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                connectButtonHandler(evt);
+        connectButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                connectButtonActionPerformed(evt);
             }
         });
 
         buttonPanel.add(connectButton);
 
+        resetButton.setMnemonic('r');
         resetButton.setText("Reset");
-        resetButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                resetButtonMouseClicked(evt);
+        resetButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetButtonActionPerformed(evt);
             }
         });
 
@@ -153,17 +155,7 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
-    private void resetButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resetButtonMouseClicked
-        towerTableModel.clear();
-        chartCanvas.repaint();
-    }//GEN-LAST:event_resetButtonMouseClicked
-    
-    private void graphPanelComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_graphPanelComponentResized
-        chartCanvas.setSize(graphPanel.getSize());
-        chartCanvas.repaint();
-    }//GEN-LAST:event_graphPanelComponentResized
-    
-    private void connectButtonHandler(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_connectButtonHandler
+    private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
         JButton button = (JButton) evt.getSource();
         String action = button.getText();
         
@@ -177,8 +169,18 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
             button.setEnabled(false);
             monitorThread.requestStop();
         }
-    }//GEN-LAST:event_connectButtonHandler
-    
+    }//GEN-LAST:event_connectButtonActionPerformed
+        
+    private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
+        towerTableModel.clear();
+        chartCanvas.repaint();
+    }//GEN-LAST:event_resetButtonActionPerformed
+        
+    private void graphPanelComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_graphPanelComponentResized
+        chartCanvas.setSize(graphPanel.getSize());
+        chartCanvas.repaint();
+    }//GEN-LAST:event_graphPanelComponentResized
+        
     /**
      *
      * @see MonitorThreadListener#towerDatum
