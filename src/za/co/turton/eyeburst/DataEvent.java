@@ -1,5 +1,5 @@
 /*
- * MonitorThreadEvent.java
+ * DataEvent.java
  *
  * Created on July 15, 2006, 4:35 PM
  *
@@ -13,19 +13,18 @@ import java.util.EventObject;
  * Carries event data to <code>MonitorThreadListener</code>s
  * @author james
  */
-public class MonitorThreadEvent extends EventObject {
+public class DataEvent extends EventObject {
     
-    private TowerDatum datum;
-    
-    private Exception threadException;
+    private TowerDatum datum;        
     
     private Tower currentTower;
     
     /**
-     * Creates a new instance of MonitorThreadEvent
+     * Creates a new instance of DataEvent
+     * 
      * @param source the monitor thread originator
      */
-    public MonitorThreadEvent(MonitorThread source) {
+    public DataEvent(MonitorThread source) {
         super(source);
     }
     
@@ -34,27 +33,17 @@ public class MonitorThreadEvent extends EventObject {
      * @param source the monitor thread originator
      * @param datum A datum read by the monitor thread
      */
-    public MonitorThreadEvent(MonitorThread source, TowerDatum datum) {
+    public DataEvent(MonitorThread source, TowerDatum datum) {
         super(source);
         this.datum = datum;
-    }
-    
-    /**
-     * 
-     * @param source the monitor thread originator
-     * @param threadException an exception encountered by the monitor thread
-     */
-    public MonitorThreadEvent(MonitorThread source, Exception threadException) {
-        super(source);
-        this.threadException = threadException;
-    }
+    }        
     
     /**
      * 
      * @param source the monitor thread originator
      * @param currentTower the current tower read by the monitor thread
      */
-    public MonitorThreadEvent(MonitorThread source, Tower currentTower) {
+    public DataEvent(MonitorThread source, Tower currentTower) {
         super(source);
         this.currentTower = currentTower;
     }
@@ -65,15 +54,7 @@ public class MonitorThreadEvent extends EventObject {
      */
     public TowerDatum getDatum() {
         return datum;
-    }
-    
-    /**
-     * 
-     * @return the exception carried on this event
-     */
-    public Exception getThreadException() {
-        return threadException;
-    }
+    }        
     
     /**
      * 

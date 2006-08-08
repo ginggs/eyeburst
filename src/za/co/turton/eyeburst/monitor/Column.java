@@ -4,7 +4,7 @@
  * Created on July 7, 2006, 3:00 PM
  */
 
-package za.co.turton.eyeburst;
+package za.co.turton.eyeburst.monitor;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

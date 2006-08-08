@@ -4,14 +4,17 @@
  * Created on June 14, 2006, 2:29 PM
  */
 
-package za.co.turton.eyeburst;
+package za.co.turton.eyeburst.monitor;
 
 import java.awt.Component;
 import java.util.logging.Level;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import org.jfree.chart.JFreeChart;
+import za.co.turton.eyeburst.*;
+import za.co.turton.eyeburst.accumulation.AccumulationFrame;
 import za.co.turton.eyeburst.config.Configuration;
 import za.co.turton.eyeburst.config.ConfigurationException;
 
@@ -19,7 +22,7 @@ import za.co.turton.eyeburst.config.ConfigurationException;
  * This is the main Swing frame of the application
  * @author james
  */
-public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadListener {
+public class MonitorFrame extends javax.swing.JFrame implements ConnectionListener, CurrentTowerListener {
     
     private MonitorThread monitorThread;
     
@@ -29,13 +32,17 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
     
     private ChartCanvas chartCanvas;
     
+    private TowerPublisher dataHub;
+    
     /**
      * Creates a new MonitorFrame
      */
     public MonitorFrame() {
+        
         initComponents();
 //        settingsDialog.setContentPane(new SettingsPanel());
 //        settingsDialog.pack();
+        this.dataHub = new TowerPublisher();
         setTitle(Configuration.getAppTitle());
         this.towerTableModel = new TowerTableModel();
         TableSorter sorter = new TableSorter(towerTableModel);
@@ -44,8 +51,11 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
         towerTable.getTableHeader().setToolTipText("Click to specify sorting; Control-Click to specify secondary sorting");
         towerTable.setModel(sorter);
         towerTableModel.addTableModelListener(towerTable);
-        chartCanvas = new ChartCanvas(towerTableModel);
+        chartCanvas = new ChartCanvas();
         graphPanel.add(chartCanvas);
+        
+        dataHub.addListener(towerTableModel);
+        dataHub.addListener(chartCanvas);
     }
     
     /** This method is called from within the constructor to
@@ -63,10 +73,11 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
         tableScrollPane = new javax.swing.JScrollPane();
         towerTable = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        currentLabel = new javax.swing.JLabel();
+        currentTower = new javax.swing.JLabel();
         buttonPanel = new javax.swing.JPanel();
         connectButton = new javax.swing.JButton();
+        accumulateButton = new javax.swing.JButton();
         resetButton = new javax.swing.JButton();
 
         errorDialog.getContentPane().setLayout(new java.awt.FlowLayout());
@@ -82,7 +93,7 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("eyeBurst");
+        setTitle("Signal Data Overview");
         setName("eyeBurst Frame");
         displayPanel.setLayout(new java.awt.BorderLayout());
 
@@ -104,16 +115,16 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
 
         towerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+
             }
         ));
+        towerTable.setToolTipText("Drag a table row into an accumulation frame to start accumulating data for the tower in that row");
         towerTable.setGridColor(new java.awt.Color(192, 192, 192));
+        towerTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        towerTable.setDragEnabled(true);
         tableScrollPane.setViewportView(towerTable);
 
         jSplitPane1.setRightComponent(tableScrollPane);
@@ -122,16 +133,17 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
 
         getContentPane().add(displayPanel);
 
-        jLabel1.setText("Currently aligned to");
-        jPanel1.add(jLabel1);
+        currentLabel.setText("Currently aligned to");
+        jPanel1.add(currentLabel);
 
-        jLabel2.setText("?");
-        jPanel1.add(jLabel2);
+        currentTower.setText("?");
+        jPanel1.add(currentTower);
 
         getContentPane().add(jPanel1);
 
         connectButton.setMnemonic('c');
         connectButton.setText("Connect");
+        connectButton.setToolTipText("Toggle the connection to your iBurst(TM) device");
         connectButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 connectButtonActionPerformed(evt);
@@ -140,8 +152,20 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
 
         buttonPanel.add(connectButton);
 
+        accumulateButton.setMnemonic('a');
+        accumulateButton.setText("Accumulate...");
+        accumulateButton.setToolTipText("Create a new accumulation frame in which you can graph signal data accumulated over a number of readings");
+        accumulateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                accumulateButtonActionPerformed(evt);
+            }
+        });
+
+        buttonPanel.add(accumulateButton);
+
         resetButton.setMnemonic('r');
         resetButton.setText("Reset");
+        resetButton.setToolTipText("Clears all recorded data");
         resetButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 resetButtonActionPerformed(evt);
@@ -155,14 +179,35 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
+    private void accumulateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accumulateButtonActionPerformed
+        String input = JOptionPane.showInputDialog(this, "Sample Size", 10);
+        
+        if (input == null)
+            return;
+        
+        try {
+            int sampleSize = Integer.parseInt(input);
+            AccumulationFrame accFrame = new AccumulationFrame(dataHub, sampleSize);
+            dataHub.addListener(accFrame);
+            accFrame.setLocationByPlatform(true);
+            accFrame.setVisible(true);
+            
+        } catch (NumberFormatException e) {
+            Configuration.getLogger().log(Level.WARNING, "Could not parse sample size for accumulation frame", e);
+            JOptionPane.showMessageDialog(this, e.toString(), "Invalid Sample Size", JOptionPane.ERROR_MESSAGE);
+        }
+        
+    }//GEN-LAST:event_accumulateButtonActionPerformed
+    
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
         JButton button = (JButton) evt.getSource();
         String action = button.getText();
         
         if (action.equals("Connect")) {
             button.setEnabled(false);
-            monitorThread = new MonitorThread();
-            monitorThread.addListener(this);
+            monitorThread = new MonitorThread(dataHub);
+            monitorThread.addListener((ConnectionListener) this);
+            monitorThread.addListener((CurrentTowerListener) this);
             monitorThread.start();
             
         } else if (action.equals("Disconnect")) {
@@ -170,40 +215,19 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
             monitorThread.requestStop();
         }
     }//GEN-LAST:event_connectButtonActionPerformed
-        
+    
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         towerTableModel.clear();
-        chartCanvas.repaint();
+        chartCanvas.clear();
     }//GEN-LAST:event_resetButtonActionPerformed
-        
+    
     private void graphPanelComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_graphPanelComponentResized
         chartCanvas.setSize(graphPanel.getSize());
         chartCanvas.repaint();
     }//GEN-LAST:event_graphPanelComponentResized
         
-    /**
-     *
-     * @see MonitorThreadListener#towerDatum
-     */
-    public void towerDatum(final MonitorThreadEvent event) {
-        final TowerDatum towerDatum = event.getDatum();
-        
-        if (towerDatum.cost < Configuration.getSignalLowerBound())
-            return;
-        
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                towerTableModel.addTowerDatum(towerDatum);
-                chartCanvas.repaint();
-            }
-        });
-    }
     
-    /**
-     *
-     * @see MonitorThreadListener#disconnected
-     */
-    public void disconnected(final MonitorThreadEvent e) {
+    public void disconnected(final ConnectionEvent e) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 connectButton.setText("Connect");
@@ -212,24 +236,15 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
         });
     }
     
-    /**
-     *
-     * @see MonitorThreadListener#currentTower
-     */
-    public void currentTower(final MonitorThreadEvent e) {
+    public void currentTower(final DataEvent e) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                jLabel2.setText(e.getCurrentTower().getName());
-                connectButton.setEnabled(true);
+                currentTower.setText(e.getCurrentTower().getName());                
             }
         });
     }
     
-    /**
-     *
-     * @see MonitorThreadListener#connected
-     */
-    public void connected(final MonitorThreadEvent e) {
+    public void connected(final ConnectionEvent e) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 connectButton.setText("Disconnect");
@@ -242,17 +257,16 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
      *
      * @see MonitorThreadListener#connectFailed
      */
-    public void connectFailed(final MonitorThreadEvent e) {
+    public void connectFailed(final ConnectionEvent e) {
         final Component dialogParent = this;
         
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                JOptionPane.showMessageDialog(dialogParent, e.getThreadException(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialogParent, e.getThreadException(), "Connect Failed", JOptionPane.ERROR_MESSAGE);
                 connectButton.setEnabled(true);
             }
         });
     }
-    
     
     /**
      * Application execution entry point
@@ -265,7 +279,9 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
             
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    new MonitorFrame().setVisible(true);
+                    MonitorFrame monitorFrame = new MonitorFrame();
+                    monitorFrame.setLocationByPlatform(true);
+                    monitorFrame.setVisible(true);
                 }
             });
         } catch (ConfigurationException e) {
@@ -274,14 +290,15 @@ public class MonitorFrame extends javax.swing.JFrame implements MonitorThreadLis
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton accumulateButton;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton connectButton;
+    private javax.swing.JLabel currentLabel;
+    private javax.swing.JLabel currentTower;
     private javax.swing.JPanel displayPanel;
     private javax.swing.JDialog errorDialog;
     private javax.swing.JLabel errorLabel;
     private javax.swing.JPanel graphPanel;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JButton resetButton;

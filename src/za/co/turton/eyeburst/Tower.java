@@ -6,19 +6,26 @@
  */
 package za.co.turton.eyeburst;
 
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesDataItem;
 import za.co.turton.eyeburst.config.Configuration;
+import za.co.turton.eyeburst.monitor.Column;
 
 /**
  * Represents an iBurst tower
  * @author james
  */
-public class Tower implements Comparable {
+public class Tower {
     
     private String code;
     
@@ -37,9 +44,7 @@ public class Tower implements Comparable {
     private float load;
     
     private List<TowerDatum> towerData;
-    
-    private TimeSeries series;
-    
+        
     /**
      * Creates a new instance of Tower
      * @param code The code of the tower
@@ -54,8 +59,7 @@ public class Tower implements Comparable {
         towerData = new LinkedList();
         totalCost = totalSquaredCost = 0f;
         min = Float.POSITIVE_INFINITY;
-        max = Float.NEGATIVE_INFINITY;
-        series = new TimeSeries(name, org.jfree.data.time.Second.class);
+        max = Float.NEGATIVE_INFINITY;        
     }
     
     /**
@@ -73,36 +77,8 @@ public class Tower implements Comparable {
         max = Math.max(max, datum.cost);
         
         distance = datum.distance;
-        load = datum.load;
-        
-        Second second = new Second(datum.readingTime);
-        TimeSeriesDataItem dataItem = new TimeSeriesDataItem(second, datum.cost);
-        series.add(dataItem);
-    }
-    
-    /**
-     * Retrieve the JFreeChart TimeSeries held by this Tower
-     * @return the TimeSeries
-     */
-    public TimeSeries getSeries() {
-        return this.series;
-    }
-    
-    /**
-     * Remove all expired chart data from this Tower's TimeSeries
-     */
-    public synchronized void removeExpiredFromChart() {
-        long now = System.currentTimeMillis();
-        int toCull = 0;
-        
-        Iterator<TimeSeriesDataItem> it = series.getItems().iterator();
-        
-        while (it.hasNext())
-            if (it.next().getPeriod().getMiddleMillisecond() < now - Configuration.getChartDataExpiry())
-                toCull++;
-        
-        series.delete(0, toCull - 1);
-    }
+        load = datum.load;                
+    }       
     
     /**
      *
@@ -117,7 +93,7 @@ public class Tower implements Comparable {
      *
      * @return This tower's name
      */
-    @Column(name = "Name", number = 1)
+    @Column(name = "Location", number = 1)
     public String getName() {
         return name;
     }
@@ -173,7 +149,7 @@ public class Tower implements Comparable {
      * @return The number signals reported for this Tower
      */
     @Column(name = "Count", number = 7)
-    public Integer getCount() {
+    public Integer getDataCount() {
         return towerData.size();
     }
     
@@ -201,7 +177,16 @@ public class Tower implements Comparable {
      * @return
      */
     public boolean equals(Object obj) {
-        return (obj instanceof Tower && ((Tower) obj).code.equals(code));
+        if (obj instanceof Tower)
+            return ((Tower) obj).getCode().equals(code);
+        
+        if (obj instanceof TowerDatum)
+            return ((TowerDatum) obj).code.equals(code);
+        
+        if (obj instanceof String)
+            return obj.equals(code);
+        
+        return false;
     }
     
     /**
@@ -209,7 +194,7 @@ public class Tower implements Comparable {
      * @return
      */
     public int hashCode() {
-        return Integer.parseInt(this.code);
+        return this.code.hashCode();
     }
     
     /**
@@ -220,5 +205,5 @@ public class Tower implements Comparable {
     public int compareTo(Object o) {
         Tower other = (Tower) o;
         return getAvg().compareTo(other.getAvg());
-    }
+    }        
 }

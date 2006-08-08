@@ -4,7 +4,7 @@
  * Created on July 1, 2006, 10:29 AM
  */
 
-package za.co.turton.eyeburst;
+package za.co.turton.eyeburst.monitor;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -17,20 +17,18 @@ import java.util.TreeMap;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
-import org.jfree.data.time.TimeSeriesCollection;
+import za.co.turton.eyeburst.*;
 
 /**
  * Implementation of javax.swing.TableModel to present tower data
  * @author james
  */
-public class TowerTableModel implements TableModel {
+public class TowerTableModel implements TableModel, TowerUpdateListener {
     
     private Map<String, Integer> towersMap;
     
     private List<Tower> towers;
-    
-    private TimeSeriesCollection seriesCol;
-    
+         
     private Set<TableModelListener> listeners;
     
     private Map<Integer, Method> columnGetters;
@@ -41,7 +39,6 @@ public class TowerTableModel implements TableModel {
         this.towers = new ArrayList<Tower>();
         this.listeners = new HashSet<TableModelListener>();
         
-        seriesCol = new TimeSeriesCollection();
         columnGetters = new HashMap<Integer, Method>();
         
         for (Method method : Tower.class.getMethods()) {
@@ -57,45 +54,13 @@ public class TowerTableModel implements TableModel {
      */
     public void clear() {
         towersMap.clear();
-        towers.clear();
-        seriesCol.removeAllSeries();
+        towers.clear();        
         fireTableChanged();
-    }
+    }  
     
-    /**
-     * Add a new tower datum to an existing or new tower
-     * @param towerCode the code of the tower to which the datum applies
-     * @param towerDatum the tower datum
-     */
-    public void addTowerDatum(TowerDatum towerDatum) {
-        
-        Tower tower = retrieveOrCreate(towerDatum.code);
-        tower.addDatum(towerDatum);
-        
-        for (Tower t : towers)
-            t.removeExpiredFromChart();
-        
-        fireTableChanged();
-    }
-    
-    /**
-     * Retrieve a tower, creating mapping it if it is not mapped
-     * @param towerCode the code of the tower to be retrieved
-     * @return a new or existing tower
-     */
-    private Tower retrieveOrCreate(final String towerCode) {
-        Tower tower = null;
+    public Tower retrieve(String towerCode) {
         Integer index = towersMap.get(towerCode);
-        
-        if (index == null) {
-            tower = new Tower(towerCode);
-            towers.add(tower);
-            towersMap.put(towerCode, towers.size() - 1);
-            seriesCol.addSeries(tower.getSeries());
-        } else
-            tower = towers.get(index);
-        
-        return tower;
+        return towers.get(index);
     }
     
     /**
@@ -146,7 +111,7 @@ public class TowerTableModel implements TableModel {
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }
-    
+       
     /**
      *
      * @see TableModel#getValue
@@ -185,13 +150,20 @@ public class TowerTableModel implements TableModel {
      */
     public int getColumnCount() {
         return columnGetters.size();
-    }
-    
-    /**
-     *
-     * @see TableModel#getSeriesCol
-     */
-    public TimeSeriesCollection getSeriesCol() {
-        return seriesCol;
+    }       
+
+    public void towerUpdate(TowerUpdateEvent evt) {
+        Tower tower = null;
+        String towerCode = evt.getTowerDatum().code;
+        Integer index = towersMap.get(towerCode);
+        
+        if (index == null) {
+            tower = evt.getSource().createTowerWithDatum(evt.getTowerDatum());
+            towers.add(tower);
+            towersMap.put(towerCode, towers.size() - 1);
+        } else
+            tower = towers.get(index);
+        
+        fireTableChanged();
     }
 }

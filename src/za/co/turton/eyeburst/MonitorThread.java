@@ -10,7 +10,6 @@ package za.co.turton.eyeburst;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.HashSet;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -25,35 +24,57 @@ public class MonitorThread extends Thread {
     
     private MonitorLineProvider lineProvider;
     
-    private Set<MonitorThreadListener> listeners;
+    private TowerPublisher dataHub;
+    
+    private Set<ConnectionListener> connectionListeners;
+    
+    private Set<CurrentTowerListener> ctListeners;
     
     private boolean mustRun;
     
-    private static final String DELIM = " ";        
+    private static final String DELIM = " ";
     
     /**
      * Creates a new instance of MonitorThread
      */
-    public MonitorThread() {
+    public MonitorThread(TowerPublisher dataHub) {
+        this.dataHub = dataHub;
         this.setName("MonitorThread");
         this.setDaemon(true);
-        this.listeners = new HashSet<MonitorThreadListener>();
+        this.connectionListeners = new HashSet<ConnectionListener>();
+        this.ctListeners = new HashSet<CurrentTowerListener>();
     }
     
     /**
      * Register a listener with this monitor thread
      * @param l the listener
      */
-    public void addListener(MonitorThreadListener l) {
-        listeners.add(l);
+    public void addListener(ConnectionListener l) {
+        connectionListeners.add(l);
     }
     
     /**
      * Deregister a listener with this monitorr thread
      * @param l the listener
      */
-    public void removeListener(MonitorThreadListener l) {
-        listeners.remove(l);
+    public void removeListener(ConnectionListener l) {
+        connectionListeners.remove(l);
+    }
+    
+    /**
+     * Register a listener with this monitor thread
+     * @param l the listener
+     */
+    public void addListener(CurrentTowerListener l) {
+        ctListeners.add(l);
+    }
+    
+    /**
+     * Deregister a listener with this monitor thread
+     * @param l the listener
+     */
+    public void removeListener(CurrentTowerListener l) {
+        ctListeners.remove(l);
     }
     
     /**
@@ -111,11 +132,11 @@ public class MonitorThread extends Thread {
                             // "Load"
                             tokeniser.nextToken();
                             towerDatum.load = Integer.parseInt(tokeniser.nextToken().trim());
-                            
-                            fireTowerDatum(towerDatum);
+                                                        
+                            dataHub.take(towerDatum);
                         }
                     } catch (Exception e) {
-                        Configuration.getLogger().info("Unintelligible: "+line);
+                        Configuration.getLogger().log(Level.INFO, "Unintelligible: "+line);
                     }
                 } catch (SocketTimeoutException e) {
                     if (this.mustRun)
@@ -147,37 +168,30 @@ public class MonitorThread extends Thread {
     }
     
     private void fireConnectFailed(Exception e) {
-        MonitorThreadEvent event = new MonitorThreadEvent(this, e);
+        ConnectionEvent event = new ConnectionEvent(this, e);
         
-        for (MonitorThreadListener listener : listeners)
+        for (ConnectionListener listener : connectionListeners)
             listener.connectFailed(event);
     }
     
     private void fireDisconnected() {
-        MonitorThreadEvent event = new MonitorThreadEvent(this);
+        ConnectionEvent event = new ConnectionEvent(this);
         
-        for (MonitorThreadListener listener : listeners)
+        for (ConnectionListener listener : connectionListeners)
             listener.disconnected(event);
     }
     
     private void fireConnected() {
-        MonitorThreadEvent event = new MonitorThreadEvent(this);
+        ConnectionEvent event = new ConnectionEvent(this);
         
-        for (MonitorThreadListener listener : listeners)
+        for (ConnectionListener listener : connectionListeners)
             listener.connected(event);
     }
     
-    private void fireTowerDatum(TowerDatum datum) {
-        MonitorThreadEvent event = new MonitorThreadEvent(this, datum);
-        
-        for (MonitorThreadListener listener : listeners)
-            listener.towerDatum(event);
-    }
-    
     private void fireCurrentTower(String towerCode) {
-        MonitorThreadEvent event = new MonitorThreadEvent(this, new Tower(towerCode));
+        DataEvent event = new DataEvent(this, new Tower(towerCode));
         
-        for (MonitorThreadListener listener : listeners)
+        for (CurrentTowerListener listener : ctListeners)
             listener.currentTower(event);
     }
     
@@ -191,7 +205,7 @@ public class MonitorThread extends Thread {
         } catch (Exception e) {
             Configuration.getLogger().log(Level.SEVERE, "Could not instantiate line provider: "+Configuration.getLineProvider(), e);
             fireConnectFailed(e);
-        }                
+        }
         
         this.mustRun = true;
         super.start();

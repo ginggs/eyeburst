@@ -1,4 +1,4 @@
-package za.co.turton.eyeburst;
+package za.co.turton.eyeburst.monitor;
 
 import java.awt.*;
 import java.awt.event.*;

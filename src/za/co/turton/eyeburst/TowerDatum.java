@@ -15,26 +15,26 @@ import java.util.Date;
  */
 public class TowerDatum {
     
-    String code;
+    public String code;
     /**
      * When this measurement was taken
      */
-    Date readingTime;
+    public Date readingTime;
     
     /**
      * The reported signal
      */
-    float cost;
+    public float cost;
     
     /**
      * The reported distance
      */
-    int distance;
+    public int distance;
     
     /**
      * The reported load
      */
-    int load;
+    public int load;
     
     
     /** Creates a new instance of TowerData */
