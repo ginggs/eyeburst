@@ -136,7 +136,7 @@ public class MonitorThread extends Thread {
                             dataHub.take(towerDatum);
                         }
                     } catch (Exception e) {
-                        Configuration.getLogger().log(Level.INFO, "Unintelligible: "+line);
+                        Configuration.getLogger().log(Level.FINE, "Could not parse "+line, e);
                     }
                 } catch (SocketTimeoutException e) {
                     if (this.mustRun)

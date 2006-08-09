@@ -32,7 +32,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
     
     private ChartCanvas chartCanvas;
     
-    private TowerPublisher dataHub;
+    private TowerPublisher towerPublisher;
     
     /**
      * Creates a new MonitorFrame
@@ -42,7 +42,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         initComponents();
 //        settingsDialog.setContentPane(new SettingsPanel());
 //        settingsDialog.pack();
-        this.dataHub = new TowerPublisher();
+        this.towerPublisher = new TowerPublisher();
         setTitle(Configuration.getAppTitle());
         this.towerTableModel = new TowerTableModel();
         TableSorter sorter = new TableSorter(towerTableModel);
@@ -54,8 +54,8 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         chartCanvas = new ChartCanvas();
         graphPanel.add(chartCanvas);
         
-        dataHub.addListener(towerTableModel);
-        dataHub.addListener(chartCanvas);
+        towerPublisher.addListener(towerTableModel);
+        towerPublisher.addListener(chartCanvas);
     }
     
     /** This method is called from within the constructor to
@@ -187,8 +187,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         
         try {
             int sampleSize = Integer.parseInt(input);
-            AccumulationFrame accFrame = new AccumulationFrame(dataHub, sampleSize);
-            dataHub.addListener(accFrame);
+            AccumulationFrame accFrame = new AccumulationFrame(towerPublisher, sampleSize);
             accFrame.setLocationByPlatform(true);
             accFrame.setVisible(true);
             
@@ -205,7 +204,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         
         if (action.equals("Connect")) {
             button.setEnabled(false);
-            monitorThread = new MonitorThread(dataHub);
+            monitorThread = new MonitorThread(towerPublisher);
             monitorThread.addListener((ConnectionListener) this);
             monitorThread.addListener((CurrentTowerListener) this);
             monitorThread.start();

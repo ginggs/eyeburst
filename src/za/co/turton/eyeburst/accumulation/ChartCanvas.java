@@ -52,6 +52,4 @@ public class ChartCanvas extends java.awt.Canvas implements TowerCompletedListen
         dataset.add(tower.getSignalData(), tower.getName(), ac.getCategoryName());
         repaint();
     }
-    
-    
 }

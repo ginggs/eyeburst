@@ -6,6 +6,7 @@
  */
 package za.co.turton.eyeburst;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class Tower {
     
     private float load;
     
-    private List<TowerDatum> towe¨rData;
+    private List<TowerDatum> towerData;
     
 //    private TreeSet<TowerDatum> sortedTowerData;
     
@@ -51,7 +52,6 @@ public class Tower {
             this.name = this.code + " (Unknown)";
         
         towerData = new LinkedList<TowerDatum>();
-        sortedTowerData = new TreeSet<TowerDatum>(new SignalStrengthComparator());
         totalCost = totalSquaredCost = 0f;
         min = Float.POSITIVE_INFINITY;
         max = Float.NEGATIVE_INFINITY;
@@ -62,9 +62,8 @@ public class Tower {
      * @param datum The datum to add
      */
     public synchronized void addDatum(TowerDatum datum) {
-        int readings = getTowerData().size();
-        getTowerData().add(datum);
-        sortedTowerData.add(datum);
+        int readings = towerData.size();
+        towerData.add(datum);
         
         totalCost += datum.cost;
         totalSquaredCost += datum.cost * datum.cost;
@@ -109,7 +108,7 @@ public class Tower {
      */
     @Column(name = "Average", number = 3)
     public Float getAvg() {
-        return totalCost / getTowerData().size();
+        return totalCost / towerData.size();
     }
     
     /**
@@ -127,7 +126,7 @@ public class Tower {
      */
     @Column(name = "Std Dev", number = 5)
     public Float getStdDev() {
-        float variance = (totalSquaredCost / getTowerData().size()) - (getAvg() * getAvg());
+        float variance = (totalSquaredCost / towerData.size()) - (getAvg() * getAvg());
         return (float) Math.sqrt(variance);
     }
     
@@ -137,7 +136,7 @@ public class Tower {
      */
     @Column(name = "Last", number = 6)
     public Float getLast() {
-        return getTowerData().get(getTowerData().size()  - 1).cost;
+        return towerData.get(towerData.size()  - 1).cost;
     }
     
     /**
@@ -146,7 +145,7 @@ public class Tower {
      */
     @Column(name = "Count", number = 7)
     public Integer getDataCount() {
-        return getTowerData().size();
+        return towerData.size();
     }
     
     /**
@@ -233,6 +232,6 @@ public class Tower {
         for (TowerDatum datum : towerData)
             signalData.add(datum.cost);
         
-        return signlData;
+        return signalData;
     }
 }
