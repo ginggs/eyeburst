@@ -6,61 +6,62 @@
 
 package za.co.turton.eyeburst.accumulation;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import za.co.turton.eyeburst.*;
 
 /**
  *
  * @author  james
  */
-public class AccumulationFrame extends javax.swing.JFrame implements TowerUpdateListener {
+public class AccumulationFrame extends javax.swing.JFrame {
     
-    private Map<Tower, String> towers;
+    private Map<String, AccumulationCategory> setups;
     
-    private Map<Tower, String> pendingTowers;
+    private TowerPublisher towerPublisher;
     
-    private TowerPublisher dataHub;
+    private TowerSampleDataSet tsds;
     
     private int sampleSize;
     
     /** Creates new form AccumulationFrame */
-    public AccumulationFrame(TowerPublisher dataHub, int sampleSize) {
+    public AccumulationFrame(TowerPublisher towerPublisher, int sampleSize) {
         initComponents();
         this.setTitle(this.getTitle()+" (Sample Size = "+sampleSize+")");
         chartPanel.setTransferHandler(new TowerTransferHandler());
-        this.towers = new HashMap<Tower, String>();
-        this.pendingTowers = new HashMap<Tower, String>();
+        this.setups = new LinkedHashMap<String, AccumulationCategory>();
         this.sampleSize = sampleSize;
-        this.dataHub = dataHub;
+        this.towerPublisher = towerPublisher;
     }
     
     public boolean addTower(String towerCode) {
+                
+        String setupName = "test";//JOptionPane.showInputDialog(this, "Sample Name");        
+        Tower tower = towerPublisher.createTower(towerCode);
+        AccumulationCategory setup = getOrCreateSetup(setupName);
+        setup.add(tower);
         
-        if (pendingTowers.containsKey(towerCode))
-            return false;
-        
-        String sampleName = JOptionPane.showInputDialog(this, "Sample Name");        
-        Tower tower = dataHub.createTower(towerCode);
-        pendingTowers.put(tower, sampleName);
-        JLabel label = new JLabel(tower.getName()+": "+sampleName);
+        JLabel label = new JLabel(tower.getName()+": "+setupName);
         label.setVisible(true);
         pendingsPanel.add(label);
         pack();
         
         return true;
     }    
-    
-    public void towerUpdate(TowerUpdateEvent evt) {
-        for (Tower tower : pendingTowers.keySet())
-            if (tower.getDataCount() >= this.sampleSize) {
-                String name = pendingTowers.remove(tower);
-                towers.put(tower, name);
-            }
-    }
-    
+
+    private AccumulationCategory getOrCreateSetup(String setupName) {
+        AccumulationCategory setup = setups.get(setupName);
+        
+        if (setup == null) {
+            setup = new AccumulationCategory(setupName, sampleSize);
+            setups.put(setupName, setup);
+            towerPublisher.addListener(setup);
+        }
+        
+        return setup;
+    }            
+        
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

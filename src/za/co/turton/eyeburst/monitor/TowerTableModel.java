@@ -23,7 +23,7 @@ import za.co.turton.eyeburst.*;
  * Implementation of javax.swing.TableModel to present tower data
  * @author james
  */
-public class TowerTableModel implements TableModel, TowerUpdateListener {
+public class TowerTableModel implements TableModel, TowerPublicationListener {
     
     private Map<String, Integer> towersMap;
     
@@ -152,7 +152,7 @@ public class TowerTableModel implements TableModel, TowerUpdateListener {
         return columnGetters.size();
     }       
 
-    public void towerUpdate(TowerUpdateEvent evt) {
+    public void towerPublication(TowerPublicationEvent evt) {
         Tower tower = null;
         String towerCode = evt.getTowerDatum().code;
         Integer index = towersMap.get(towerCode);

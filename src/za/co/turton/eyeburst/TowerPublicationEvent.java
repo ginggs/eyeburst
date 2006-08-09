@@ -1,5 +1,5 @@
 /*
- * TowerUpdateEvent.java
+ * TowerPublicationEvent.java
  *
  * Created on August 7, 2006, 3:41 PM
  *
@@ -15,12 +15,14 @@ import java.util.EventObject;
  *
  * @author james
  */
-public class TowerUpdateEvent extends EventObject {
+public class TowerPublicationEvent extends EventObject {
     
     private TowerDatum datum;
     
-    /** Creates a new instance of TowerUpdateEvent */
-    public TowerUpdateEvent(TowerPublisher source, TowerDatum datum) {
+    /**
+     * Creates a new instance of TowerPublicationEvent
+     */
+    public TowerPublicationEvent(TowerPublisher source, TowerDatum datum) {
         super(source); 
         this.datum = datum;
     }

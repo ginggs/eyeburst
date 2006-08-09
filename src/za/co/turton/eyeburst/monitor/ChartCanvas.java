@@ -30,7 +30,7 @@ import za.co.turton.eyeburst.config.Configuration;
  * Canvas onto which the signal strength chart is drawn
  * @author james
  */
-public class ChartCanvas extends Canvas implements TowerUpdateListener {
+public class ChartCanvas extends Canvas implements TowerPublicationListener {
     
     // Chart object that is painted onto this canvas
     private JFreeChart chart;
@@ -67,7 +67,7 @@ public class ChartCanvas extends Canvas implements TowerUpdateListener {
         chart.draw(g2d, rect);
     }
     
-    public void towerUpdate(TowerUpdateEvent evt) {
+    public void towerPublication(TowerPublicationEvent evt) {
         
         TowerDatum datum = evt.getTowerDatum();
         String towerCode = datum.code;

@@ -22,14 +22,14 @@ public class TowerPublisher {
     
     private Map<String, List<Tower>> towers;
     
-    private Set<TowerUpdateListener> listeners;
+    private Set<TowerPublicationListener> listeners;
     
     /**
      * Creates a new instance of TowerPublisher
      */
     public TowerPublisher() {
         this.towers = new HashMap<String, List<Tower>>();
-        this.listeners = new HashSet<TowerUpdateListener>();
+        this.listeners = new HashSet<TowerPublicationListener>();
     }
     
     public Tower createTower(String towerCode) {
@@ -63,15 +63,15 @@ public class TowerPublisher {
                 tower.addDatum(datum);
         }
         
-        for (TowerUpdateListener listener : listeners)
-            listener.towerUpdate(new TowerUpdateEvent(this, datum));
+        for (TowerPublicationListener listener : listeners)
+            listener.towerPublication(new TowerPublicationEvent(this, datum));
     }
     
-    public void addListener(TowerUpdateListener listener) {
+    public void addListener(TowerPublicationListener listener) {
         listeners.add(listener);
     }
     
-    public void removeListener(TowerUpdateListener listener) {
+    public void removeListener(TowerPublicationListener listener) {
         listeners.remove(listener);
     }
 }

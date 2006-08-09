@@ -1,5 +1,5 @@
 /*
- * TowerUpdateListener.java
+ * TowerPublicationListener.java
  *
  * Created on August 7, 2006, 3:20 PM
  *
@@ -15,7 +15,7 @@ import java.util.EventListener;
  *
  * @author james
  */
-public interface TowerUpdateListener extends EventListener {
+public interface TowerPublicationListener extends EventListener {
     
-    public void towerUpdate(TowerUpdateEvent evt);
+    public void towerPublication(TowerPublicationEvent evt);
 }

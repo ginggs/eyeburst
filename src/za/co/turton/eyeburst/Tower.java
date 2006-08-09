@@ -6,18 +6,10 @@
  */
 package za.co.turton.eyeburst;
 
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import org.jfree.data.time.Second;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesDataItem;
+import java.util.TreeSet;
 import za.co.turton.eyeburst.config.Configuration;
 import za.co.turton.eyeburst.monitor.Column;
 
@@ -43,8 +35,10 @@ public class Tower {
     
     private float load;
     
-    private List<TowerDatum> towerData;
-        
+    private List<TowerDatum> towe¨rData;
+    
+//    private TreeSet<TowerDatum> sortedTowerData;
+    
     /**
      * Creates a new instance of Tower
      * @param code The code of the tower
@@ -56,10 +50,11 @@ public class Tower {
         if (this.name == null)
             this.name = this.code + " (Unknown)";
         
-        towerData = new LinkedList();
+        towerData = new LinkedList<TowerDatum>();
+        sortedTowerData = new TreeSet<TowerDatum>(new SignalStrengthComparator());
         totalCost = totalSquaredCost = 0f;
         min = Float.POSITIVE_INFINITY;
-        max = Float.NEGATIVE_INFINITY;        
+        max = Float.NEGATIVE_INFINITY;
     }
     
     /**
@@ -67,8 +62,9 @@ public class Tower {
      * @param datum The datum to add
      */
     public synchronized void addDatum(TowerDatum datum) {
-        int readings = towerData.size();
-        towerData.add(datum);
+        int readings = getTowerData().size();
+        getTowerData().add(datum);
+        sortedTowerData.add(datum);
         
         totalCost += datum.cost;
         totalSquaredCost += datum.cost * datum.cost;
@@ -77,8 +73,8 @@ public class Tower {
         max = Math.max(max, datum.cost);
         
         distance = datum.distance;
-        load = datum.load;                
-    }       
+        load = datum.load;
+    }
     
     /**
      *
@@ -113,7 +109,7 @@ public class Tower {
      */
     @Column(name = "Average", number = 3)
     public Float getAvg() {
-        return totalCost / towerData.size();
+        return totalCost / getTowerData().size();
     }
     
     /**
@@ -131,7 +127,7 @@ public class Tower {
      */
     @Column(name = "Std Dev", number = 5)
     public Float getStdDev() {
-        float variance = (totalSquaredCost / towerData.size()) - (getAvg() * getAvg());
+        float variance = (totalSquaredCost / getTowerData().size()) - (getAvg() * getAvg());
         return (float) Math.sqrt(variance);
     }
     
@@ -141,7 +137,7 @@ public class Tower {
      */
     @Column(name = "Last", number = 6)
     public Float getLast() {
-        return towerData.get(towerData.size() - 1).cost;
+        return getTowerData().get(getTowerData().size()  - 1).cost;
     }
     
     /**
@@ -150,7 +146,7 @@ public class Tower {
      */
     @Column(name = "Count", number = 7)
     public Integer getDataCount() {
-        return towerData.size();
+        return getTowerData().size();
     }
     
     /**
@@ -171,11 +167,35 @@ public class Tower {
         return load;
     }
     
+    /*
+    public Float getMedian() {
+        
+        int size = sortedTowerData.size();
+        
+        if (size == 0)
+            return Float.NaN;
+                
+        Iterator<TowerDatum> it = towerData.iterator();    
+        float firstMedian, secondMedian;
+        firstMedian = secondMedian = it.next().cost;
+        
+        for (int i = 0; i < size - 1; i++) {
+            if (i % 2 == 0)
+                secondMedian = it.next().cost;                
+            else
+                firstMedian = secondMedian;     
+        }
+        
+        return (firstMedian + secondMedian) / 2f;
+    }
+    */
+    
     /**
      * Two towers are equal iff they have the same code
      * @param obj
      * @return
      */
+    //@todo Fix Me?
     public boolean equals(Object obj) {
         if (obj instanceof Tower)
             return ((Tower) obj).getCode().equals(code);
@@ -205,5 +225,14 @@ public class Tower {
     public int compareTo(Object o) {
         Tower other = (Tower) o;
         return getAvg().compareTo(other.getAvg());
-    }        
+    }
+
+    public List<Float> getSignalData() {
+        List<Float> signalData = new ArrayList();
+        
+        for (TowerDatum datum : towerData)
+            signalData.add(datum.cost);
+        
+        return signlData;
+    }
 }
