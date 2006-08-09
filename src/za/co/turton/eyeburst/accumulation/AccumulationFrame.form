@@ -21,6 +21,9 @@
   </Layout>
   <SubComponents>
     <Container class="javax.swing.JPanel" name="chartPanel">
+      <Events>
+        <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="chartPanelComponentResized"/>
+      </Events>
 
       <Layout>
         <DimensionLayout dim="0">

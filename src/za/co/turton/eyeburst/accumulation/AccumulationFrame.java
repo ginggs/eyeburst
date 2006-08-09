@@ -23,6 +23,8 @@ public class AccumulationFrame extends javax.swing.JFrame {
     
     private TowerSampleDataSet tsds;
     
+    private ChartCanvas chartCanvas;
+    
     private int sampleSize;
     
     /** Creates new form AccumulationFrame */
@@ -30,14 +32,16 @@ public class AccumulationFrame extends javax.swing.JFrame {
         initComponents();
         this.setTitle(this.getTitle()+" (Sample Size = "+sampleSize+")");
         chartPanel.setTransferHandler(new TowerTransferHandler());
+        this.chartCanvas = new ChartCanvas();
+        chartPanel.add(chartCanvas);
         this.setups = new LinkedHashMap<String, AccumulationCategory>();
         this.sampleSize = sampleSize;
         this.towerPublisher = towerPublisher;
     }
     
     public boolean addTower(String towerCode) {
-                
-        String setupName = "test";//JOptionPane.showInputDialog(this, "Sample Name");        
+        
+        String setupName = "test";//JOptionPane.showInputDialog(this, "Sample Name");
         Tower tower = towerPublisher.createTower(towerCode);
         AccumulationCategory setup = getOrCreateSetup(setupName);
         setup.add(tower);
@@ -48,8 +52,8 @@ public class AccumulationFrame extends javax.swing.JFrame {
         pack();
         
         return true;
-    }    
-
+    }
+    
     private AccumulationCategory getOrCreateSetup(String setupName) {
         AccumulationCategory setup = setups.get(setupName);
         
@@ -60,8 +64,8 @@ public class AccumulationFrame extends javax.swing.JFrame {
         }
         
         return setup;
-    }            
-        
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -78,6 +82,12 @@ public class AccumulationFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Accumulated Signal Datasets");
+        chartPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                chartPanelComponentResized(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout chartPanelLayout = new org.jdesktop.layout.GroupLayout(chartPanel);
         chartPanel.setLayout(chartPanelLayout);
         chartPanelLayout.setHorizontalGroup(
@@ -101,6 +111,11 @@ public class AccumulationFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    private void chartPanelComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_chartPanelComponentResized
+        chartCanvas.setSize(chartPanel.getSize());
+        chartCanvas.repaint();
+    }//GEN-LAST:event_chartPanelComponentResized
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

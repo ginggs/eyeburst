@@ -18,6 +18,7 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 import za.co.turton.eyeburst.Tower;
+import za.co.turton.eyeburst.config.Configuration;
 
 /**
  *
@@ -33,7 +34,7 @@ public class ChartCanvas extends java.awt.Canvas implements TowerCompletedListen
     public ChartCanvas() {
         this.dataset = new DefaultBoxAndWhiskerCategoryDataset();
         CategoryAxis setupAxis = new CategoryAxis("Setup");
-        NumberAxis valueAxis = new NumberAxis("Signal Strength (dB)");
+        NumberAxis valueAxis = new NumberAxis(Configuration.getYAxisTitle());
         valueAxis.setAutoRangeIncludesZero(false);
         BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();        
         CategoryPlot plot = new CategoryPlot(dataset, setupAxis, valueAxis, renderer);
