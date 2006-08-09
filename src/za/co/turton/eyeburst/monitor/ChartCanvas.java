@@ -14,6 +14,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import javax.swing.SwingUtilities;
 import org.jfree.chart.ChartFactory;
@@ -89,7 +90,7 @@ public class ChartCanvas extends Canvas implements TowerPublicationListener {
         TimeSeriesDataItem dataItem = new TimeSeriesDataItem(second, datum.cost);
         series.add(dataItem);
         
-        removeExpired(series);
+        removeExpired();
         
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -98,17 +99,18 @@ public class ChartCanvas extends Canvas implements TowerPublicationListener {
         });
     }
     
-    private void removeExpired(TimeSeries series) {
+    private void removeExpired() {
         long now = System.currentTimeMillis();
-        int toCull = 0;
         
-        Iterator<TimeSeriesDataItem> it = series.getItems().iterator();
-        
-        while (it.hasNext())
-            if (it.next().getPeriod().getMiddleMillisecond() < now - Configuration.getChartDataExpiry())
-                toCull++;
-        
-        series.delete(0, toCull - 1);
+        for (TimeSeries series : (List<TimeSeries>) seriesCol.getSeries()) {
+            int toCull = 0;
+            
+            for (TimeSeriesDataItem item : (List<TimeSeriesDataItem>) series.getItems())
+                if (item.getPeriod().getMiddleMillisecond() < now - Configuration.getChartDataExpiry())
+                    toCull++;
+            
+            series.delete(0, toCull - 1);
+        }
     }
     
     public void clear() {

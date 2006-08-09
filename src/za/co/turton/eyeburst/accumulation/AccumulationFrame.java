@@ -9,6 +9,7 @@ package za.co.turton.eyeburst.accumulation;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import za.co.turton.eyeburst.*;
 
 /**
@@ -17,7 +18,7 @@ import za.co.turton.eyeburst.*;
  */
 public class AccumulationFrame extends javax.swing.JFrame {
     
-    private Map<String, AccumulationCategory> setups;
+    private Map<String, AccumulationCategory> categories;
     
     private TowerPublisher towerPublisher;
     
@@ -34,14 +35,14 @@ public class AccumulationFrame extends javax.swing.JFrame {
         chartPanel.setTransferHandler(new TowerTransferHandler());
         this.chartCanvas = new ChartCanvas();
         chartPanel.add(chartCanvas);
-        this.setups = new LinkedHashMap<String, AccumulationCategory>();
+        this.categories = new LinkedHashMap<String, AccumulationCategory>();
         this.sampleSize = sampleSize;
         this.towerPublisher = towerPublisher;
     }
     
     public boolean addTower(String towerCode) {
         
-        String setupName = "test";//JOptionPane.showInputDialog(this, "Sample Name");
+        String setupName = JOptionPane.showInputDialog(this, "Sample Name");
         Tower tower = towerPublisher.createTower(towerCode);
         AccumulationCategory setup = getOrCreateSetup(setupName);
         setup.add(tower);
@@ -55,15 +56,16 @@ public class AccumulationFrame extends javax.swing.JFrame {
     }
     
     private AccumulationCategory getOrCreateSetup(String setupName) {
-        AccumulationCategory setup = setups.get(setupName);
+        AccumulationCategory category = categories.get(setupName);
         
-        if (setup == null) {
-            setup = new AccumulationCategory(setupName, sampleSize);
-            setups.put(setupName, setup);
-            towerPublisher.addListener(setup);
+        if (category == null) {
+            category = new AccumulationCategory(setupName, sampleSize);
+            categories.put(setupName, category);
+            towerPublisher.addListener(category);
+            category.addListener(chartCanvas);
         }
         
-        return setup;
+        return category;
     }
     
     /** This method is called from within the constructor to
@@ -75,8 +77,6 @@ public class AccumulationFrame extends javax.swing.JFrame {
     private void initComponents() {
         chartPanel = new javax.swing.JPanel();
         pendingsPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jProgressBar1 = new javax.swing.JProgressBar();
 
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
@@ -101,12 +101,6 @@ public class AccumulationFrame extends javax.swing.JFrame {
         getContentPane().add(chartPanel);
 
         pendingsPanel.setPreferredSize(new java.awt.Dimension(292, 80));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jLabel1.setText("jLabel1");
-        pendingsPanel.add(jLabel1);
-
-        pendingsPanel.add(jProgressBar1);
-
         getContentPane().add(pendingsPanel);
 
         pack();
@@ -120,8 +114,6 @@ public class AccumulationFrame extends javax.swing.JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel chartPanel;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JPanel pendingsPanel;
     // End of variables declaration//GEN-END:variables
     

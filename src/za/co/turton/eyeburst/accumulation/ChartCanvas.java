@@ -30,20 +30,23 @@ public class ChartCanvas extends java.awt.Canvas implements TowerCompletedListen
     
     private DefaultBoxAndWhiskerCategoryDataset dataset;
     
+    private static final int PADDING_RIGHT = 20;
+    
     /** Creates a new instance of ChartCanvas */
     public ChartCanvas() {
-        this.dataset = new DefaultBoxAndWhiskerCategoryDataset();
+        dataset = new DefaultBoxAndWhiskerCategoryDataset();
         CategoryAxis setupAxis = new CategoryAxis("Setup");
         NumberAxis valueAxis = new NumberAxis(Configuration.getYAxisTitle());
         valueAxis.setAutoRangeIncludesZero(false);
-        BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();        
+        BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
         CategoryPlot plot = new CategoryPlot(dataset, setupAxis, valueAxis, renderer);
         chart = new JFreeChart(plot);        
     }
 
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) getGraphics();
-        Rectangle rect = new Rectangle(getSize());
+        Dimension d = getSize();
+        Rectangle rect = new Rectangle(d.width - PADDING_RIGHT, d.height);
         chart.draw(g2d, rect);
     }
 

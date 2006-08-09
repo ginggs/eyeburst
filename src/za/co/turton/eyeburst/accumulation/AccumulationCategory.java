@@ -9,6 +9,7 @@ package za.co.turton.eyeburst.accumulation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +41,7 @@ public class AccumulationCategory implements TowerPublicationListener {
         this.towers = new ArrayList<Tower>();
         this.categoryName = setupName;
         this.sampleSize = sampleSize;
+        this.listeners = new HashSet<TowerCompletedListener>();
     }
     
     void add(Tower tower) {
@@ -72,5 +74,13 @@ public class AccumulationCategory implements TowerPublicationListener {
     
     public String getCategoryName() {
         return categoryName;
+    }
+    
+    public void addListener(TowerCompletedListener listener) {
+        this.listeners.add(listener);
+    }
+    
+    public void removeListener(TowerCompletedListener listener) {
+        this.listeners.remove(listener);
     }
 }
