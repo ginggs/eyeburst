@@ -36,9 +36,7 @@ public class Tower {
     
     private float load;
     
-    private List<TowerDatum> towerData;
-    
-//    private TreeSet<TowerDatum> sortedTowerData;
+    private List<TowerDatum> towerData;    
     
     /**
      * Creates a new instance of Tower
@@ -188,44 +186,7 @@ public class Tower {
         return (firstMedian + secondMedian) / 2f;
     }
     */
-    
-    /**
-     * Two towers are equal iff they have the same code
-     * @param obj
-     * @return
-     */
-    //@todo Fix Me?
-    public boolean equals(Object obj) {
-        if (obj instanceof Tower)
-            return ((Tower) obj).getCode().equals(code);
         
-        if (obj instanceof TowerDatum)
-            return ((TowerDatum) obj).code.equals(code);
-        
-        if (obj instanceof String)
-            return obj.equals(code);
-        
-        return false;
-    }
-    
-    /**
-     *
-     * @return
-     */
-    public int hashCode() {
-        return this.code.hashCode();
-    }
-    
-    /**
-     *
-     * @param o
-     * @return
-     */
-    public int compareTo(Object o) {
-        Tower other = (Tower) o;
-        return getAvg().compareTo(other.getAvg());
-    }
-
     public List<Float> getSignalData() {
         List<Float> signalData = new ArrayList();
         

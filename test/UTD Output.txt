@@ -10,8 +10,13 @@ rfScan debug level set to 2
 160313.785 rfScanGpp   1   Bscc 10   Cost -73     Distance 10     Load 3
 160324.030 rfScanGpp   1   Bscc 16   Cost -75     Distance 10     Load 3
 160334.280 rfScanGpp   1   Bscc 11   Cost -74     Distance 10     Load 3
-160334.280 rfScanGpp   1   Bscc 4000   Cost -107     Distance 40     Load 0
-160335.595 rfScanGpp   0   Aligned bscc is 4000
+160303.535 rfScanGpp   1   Bscc 16   Cost -70     Distance 10     Load 3
+160303.535 rfScanGpp   1   Bscc 13   Cost -115     Distance 40     Load 0
+160313.785 rfScanGpp   1   Bscc 10   Cost -79     Distance 10     Load 3
+160324.030 rfScanGpp   1   Bscc 16   Cost -80     Distance 10     Load 3
+160334.280 rfScanGpp   1   Bscc 11   Cost -71     Distance 10     Load 3
+160334.280 rfScanGpp   1   Bscc 400   Cost -107     Distance 40     Load 0
+160335.595 rfScanGpp   0   Aligned bscc is 400
 160340.110 rfScanGpp   0   Aligned bscc is 5 
 160343.795 rfScanGpp   0   Aligned bscc is   
 160344.530 rfScanGpp   1   Bscc 10   Cost -73     Distance 10     Load 3
