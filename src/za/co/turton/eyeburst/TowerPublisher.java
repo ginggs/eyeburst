@@ -6,10 +6,9 @@
 
 package za.co.turton.eyeburst;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import za.co.turton.eyeburst.config.Configuration;
@@ -20,28 +19,29 @@ import za.co.turton.eyeburst.config.Configuration;
  */
 public class TowerPublisher {
     
-    private Map<String, List<Tower>> towers;
+    private Map<String, Set<WeakReference<Tower>>> towers;
     
     private Set<TowerPublicationListener> listeners;
-    
+        
     /**
      * Creates a new instance of TowerPublisher
      */
     public TowerPublisher() {
-        this.towers = new HashMap<String, List<Tower>>();
+        this.towers = new HashMap<String, Set<WeakReference<Tower>>>();
         this.listeners = new HashSet<TowerPublicationListener>();
     }
     
     public Tower createTower(String towerCode) {
         Tower tower = new Tower(towerCode);
-        List<Tower> towerList = towers.get(towerCode);
+        WeakReference<Tower> towerRef = new WeakReference<Tower>(tower);        
+        Set<WeakReference<Tower>> towerSet = towers.get(towerCode);
         
-        if (towerList == null) {
-            towerList = new LinkedList<Tower>();
-            towers.put(towerCode, towerList);
+        if (towerSet == null) {
+            towerSet = new HashSet<WeakReference<Tower>>();                        
+            towers.put(towerCode, towerSet);
         }
         
-        towerList.add(tower);
+        towerSet.add(towerRef);
         return tower;
     }
     
@@ -56,11 +56,22 @@ public class TowerPublisher {
         if (datum.cost < Configuration.getSignalLowerBound())
             return;
         
-        List<Tower> towerList = towers.get(datum.code);
+        Set<WeakReference<Tower>> towerSet = towers.get(datum.code);
         
-        if (towerList != null) {
-            for (Tower tower : towerList)
-                tower.addDatum(datum);
+        if (towerSet != null) {
+            Set<WeakReference<Tower>> deadRefs = new HashSet();
+        
+            for (WeakReference<Tower> towerRef : towerSet) {
+                Tower tower = towerRef.get();
+                
+                if (tower != null)
+                    tower.addDatum(datum);                    
+                else
+                    deadRefs.add(towerRef);
+            }
+                
+            for (WeakReference<Tower> deadRef : deadRefs)
+                towerSet.remove(deadRef);
         }
         
         for (TowerPublicationListener listener : listeners)
