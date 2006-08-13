@@ -1,11 +1,11 @@
 /*
- * AccumulationCategory.java
+ * SampleCategory.java
  *
  * Created on August 8, 2006, 3:59 PM
  *
  */
 
-package za.co.turton.eyeburst.accumulation;
+package za.co.turton.eyeburst.sample;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +21,7 @@ import za.co.turton.eyeburst.TowerPublicationListener;
  *
  * @author james
  */
-public class AccumulationCategory implements TowerPublicationListener {
+public class SampleCategory implements TowerPublicationListener {
     
     private List<Tower> towers;
     
@@ -34,9 +34,9 @@ public class AccumulationCategory implements TowerPublicationListener {
     private Set<TowerCompletedListener> listeners;
     
     /**
-     * Creates a new instance of AccumulationCategory
+     * Creates a new instance of SampleCategory
      */
-    public AccumulationCategory(String setupName, int sampleSize) {
+    public SampleCategory(String setupName, int sampleSize) {
         this.pendingTowers = new HashMap<String, Tower>();
         this.towers = new ArrayList<Tower>();
         this.categoryName = setupName;

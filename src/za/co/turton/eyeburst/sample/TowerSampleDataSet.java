@@ -5,7 +5,7 @@
  *
  */
 
-package za.co.turton.eyeburst.accumulation;
+package za.co.turton.eyeburst.sample;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,7 +25,7 @@ import za.co.turton.eyeburst.Tower;
  */
 public class TowerSampleDataSet {
     
-    private LinkedHashMap<String, AccumulationCategory> setups;
+    private LinkedHashMap<String, SampleCategory> setups;
     
     private Map<Tower, BoxAndWhiskerItem> statistics;
     
@@ -42,10 +42,10 @@ public class TowerSampleDataSet {
         this.listeners = new HashSet<DatasetChangeListener>();
     }
 
-    private AccumulationCategory getSetup(int index) {
+    private SampleCategory getSetup(int index) {
         int i = 0;
         
-        for (AccumulationCategory setup : setups.values())
+        for (SampleCategory setup : setups.values())
             if (i++ == index)
                 return setup;
         

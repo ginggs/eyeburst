@@ -1,10 +1,10 @@
 /*
- * AccumulationFrame.java
+ * SampleFrame.java
  *
  * Created on August 1, 2006, 12:58 PM
  */
 
-package za.co.turton.eyeburst.accumulation;
+package za.co.turton.eyeburst.sample;
 
 import java.awt.GridLayout;
 import java.util.Arrays;
@@ -21,9 +21,9 @@ import za.co.turton.eyeburst.*;
  *
  * @author  james
  */
-public class AccumulationFrame extends javax.swing.JFrame implements TowerPublicationListener, TowerCompletedListener {
+public class SampleFrame extends javax.swing.JFrame implements TowerPublicationListener, TowerCompletedListener {
     
-    private Map<String, AccumulationCategory> categories;
+    private Map<String, SampleCategory> categories;
     
     private Map<String, JProgressBar> progressBars;
     
@@ -35,8 +35,10 @@ public class AccumulationFrame extends javax.swing.JFrame implements TowerPublic
     
     private int sampleSize;
     
-    /** Creates new form AccumulationFrame */
-    public AccumulationFrame(TowerPublisher towerPublisher, int sampleSize) {
+    /**
+     * Creates new form SampleFrame
+     */
+    public SampleFrame(TowerPublisher towerPublisher, int sampleSize) {
         
         if (sampleSize <= 0)
             throw new IllegalArgumentException("Sample size must be >= 1");
@@ -46,7 +48,7 @@ public class AccumulationFrame extends javax.swing.JFrame implements TowerPublic
         chartPanel.setTransferHandler(new TowerTransferHandler());
         this.chartCanvas = new ChartCanvas();
         chartPanel.add(chartCanvas);
-        this.categories = new LinkedHashMap<String, AccumulationCategory>();
+        this.categories = new LinkedHashMap<String, SampleCategory>();
         this.sampleSize = sampleSize;
         this.towerPublisher = towerPublisher;
         this.progressBars = new HashMap<String, JProgressBar>();
@@ -57,32 +59,38 @@ public class AccumulationFrame extends javax.swing.JFrame implements TowerPublic
         
         Tower tower = towerPublisher.createTower(towerCode);
         String categoryName = JOptionPane.showInputDialog(this, "Category");
-        AccumulationCategory setup = getOrCreateCategory(categoryName);
+        SampleCategory setup = getOrCreateCategory(categoryName);
         setup.add(tower);
         
         GridLayout layout = (GridLayout) pendingsPanel.getLayout();
         layout.setRows(layout.getRows()+1);
         
-        JLabel label = new JLabel(tower.getName());
-        label.setHorizontalAlignment(SwingConstants.TRAILING);
-        pendingsPanel.add(label);
+        JLabel categoryLabel = new JLabel(categoryName);
+        categoryLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        pendingsPanel.add(categoryLabel);
+                
+        JLabel towerLabel = new JLabel(tower.getName());
+        towerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        pendingsPanel.add(towerLabel);
         
-        JProgressBar towerProgress = new JProgressBar(0, sampleSize - 1);
+        JProgressBar towerProgress = new JProgressBar(0, sampleSize);
         pendingsPanel.add(towerProgress);
         progressBars.put(towerCode, towerProgress);
         
-        label.setVisible(true);
+        categoryLabel.setVisible(true);
+        towerLabel.setVisible(true);
         towerProgress.setVisible(true);
+        pendingsPanel.repaint();    
         pack();
         
         return true;
     }
     
-    private AccumulationCategory getOrCreateCategory(String setupName) {
-        AccumulationCategory category = categories.get(setupName);
+    private SampleCategory getOrCreateCategory(String setupName) {
+        SampleCategory category = categories.get(setupName);
         
         if (category == null) {
-            category = new AccumulationCategory(setupName, sampleSize);
+            category = new SampleCategory(setupName, sampleSize);
             categories.put(setupName, category);
             towerPublisher.addListener(category);
             category.addListener(chartCanvas);
@@ -98,10 +106,12 @@ public class AccumulationFrame extends javax.swing.JFrame implements TowerPublic
         int index = Arrays.asList(pendingsPanel.getComponents()).indexOf(progressBar);
         pendingsPanel.remove(progressBar);
         pendingsPanel.remove(index - 1);
+        pendingsPanel.remove(index - 2);
         GridLayout layout = (GridLayout) pendingsPanel.getLayout();
         layout.setRows(layout.getRows() - 1);
         progressBars.remove(towerCode);
         pack();
+        pendingsPanel.repaint();
     }
 
     public void towerPublication(TowerPublicationEvent evt) {
@@ -125,7 +135,7 @@ public class AccumulationFrame extends javax.swing.JFrame implements TowerPublic
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Accumulated Signal Datasets");
-        chartPanel.setPreferredSize(new java.awt.Dimension(150, 250));
+        chartPanel.setPreferredSize(new java.awt.Dimension(200, 400));
         chartPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 chartPanelComponentResized(evt);
@@ -140,14 +150,14 @@ public class AccumulationFrame extends javax.swing.JFrame implements TowerPublic
         );
         chartPanelLayout.setVerticalGroup(
             chartPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 225, Short.MAX_VALUE)
+            .add(0, 230, Short.MAX_VALUE)
         );
         getContentPane().add(chartPanel);
 
-        pendingsPanel.setLayout(new java.awt.GridLayout(0, 2, 10, 0));
+        pendingsPanel.setLayout(new java.awt.GridLayout(0, 3, 10, 0));
 
         pendingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Pending"));
-        pendingsPanel.setPreferredSize(new java.awt.Dimension(292, 80));
+        pendingsPanel.setPreferredSize(new java.awt.Dimension(200, 100));
         getContentPane().add(pendingsPanel);
 
         pack();

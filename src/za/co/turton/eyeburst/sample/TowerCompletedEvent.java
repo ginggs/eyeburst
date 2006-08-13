@@ -5,7 +5,7 @@
  *
  */
 
-package za.co.turton.eyeburst.accumulation;
+package za.co.turton.eyeburst.sample;
 
 import za.co.turton.eyeburst.Tower;
 
@@ -17,7 +17,7 @@ public class TowerCompletedEvent extends java.util.EventObject {
     
     private Tower tower;
     
-    public TowerCompletedEvent(AccumulationCategory source, Tower tower) {
+    public TowerCompletedEvent(SampleCategory source, Tower tower) {
         super(source);
         this.setTower(tower);
     }

@@ -5,7 +5,7 @@
  *
  */
 
-package za.co.turton.eyeburst.accumulation;
+package za.co.turton.eyeburst.sample;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -52,8 +52,11 @@ public class ChartCanvas extends java.awt.Canvas implements TowerCompletedListen
 
     public void towerCompleted(TowerCompletedEvent tc) {
         Tower tower = tc.getTower();
-        AccumulationCategory ac = (AccumulationCategory) tc.getSource();
+        SampleCategory ac = (SampleCategory) tc.getSource();
         dataset.add(tower.getSignalData(), tower.getName(), ac.getCategoryName());
+        Dimension preferredSize = getParent().getPreferredSize();
+        preferredSize.width += 50;
+        getParent().setPreferredSize(preferredSize);
         repaint();
     }
 }

@@ -14,7 +14,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import org.jfree.chart.JFreeChart;
 import za.co.turton.eyeburst.*;
-import za.co.turton.eyeburst.accumulation.AccumulationFrame;
+import za.co.turton.eyeburst.sample.SampleFrame;
 import za.co.turton.eyeburst.config.Configuration;
 import za.co.turton.eyeburst.config.ConfigurationException;
 
@@ -77,7 +77,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         currentTower = new javax.swing.JLabel();
         buttonPanel = new javax.swing.JPanel();
         connectButton = new javax.swing.JButton();
-        accumulateButton = new javax.swing.JButton();
+        sampleButton = new javax.swing.JButton();
         resetButton = new javax.swing.JButton();
 
         errorDialog.getContentPane().setLayout(new java.awt.FlowLayout());
@@ -121,7 +121,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
 
             }
         ));
-        towerTable.setToolTipText("Drag a table row into an accumulation frame to start accumulating data for the tower in that row");
+        towerTable.setToolTipText("Drag a table row into a sample frame to start accumulating data for the tower in that row");
         towerTable.setGridColor(new java.awt.Color(192, 192, 192));
         towerTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         towerTable.setDragEnabled(true);
@@ -152,16 +152,16 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
 
         buttonPanel.add(connectButton);
 
-        accumulateButton.setMnemonic('a');
-        accumulateButton.setText("Accumulate...");
-        accumulateButton.setToolTipText("Create a new accumulation frame in which you can graph signal data accumulated over a number of readings");
-        accumulateButton.addActionListener(new java.awt.event.ActionListener() {
+        sampleButton.setMnemonic('a');
+        sampleButton.setText("Sample...");
+        sampleButton.setToolTipText("Create a new sample frame in which you can accumulate signal statistics over a defined number of readings");
+        sampleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                accumulateButtonActionPerformed(evt);
+                sampleButtonActionPerformed(evt);
             }
         });
 
-        buttonPanel.add(accumulateButton);
+        buttonPanel.add(sampleButton);
 
         resetButton.setMnemonic('r');
         resetButton.setText("Reset");
@@ -179,7 +179,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
-    private void accumulateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accumulateButtonActionPerformed
+    private void sampleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleButtonActionPerformed
         String input = JOptionPane.showInputDialog(this, "Sample Size", 10);
         
         if (input == null)
@@ -187,16 +187,16 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         
         try {
             int sampleSize = Integer.parseInt(input);
-            AccumulationFrame accFrame = new AccumulationFrame(towerPublisher, sampleSize);
-            accFrame.setLocationByPlatform(true);
-            accFrame.setVisible(true);
+            SampleFrame sampleFrame = new SampleFrame(towerPublisher, sampleSize);
+            sampleFrame.setLocationByPlatform(true);
+            sampleFrame.setVisible(true);
             
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             Configuration.getLogger().log(Level.WARNING, "Could not parse sample size for accumulation frame", e);
             JOptionPane.showMessageDialog(this, e.toString(), "Invalid Sample Size", JOptionPane.ERROR_MESSAGE);
         }
         
-    }//GEN-LAST:event_accumulateButtonActionPerformed
+    }//GEN-LAST:event_sampleButtonActionPerformed
     
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
         JButton button = (JButton) evt.getSource();
@@ -289,7 +289,6 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton accumulateButton;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton connectButton;
     private javax.swing.JLabel currentLabel;
@@ -301,6 +300,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JButton resetButton;
+    private javax.swing.JButton sampleButton;
     private javax.swing.JScrollPane tableScrollPane;
     private javax.swing.JTable towerTable;
     // End of variables declaration//GEN-END:variables

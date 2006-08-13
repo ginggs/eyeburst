@@ -99,7 +99,7 @@
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="0" rowCount="0"/>
                     </Property>
-                    <Property name="toolTipText" type="java.lang.String" value="Drag a table row into an accumulation frame to start accumulating data for the tower in that row"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Drag a table row into a sample frame to start accumulating data for the tower in that row"/>
                     <Property name="gridColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="c0" green="c0" red="c0" type="rgb"/>
                     </Property>
@@ -144,14 +144,14 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="connectButtonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="accumulateButton">
+        <Component class="javax.swing.JButton" name="sampleButton">
           <Properties>
             <Property name="mnemonic" type="int" value="97"/>
-            <Property name="text" type="java.lang.String" value="Accumulate..."/>
-            <Property name="toolTipText" type="java.lang.String" value="Create a new accumulation frame in which you can graph signal data accumulated over a number of readings"/>
+            <Property name="text" type="java.lang.String" value="Sample..."/>
+            <Property name="toolTipText" type="java.lang.String" value="Create a new sample frame in which you can accumulate signal statistics over a defined number of readings"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="accumulateButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sampleButtonActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="resetButton">

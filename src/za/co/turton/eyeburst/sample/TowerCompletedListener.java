@@ -5,7 +5,7 @@
  *
  */
 
-package za.co.turton.eyeburst.accumulation;
+package za.co.turton.eyeburst.sample;
 
 import java.util.EventListener;
 

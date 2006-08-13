@@ -1,4 +1,4 @@
-package za.co.turton.eyeburst.accumulation;
+package za.co.turton.eyeburst.sample;
 
 import javax.swing.*;
 import java.awt.datatransfer.*;
@@ -7,10 +7,10 @@ public class TowerTransferHandler extends TransferHandler {
     
     public boolean importData(JComponent target, Transferable t) {
         
-        AccumulationFrame accFrame = null;
+        SampleFrame accFrame = null;
         
         try {
-            accFrame = (AccumulationFrame) target.getTopLevelAncestor();
+            accFrame = (SampleFrame) target.getTopLevelAncestor();
             String row = (String) t.getTransferData(DataFlavor.stringFlavor);
             String towerCode = row.substring(0, row.indexOf('\t'));            
             return accFrame.addTower(towerCode);
