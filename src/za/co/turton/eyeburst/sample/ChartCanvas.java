@@ -52,8 +52,8 @@ public class ChartCanvas extends java.awt.Canvas implements TowerCompletedListen
 
     public void towerCompleted(TowerCompletedEvent tc) {
         Tower tower = tc.getTower();
-        SampleGroup ac = (SampleGroup) tc.getSource();
-        dataset.add(tower.getSignalData(), tower.getName(), ac.getCategoryName());
+        SampleGroup sampleGroup = (SampleGroup) tc.getSource();
+        dataset.add(tower.getSignalData(), tower.getName(), sampleGroup.getGroupName());
         repaint();
     }
 }

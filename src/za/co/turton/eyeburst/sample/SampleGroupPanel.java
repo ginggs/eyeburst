@@ -36,6 +36,7 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
     public SampleGroupPanel(SampleGroup sampleGroup) {
         initComponents();
         this.sampleGroup = sampleGroup;
+        sampleGroup.addListener(this);
         ((TitledBorder) getBorder()).setTitle(sampleGroup.getGroupName());
         setTransferHandler(new TowerTransferHandler());
         this.progressBars = new HashMap<String, JProgressBar>();
@@ -120,9 +121,9 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
         
         GridLayout layout = (GridLayout) getLayout();
         layout.setRows(layout.getRows() - 1);
-        progressBars.remove(towerCode);
-        ((JFrame) getTopLevelAncestor()).pack();
+        progressBars.remove(towerCode);        
         repaint();
+        ((JFrame) getTopLevelAncestor()).pack();
     }
     
 }

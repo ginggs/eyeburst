@@ -38,8 +38,7 @@ public class SampleFrame extends javax.swing.JFrame {
                
 //        this.groups = new HashMap<String, SampleGroup>();        
 //        this.progressBars = new HashMap<Tower, JProgressBar>();
-//        towerPublisher.addListener(this);
-        //@todo: Fix packing twice?        
+//        towerPublisher.addListener(this);      
     }    
         
     /** This method is called from within the constructor to
