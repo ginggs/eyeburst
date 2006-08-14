@@ -7,8 +7,11 @@
 package za.co.turton.eyeburst.monitor;
 
 import java.awt.Component;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.logging.Level;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -100,8 +103,8 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         displayPanel.setAutoscrolls(true);
         displayPanel.setMinimumSize(new java.awt.Dimension(400, 200));
         displayPanel.setOpaque(false);
-        displayPanel.setPreferredSize(new java.awt.Dimension(500, 400));
-        jSplitPane1.setDividerLocation(250);
+        displayPanel.setPreferredSize(new java.awt.Dimension(550, 500));
+        jSplitPane1.setDividerLocation(320);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         graphPanel.setLayout(new javax.swing.BoxLayout(graphPanel, javax.swing.BoxLayout.X_AXIS));
 
@@ -190,6 +193,25 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
             SampleFrame sampleFrame = new SampleFrame(towerPublisher, sampleSize);
             sampleFrame.setLocationByPlatform(true);
             sampleFrame.setVisible(true);
+            sampleButton.setEnabled(false);
+            
+            sampleFrame.addWindowListener(new WindowListener() {
+                public void windowActivated(WindowEvent e) {
+                }
+                public void windowClosed(WindowEvent e) {
+                    sampleButton.setEnabled(true);
+                }
+                public void windowClosing(WindowEvent e) {
+                }
+                public void windowDeactivated(WindowEvent e) {
+                }
+                public void windowDeiconified(WindowEvent e) {
+                }
+                public void windowIconified(WindowEvent e) {
+                }
+                public void windowOpened(WindowEvent e) {
+                }
+            });
             
         } catch (IllegalArgumentException e) {
             Configuration.getLogger().log(Level.WARNING, "Could not parse sample size for accumulation frame", e);

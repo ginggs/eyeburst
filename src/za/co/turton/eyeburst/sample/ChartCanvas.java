@@ -33,14 +33,14 @@ public class ChartCanvas extends java.awt.Canvas implements TowerCompletedListen
     private static final int PADDING_RIGHT = 20;
     
     /** Creates a new instance of ChartCanvas */
-    public ChartCanvas() {
+    public ChartCanvas(int sampleSize) {
         dataset = new DefaultBoxAndWhiskerCategoryDataset();
-        CategoryAxis setupAxis = new CategoryAxis("Setup");
+        CategoryAxis setupAxis = new CategoryAxis("Sample");
         NumberAxis valueAxis = new NumberAxis(Configuration.getYAxisTitle());
         valueAxis.setAutoRangeIncludesZero(false);
         BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
         CategoryPlot plot = new CategoryPlot(dataset, setupAxis, valueAxis, renderer);
-        chart = new JFreeChart(plot);        
+        chart = new JFreeChart("Sampled Data (Size = "+sampleSize+")", plot);        
     }
 
     public void paint(Graphics g) {
@@ -52,11 +52,8 @@ public class ChartCanvas extends java.awt.Canvas implements TowerCompletedListen
 
     public void towerCompleted(TowerCompletedEvent tc) {
         Tower tower = tc.getTower();
-        SampleCategory ac = (SampleCategory) tc.getSource();
+        SampleGroup ac = (SampleGroup) tc.getSource();
         dataset.add(tower.getSignalData(), tower.getName(), ac.getCategoryName());
-        Dimension preferredSize = getParent().getPreferredSize();
-        preferredSize.width += 50;
-        getParent().setPreferredSize(preferredSize);
         repaint();
     }
 }

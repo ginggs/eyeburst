@@ -25,7 +25,7 @@ import za.co.turton.eyeburst.Tower;
  */
 public class TowerSampleDataSet {
     
-    private LinkedHashMap<String, SampleCategory> setups;
+    private LinkedHashMap<String, SampleGroup> setups;
     
     private Map<Tower, BoxAndWhiskerItem> statistics;
     
@@ -42,10 +42,10 @@ public class TowerSampleDataSet {
         this.listeners = new HashSet<DatasetChangeListener>();
     }
 
-    private SampleCategory getSetup(int index) {
+    private SampleGroup getSetup(int index) {
         int i = 0;
         
-        for (SampleCategory setup : setups.values())
+        for (SampleGroup setup : setups.values())
             if (i++ == index)
                 return setup;
         

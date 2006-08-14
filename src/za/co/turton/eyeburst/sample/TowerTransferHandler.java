@@ -7,17 +7,17 @@ public class TowerTransferHandler extends TransferHandler {
     
     public boolean importData(JComponent target, Transferable t) {
         
-        SampleFrame accFrame = null;
+        SampleGroupPanel panel = null;
         
         try {
-            accFrame = (SampleFrame) target.getTopLevelAncestor();
+            panel = (SampleGroupPanel) target;
             String row = (String) t.getTransferData(DataFlavor.stringFlavor);
             String towerCode = row.substring(0, row.indexOf('\t'));            
-            return accFrame.addTower(towerCode);
+            return panel.addTower(towerCode);
             
         } catch (Exception e) {
             
-            JOptionPane.showMessageDialog(accFrame, e, "Drop failed", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(panel.getTopLevelAncestor(), e, "Drop failed", JOptionPane.ERROR_MESSAGE);
         }
         
         return false;

@@ -23,10 +23,20 @@ public class TowerPublisher {
     
     private Set<TowerPublicationListener> listeners;
         
+    private static TowerPublisher publisher = null;
+    
+    public synchronized static TowerPublisher getInstance() {
+        if (publisher == null)
+            publisher = new TowerPublisher();
+        
+        return publisher;
+    }
+    
     /**
+     *
      * Creates a new instance of TowerPublisher
      */
-    public TowerPublisher() {
+    private TowerPublisher() {
         this.towers = new HashMap<String, Set<WeakReference<Tower>>>();
         this.listeners = new HashSet<TowerPublicationListener>();
     }

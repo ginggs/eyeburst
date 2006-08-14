@@ -17,7 +17,7 @@ public class TowerCompletedEvent extends java.util.EventObject {
     
     private Tower tower;
     
-    public TowerCompletedEvent(SampleCategory source, Tower tower) {
+    public TowerCompletedEvent(SampleGroup source, Tower tower) {
         super(source);
         this.setTower(tower);
     }

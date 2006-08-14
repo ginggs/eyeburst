@@ -6,27 +6,19 @@
 
 package za.co.turton.eyeburst.sample;
 
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
-import javax.swing.SwingConstants;
 import za.co.turton.eyeburst.*;
 
 /**
  *
  * @author  james
  */
-public class SampleFrame extends javax.swing.JFrame implements TowerPublicationListener, TowerCompletedListener {
-    
-    private Map<String, SampleCategory> categories;
-    
-    private Map<String, JProgressBar> progressBars;
-    
+public class SampleFrame extends javax.swing.JFrame {    
+        
     private TowerPublisher towerPublisher;
     
     private TowerSampleDataSet tsds;
@@ -44,83 +36,16 @@ public class SampleFrame extends javax.swing.JFrame implements TowerPublicationL
             throw new IllegalArgumentException("Sample size must be >= 1");
         
         initComponents();
-        this.setTitle(this.getTitle()+" (Sample Size = "+sampleSize+")");
-        chartPanel.setTransferHandler(new TowerTransferHandler());
-        this.chartCanvas = new ChartCanvas();
-        chartPanel.add(chartCanvas);
-        this.categories = new LinkedHashMap<String, SampleCategory>();
+//        this.groups = new HashMap<String, SampleGroup>();
         this.sampleSize = sampleSize;
         this.towerPublisher = towerPublisher;
-        this.progressBars = new HashMap<String, JProgressBar>();
-        towerPublisher.addListener(this);
-    }
-    
-    public boolean addTower(String towerCode) {
+//        this.progressBars = new HashMap<Tower, JProgressBar>();
+//        towerPublisher.addListener(this);
+        chartCanvas = new ChartCanvas(sampleSize);
+        chartCanvas.setSize(250, 500);
+        chartPanel.add(chartCanvas);
+    }    
         
-        Tower tower = towerPublisher.createTower(towerCode);
-        String categoryName = JOptionPane.showInputDialog(this, "Category");
-        SampleCategory setup = getOrCreateCategory(categoryName);
-        setup.add(tower);
-        
-        GridLayout layout = (GridLayout) pendingsPanel.getLayout();
-        layout.setRows(layout.getRows()+1);
-        
-        JLabel categoryLabel = new JLabel(categoryName);
-        categoryLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        pendingsPanel.add(categoryLabel);
-                
-        JLabel towerLabel = new JLabel(tower.getName());
-        towerLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        pendingsPanel.add(towerLabel);
-        
-        JProgressBar towerProgress = new JProgressBar(0, sampleSize);
-        pendingsPanel.add(towerProgress);
-        progressBars.put(towerCode, towerProgress);
-        
-        categoryLabel.setVisible(true);
-        towerLabel.setVisible(true);
-        towerProgress.setVisible(true);
-        pendingsPanel.repaint();    
-        pack();
-        
-        return true;
-    }
-    
-    private SampleCategory getOrCreateCategory(String setupName) {
-        SampleCategory category = categories.get(setupName);
-        
-        if (category == null) {
-            category = new SampleCategory(setupName, sampleSize);
-            categories.put(setupName, category);
-            towerPublisher.addListener(category);
-            category.addListener(chartCanvas);
-            category.addListener(this);
-        }
-        
-        return category;
-    }
-
-    public void towerCompleted(TowerCompletedEvent tc) {
-        String towerCode = tc.getTower().getCode();
-        JProgressBar progressBar = progressBars.get(towerCode);
-        int index = Arrays.asList(pendingsPanel.getComponents()).indexOf(progressBar);
-        pendingsPanel.remove(progressBar);
-        pendingsPanel.remove(index - 1);
-        pendingsPanel.remove(index - 2);
-        GridLayout layout = (GridLayout) pendingsPanel.getLayout();
-        layout.setRows(layout.getRows() - 1);
-        progressBars.remove(towerCode);
-        pack();
-        pendingsPanel.repaint();
-    }
-
-    public void towerPublication(TowerPublicationEvent evt) {
-        JProgressBar progressBar = progressBars.get(evt.getTowerDatum().code);
-        
-        if (progressBar != null)
-            progressBar.setValue(progressBar.getValue() + 1);
-    }
-    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -128,50 +53,91 @@ public class SampleFrame extends javax.swing.JFrame implements TowerPublicationL
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
+        sampleGroupMenu = new javax.swing.JPopupMenu();
+        createGroupItem = new javax.swing.JMenuItem();
+        jSplitPane1 = new javax.swing.JSplitPane();
         chartPanel = new javax.swing.JPanel();
         pendingsPanel = new javax.swing.JPanel();
+
+        sampleGroupMenu.setInvoker(pendingsPanel);
+        sampleGroupMenu.setName("createGroupPopup");
+        createGroupItem.setText("Create Sample Group");
+        createGroupItem.setName("createSampleGroupItem");
+        createGroupItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createGroupItemActionPerformed(evt);
+            }
+        });
+
+        sampleGroupMenu.add(createGroupItem);
 
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Accumulated Signal Datasets");
-        chartPanel.setPreferredSize(new java.awt.Dimension(200, 400));
+        setTitle("eyeBurst");
+        jSplitPane1.setDividerLocation(250);
+        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        chartPanel.setLayout(new java.awt.GridLayout(1, 0));
+
         chartPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 chartPanelComponentResized(evt);
             }
         });
 
-        org.jdesktop.layout.GroupLayout chartPanelLayout = new org.jdesktop.layout.GroupLayout(chartPanel);
-        chartPanel.setLayout(chartPanelLayout);
-        chartPanelLayout.setHorizontalGroup(
-            chartPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 491, Short.MAX_VALUE)
-        );
-        chartPanelLayout.setVerticalGroup(
-            chartPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 230, Short.MAX_VALUE)
-        );
-        getContentPane().add(chartPanel);
+        jSplitPane1.setLeftComponent(chartPanel);
 
-        pendingsPanel.setLayout(new java.awt.GridLayout(0, 3, 10, 0));
+        pendingsPanel.setLayout(new javax.swing.BoxLayout(pendingsPanel, javax.swing.BoxLayout.Y_AXIS));
 
-        pendingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Pending"));
-        pendingsPanel.setPreferredSize(new java.awt.Dimension(200, 100));
-        getContentPane().add(pendingsPanel);
+        pendingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1), "Pending Samples (right-click to create group)", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
+        pendingsPanel.setComponentPopupMenu(sampleGroupMenu);
+        pendingsPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                pendingsPanelMouseClicked(evt);
+            }
+        });
+
+        jSplitPane1.setRightComponent(pendingsPanel);
+
+        getContentPane().add(jSplitPane1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
+    private void createGroupItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createGroupItemActionPerformed
+        String groupName = JOptionPane.showInputDialog(this, "Sample Group Name");
+        
+        for (Component child : pendingsPanel.getComponents())
+            if (child.getName() != null && child.equals(groupName))
+                return;
+        
+        SampleGroup sampleGroup = new SampleGroup(groupName, sampleSize);
+        sampleGroup.addListener(chartCanvas);
+        
+        SampleGroupPanel groupPanel = new SampleGroupPanel(sampleGroup);
+        pendingsPanel.add(groupPanel);
+        groupPanel.setVisible(true);
+        pack();
+    }//GEN-LAST:event_createGroupItemActionPerformed
+    
+    private void pendingsPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pendingsPanelMouseClicked
+        // Dummy method necessary for popup menu
+    }//GEN-LAST:event_pendingsPanelMouseClicked
+    
     private void chartPanelComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_chartPanelComponentResized
-        chartCanvas.setSize(chartPanel.getSize());
-        chartCanvas.repaint();
+        if (chartCanvas != null) {
+            chartCanvas.setSize(chartPanel.getSize());
+            chartCanvas.repaint();
+        }
     }//GEN-LAST:event_chartPanelComponentResized
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel chartPanel;
+    private javax.swing.JMenuItem createGroupItem;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JPanel pendingsPanel;
+    private javax.swing.JPopupMenu sampleGroupMenu;
     // End of variables declaration//GEN-END:variables
     
 }
