@@ -7,20 +7,15 @@
 package za.co.turton.eyeburst.sample;
 
 import java.awt.Component;
-import java.awt.GridLayout;
-import java.util.Arrays;
+import java.awt.Dimension;
 import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
-import za.co.turton.eyeburst.*;
 
 /**
  *
  * @author  james
  */
 public class SampleFrame extends javax.swing.JFrame {    
-        
-    private TowerPublisher towerPublisher;
-    
+            
     private TowerSampleDataSet tsds;
     
     private ChartCanvas chartCanvas;
@@ -30,20 +25,21 @@ public class SampleFrame extends javax.swing.JFrame {
     /**
      * Creates new form SampleFrame
      */
-    public SampleFrame(TowerPublisher towerPublisher, int sampleSize) {
+    public SampleFrame(int sampleSize) {
+        
+        initComponents();
         
         if (sampleSize <= 0)
             throw new IllegalArgumentException("Sample size must be >= 1");
         
-        initComponents();
-//        this.groups = new HashMap<String, SampleGroup>();
         this.sampleSize = sampleSize;
-        this.towerPublisher = towerPublisher;
+        chartCanvas = new ChartCanvas(sampleSize);
+        chartPanel.add(chartCanvas);
+               
+//        this.groups = new HashMap<String, SampleGroup>();        
 //        this.progressBars = new HashMap<Tower, JProgressBar>();
 //        towerPublisher.addListener(this);
-        chartCanvas = new ChartCanvas(sampleSize);
-        chartCanvas.setSize(250, 500);
-        chartPanel.add(chartCanvas);
+        //@todo: Fix packing twice?        
     }    
         
     /** This method is called from within the constructor to

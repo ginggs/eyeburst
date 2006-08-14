@@ -46,7 +46,10 @@ public class SampleGroup implements TowerPublicationListener {
         TowerPublisher.getInstance().addListener(this);
     }
     
-    void add(Tower tower) {
+    void add(Tower tower) throws TowerAlreadyPending {
+        if (pendingTowers.containsKey(tower.getCode()))
+            throw new TowerAlreadyPending();
+        
         pendingTowers.put(tower.getCode(), tower);
     }
     

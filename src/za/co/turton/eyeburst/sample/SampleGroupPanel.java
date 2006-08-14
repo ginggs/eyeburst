@@ -10,6 +10,7 @@ import java.awt.GridLayout;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
@@ -27,7 +28,9 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
     
     private SampleGroup sampleGroup;
     
-    private Map<Tower, JProgressBar> progressBars;
+    private Map<String, JProgressBar> progressBars;
+    
+    private boolean virgin;
     
     /** Creates new form SampleGroupPanel */
     public SampleGroupPanel(SampleGroup sampleGroup) {
@@ -35,7 +38,9 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
         this.sampleGroup = sampleGroup;
         ((TitledBorder) getBorder()).setTitle(sampleGroup.getGroupName());
         setTransferHandler(new TowerTransferHandler());
-        this.progressBars = new HashMap<Tower, JProgressBar>();
+        this.progressBars = new HashMap<String, JProgressBar>();
+        TowerPublisher.getInstance().addListener(this);
+        this.virgin = true;
     }
     
     /** This method is called from within the constructor to
@@ -45,38 +50,57 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
+        jLabel1 = new javax.swing.JLabel();
 
         setLayout(new java.awt.GridLayout(0, 2, 10, 0));
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder("")));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel1.setText("Drag towers here...");
+        jLabel1.setEnabled(false);
+        add(jLabel1);
+
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
     
     public boolean addTower(String towerCode) {
+        
         Tower tower = TowerPublisher.getInstance().createTower(towerCode);
-        sampleGroup.add(tower);
         
-        GridLayout layout = (GridLayout) getLayout();
-        layout.setRows(layout.getRows()+1);
-        
-        JLabel towerLabel = new JLabel(tower.getName());
-        towerLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        add(towerLabel);
-        
-        JProgressBar towerProgress = new JProgressBar(0, sampleGroup.getSampleSize());
-        add(towerProgress);
-        progressBars.put(tower, towerProgress);
-        
-        towerLabel.setVisible(true);
-        towerProgress.setVisible(true);
-        
-//        getTopLevelAncestor().pack();
-        repaint();
-        
-        return true;
+        try {
+            sampleGroup.add(tower);
+            
+            if (this.virgin) {
+                this.removeAll();
+                this.virgin = false;
+            }
+            
+            
+            GridLayout layout = (GridLayout) getLayout();
+            layout.setRows(layout.getRows()+1);
+            
+            JLabel towerLabel = new JLabel(tower.getName());
+            towerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            add(towerLabel);
+            
+            JProgressBar towerProgress = new JProgressBar(0, sampleGroup.getSampleSize());
+            add(towerProgress);
+            progressBars.put(towerCode, towerProgress);
+            
+            towerLabel.setVisible(true);
+            towerProgress.setVisible(true);
+            
+            ((JFrame) getTopLevelAncestor()).pack();
+            repaint();
+            
+            return true;
+        } catch (TowerAlreadyPending e) {
+            return false;
+        }
     }
     
     public void towerPublication(TowerPublicationEvent evt) {
@@ -97,7 +121,7 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
         GridLayout layout = (GridLayout) getLayout();
         layout.setRows(layout.getRows() - 1);
         progressBars.remove(towerCode);
-//        pack();
+        ((JFrame) getTopLevelAncestor()).pack();
         repaint();
     }
     

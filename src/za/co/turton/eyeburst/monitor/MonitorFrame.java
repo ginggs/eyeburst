@@ -35,8 +35,6 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
     
     private ChartCanvas chartCanvas;
     
-    private TowerPublisher towerPublisher;
-    
     /**
      * Creates a new MonitorFrame
      */
@@ -45,7 +43,6 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         initComponents();
 //        settingsDialog.setContentPane(new SettingsPanel());
 //        settingsDialog.pack();
-        this.towerPublisher = new TowerPublisher();
         setTitle(Configuration.getAppTitle());
         this.towerTableModel = new TowerTableModel();
         TableSorter sorter = new TableSorter(towerTableModel);
@@ -57,6 +54,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         chartCanvas = new ChartCanvas();
         graphPanel.add(chartCanvas);
         
+        TowerPublisher towerPublisher = TowerPublisher.getInstance();
         towerPublisher.addListener(towerTableModel);
         towerPublisher.addListener(chartCanvas);
     }
@@ -190,7 +188,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         
         try {
             int sampleSize = Integer.parseInt(input);
-            SampleFrame sampleFrame = new SampleFrame(towerPublisher, sampleSize);
+            SampleFrame sampleFrame = new SampleFrame(sampleSize);
             sampleFrame.setLocationByPlatform(true);
             sampleFrame.setVisible(true);
             sampleButton.setEnabled(false);
@@ -226,7 +224,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         
         if (action.equals("Connect")) {
             button.setEnabled(false);
-            monitorThread = new MonitorThread(towerPublisher);
+            monitorThread = new MonitorThread();
             monitorThread.addListener((ConnectionListener) this);
             monitorThread.addListener((CurrentTowerListener) this);
             monitorThread.start();

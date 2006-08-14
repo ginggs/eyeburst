@@ -24,7 +24,7 @@ public class MonitorThread extends Thread {
     
     private MonitorLineProvider lineProvider;
     
-    private TowerPublisher dataHub;
+    private TowerPublisher towerPublisher;
     
     private Set<ConnectionListener> connectionListeners;
     
@@ -37,8 +37,8 @@ public class MonitorThread extends Thread {
     /**
      * Creates a new instance of MonitorThread
      */
-    public MonitorThread(TowerPublisher dataHub) {
-        this.dataHub = dataHub;
+    public MonitorThread() {
+        this.towerPublisher = TowerPublisher.getInstance();
         this.setName("MonitorThread");
         this.setDaemon(true);
         this.connectionListeners = new HashSet<ConnectionListener>();
@@ -133,7 +133,7 @@ public class MonitorThread extends Thread {
                             tokeniser.nextToken();
                             towerDatum.load = Integer.parseInt(tokeniser.nextToken().trim());
                                                         
-                            dataHub.take(towerDatum);
+                            towerPublisher.take(towerDatum);
                         }
                     } catch (Exception e) {
                         Configuration.getLogger().log(Level.FINE, "Could not parse "+line, e);
@@ -232,7 +232,7 @@ public class MonitorThread extends Thread {
         }
         
         /**
-         * Periodicaly write the current tower prompt to the configured line provider
+         * Periodically write the current tower prompt to the configured line provider
          */
         public void run() {
             Configuration.getLogger().log(Level.FINE, this+" running");
