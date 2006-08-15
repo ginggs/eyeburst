@@ -56,7 +56,7 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
         setLayout(new java.awt.GridLayout(0, 2, 10, 0));
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder("")));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Drag towers here...");
         jLabel1.setEnabled(false);
         add(jLabel1);
@@ -79,8 +79,7 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
                 this.removeAll();
                 this.virgin = false;
             }
-            
-            
+                        
             GridLayout layout = (GridLayout) getLayout();
             layout.setRows(layout.getRows()+1);
             
@@ -96,7 +95,6 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
             towerProgress.setVisible(true);
             
             ((JFrame) getTopLevelAncestor()).pack();
-            repaint();
             
             return true;
         } catch (TowerAlreadyPending e) {

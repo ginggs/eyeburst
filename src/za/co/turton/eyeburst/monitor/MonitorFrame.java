@@ -181,7 +181,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
     }// </editor-fold>//GEN-END:initComponents
     
     private void sampleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleButtonActionPerformed
-        String input = JOptionPane.showInputDialog(this, "Sample Size", 10);
+        String input = JOptionPane.showInputDialog(this, "Number of readings per sample", 10);
         
         if (input == null)
             return;

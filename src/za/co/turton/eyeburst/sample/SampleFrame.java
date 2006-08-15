@@ -34,11 +34,7 @@ public class SampleFrame extends javax.swing.JFrame {
         
         this.sampleSize = sampleSize;
         chartCanvas = new ChartCanvas(sampleSize);
-        chartPanel.add(chartCanvas);
-               
-//        this.groups = new HashMap<String, SampleGroup>();        
-//        this.progressBars = new HashMap<Tower, JProgressBar>();
-//        towerPublisher.addListener(this);      
+        chartPanel.add(chartCanvas);               
     }    
         
     /** This method is called from within the constructor to
@@ -70,10 +66,11 @@ public class SampleFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("eyeBurst");
-        jSplitPane1.setDividerLocation(250);
+        jSplitPane1.setDividerLocation(400);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         chartPanel.setLayout(new java.awt.GridLayout(1, 0));
 
+        chartPanel.setPreferredSize(new java.awt.Dimension(400, 400));
         chartPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 chartPanelComponentResized(evt);
@@ -100,7 +97,10 @@ public class SampleFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     private void createGroupItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createGroupItemActionPerformed
-        String groupName = JOptionPane.showInputDialog(this, "Sample Group Name");
+        String groupName = JOptionPane.showInputDialog(this, "Sample Group Name (e.g. Near Window)");
+        
+        if (groupName == null)
+            return;
         
         for (Component child : pendingsPanel.getComponents())
             if (child.getName() != null && child.equals(groupName))
@@ -120,8 +120,12 @@ public class SampleFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_pendingsPanelMouseClicked
     
     private void chartPanelComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_chartPanelComponentResized
+        
+        Dimension newSize = chartPanel.getSize();
+        chartPanel.setPreferredSize(newSize);
+        
         if (chartCanvas != null) {
-            chartCanvas.setSize(chartPanel.getSize());
+            chartCanvas.setSize(newSize);
             chartCanvas.repaint();
         }
     }//GEN-LAST:event_chartPanelComponentResized

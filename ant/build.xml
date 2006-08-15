@@ -30,7 +30,7 @@
             basedir="${basedir}/build">
             <manifest>
                 <attribute name="Class-Path" value="lib/${jcommon.name}-${jcommon.version}.jar lib/${jfreechart.name}-${jfreechart.version}.jar"/>
-                <attribute name="Main-Class" value="za.co.turton.eyeburst.MonitorFrame"/>
+                <attribute name="Main-Class" value="za.co.turton.eyeburst.monitor.MonitorFrame"/>
             </manifest>
         </jar>
         

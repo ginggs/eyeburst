@@ -40,7 +40,7 @@ public class ChartCanvas extends java.awt.Canvas implements TowerCompletedListen
         valueAxis.setAutoRangeIncludesZero(false);
         BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
         CategoryPlot plot = new CategoryPlot(dataset, setupAxis, valueAxis, renderer);
-        chart = new JFreeChart("Sampled Data (Size = "+sampleSize+")", plot);        
+        chart = new JFreeChart("Sampled Data (Readings = "+sampleSize+")", plot);        
     }
 
     public void paint(Graphics g) {
