@@ -1,4 +1,7 @@
-Major refactoring to improve separation of concerns
+Version 1.0 Beta 1
+
+Added box and whisker plot and sampling functionality
+Major refactoring to decouple the GUI from domain
 Added mouseover tooltips
 Added keyboard mnemonics for buttons
 
