@@ -2,8 +2,20 @@ package za.co.turton.eyeburst.sample;
 
 import javax.swing.*;
 import java.awt.datatransfer.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import za.co.turton.eyeburst.config.Inject;
+import za.co.turton.eyeburst.config.InjectionConstructor;
 
 public class TowerTransferHandler extends TransferHandler {
+    
+    private Logger logger;
+    
+    public @InjectionConstructor TowerTransferHandler(
+            @Inject("logger") Logger logger) {
+        
+        this.logger = logger;
+    }
     
     public boolean importData(JComponent target, Transferable t) {
         
@@ -12,11 +24,11 @@ public class TowerTransferHandler extends TransferHandler {
         try {
             panel = (SampleGroupPanel) target;
             String row = (String) t.getTransferData(DataFlavor.stringFlavor);
-            String towerCode = row.substring(0, row.indexOf('\t'));            
+            String towerCode = row.substring(0, row.indexOf('\t'));
             return panel.addTower(towerCode);
             
         } catch (Exception e) {
-            
+            logger.log(Level.SEVERE, "Drop failed", e);
             JOptionPane.showMessageDialog(panel.getTopLevelAncestor(), e, "Drop failed", JOptionPane.ERROR_MESSAGE);
         }
         
@@ -24,23 +36,6 @@ public class TowerTransferHandler extends TransferHandler {
     }
     
     public boolean canImport(JComponent target, DataFlavor[] transferFlavors) {
-        
-//        if (target.getName() != null && target.getName().equals("chartPanel")) {
-//            for (DataFlavor flavour : transferFlavors)
-//                if (DataFlavor.stringFlavor.equals(flavour))
-//                    return true;
-//        }
-//
-//        return false;
         return true;
     }
-    
-//    protected Transferable createTransferable(JComponent comp) {
-//        JTable sourceTable = (JTable) comp;
-//        int row = sourceTable.getSelectedRow();
-//        TowerTableModel model = (TowerTableModel) sourceTable.getModel();
-//        return model.getTowerAt(row);
-//    }
-    
-    
 }

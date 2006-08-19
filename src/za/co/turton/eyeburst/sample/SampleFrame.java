@@ -29,16 +29,15 @@ public class SampleFrame extends javax.swing.JFrame {
     public @InjectionConstructor SampleFrame(
             @Inject("chartCanvas") ChartCanvas chartCanvas) {
         
-        initComponents();
-        
-        if (sampleSize <= 0)
-            throw new IllegalArgumentException("Sample size must be >= 1");
-        
+        initComponents();                
         this.chartCanvas = chartCanvas;
         chartPanel.add(chartCanvas);               
     }    
 
     public void setSampleSize(int sampleSize) {
+        if (sampleSize <= 0)
+            throw new IllegalArgumentException("Sample size must be >= 1");
+        
         this.sampleSize = sampleSize;
         chartCanvas.setSampleSize(sampleSize);
     }

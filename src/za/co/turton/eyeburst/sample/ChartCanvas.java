@@ -35,11 +35,10 @@ public class ChartCanvas extends java.awt.Canvas implements TowerCompletedListen
     
     /** Creates a new instance of ChartCanvas */
     public @InjectionConstructor ChartCanvas(
-            @Inject("yAxisTitle") String yAxisTitle,
-            int sampleSize) {
+            @Inject("yAxisTitle") String yAxisTitle) {
         
         dataset = new DefaultBoxAndWhiskerCategoryDataset();
-        CategoryAxis setupAxis = new CategoryAxis("Sample");
+        CategoryAxis setupAxis = new CategoryAxis("Sample Group");
         NumberAxis valueAxis = new NumberAxis(yAxisTitle);
         valueAxis.setAutoRangeIncludesZero(false);
         BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();

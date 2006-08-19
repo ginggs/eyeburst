@@ -19,6 +19,7 @@ import za.co.turton.eyeburst.Tower;
 import za.co.turton.eyeburst.TowerPublicationEvent;
 import za.co.turton.eyeburst.TowerPublicationListener;
 import za.co.turton.eyeburst.TowerPublisher;
+import za.co.turton.eyeburst.config.Configuration;
 import za.co.turton.eyeburst.config.Inject;
 import za.co.turton.eyeburst.config.InjectionConstructor;
 
@@ -38,13 +39,12 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
     
     /** Creates new form SampleGroupPanel */
     public @InjectionConstructor SampleGroupPanel(
-            @Inject("TowerPublisher") TowerPublisher towerPublisher) {
+            @Inject("towerPublisher") TowerPublisher towerPublisher) {
         
         initComponents();
-        sampleGroup.addListener(this);
-        ((TitledBorder) getBorder()).setTitle(sampleGroup.getGroupName());
-        setTransferHandler(new TowerTransferHandler());
+        setTransferHandler((TowerTransferHandler) Configuration.configure(TowerTransferHandler.class));
         this.progressBars = new HashMap<String, JProgressBar>();
+        this.towerPublisher = towerPublisher;
         towerPublisher.addListener(this);
         this.virgin = true;
     }
@@ -84,7 +84,7 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
                 this.removeAll();
                 this.virgin = false;
             }
-                        
+            
             GridLayout layout = (GridLayout) getLayout();
             layout.setRows(layout.getRows()+1);
             
@@ -124,13 +124,15 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
         
         GridLayout layout = (GridLayout) getLayout();
         layout.setRows(layout.getRows() - 1);
-        progressBars.remove(towerCode);        
+        progressBars.remove(towerCode);
         repaint();
         ((JFrame) getTopLevelAncestor()).pack();
     }
-
+    
     public void setSampleGroup(SampleGroup sampleGroup) {
         this.sampleGroup = sampleGroup;
+        sampleGroup.addListener(this);
+        ((TitledBorder) getBorder()).setTitle(sampleGroup.getGroupName());
     }
     
 }

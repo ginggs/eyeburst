@@ -30,6 +30,10 @@ import za.co.turton.eyeburst.io.FileMonitorLineProvider;
 import za.co.turton.eyeburst.monitor.ChartCanvas;
 import za.co.turton.eyeburst.monitor.MonitorFrame;
 import za.co.turton.eyeburst.monitor.TowerTableModel;
+import za.co.turton.eyeburst.sample.SampleFrame;
+import za.co.turton.eyeburst.sample.SampleGroup;
+import za.co.turton.eyeburst.sample.SampleGroupPanel;
+import za.co.turton.eyeburst.sample.TowerTransferHandler;
 
 public abstract class Configuration {
     
@@ -83,12 +87,34 @@ public abstract class Configuration {
         
         classDeps = new HashMap<String, Object>();
         dependencies.put(TowerTableModel.class, classDeps);
-                
+        
         classDeps = new HashMap<String, Object>();
         dependencies.put(ChartCanvas.class, classDeps);
         
         classDeps.put("towerNameService", TowerNameService.class);
         
+        classDeps = new HashMap<String, Object>();
+        dependencies.put(SampleFrame.class, classDeps);
+        
+        classDeps.put("chartCanvas", za.co.turton.eyeburst.sample.ChartCanvas.class);
+        
+        classDeps = new HashMap<String, Object>();
+        dependencies.put(za.co.turton.eyeburst.sample.ChartCanvas.class, classDeps);
+        
+        classDeps = new HashMap<String, Object>();
+        dependencies.put(SampleGroup.class, classDeps);
+        
+        classDeps.put("towerPublisher", TowerPublisher.class);
+        
+        classDeps = new HashMap<String, Object>();
+        dependencies.put(SampleGroupPanel.class, classDeps);
+        
+        classDeps.put("towerPublisher", TowerPublisher.class);
+        
+        classDeps = new HashMap<String, Object>();
+        dependencies.put(TowerTransferHandler.class, classDeps);
+        
+        classDeps.put("logger", logger);
         return dependencies;
     }
     
@@ -166,9 +192,9 @@ public abstract class Configuration {
             
             if (classDeps == null)
                 throw new ConfigurationException("Class "+clazz+" not registered");
-                                            
+            
             for (int i = 0; i < argTypes.length; i++) {
-                String depName = getDependencyName(allAnnotations[i]);                                                
+                String depName = getDependencyName(allAnnotations[i]);
                 Object dependency = classDeps.get(depName);
                 
                 if (dependency != null) {
