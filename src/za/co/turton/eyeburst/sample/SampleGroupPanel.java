@@ -19,6 +19,8 @@ import za.co.turton.eyeburst.Tower;
 import za.co.turton.eyeburst.TowerPublicationEvent;
 import za.co.turton.eyeburst.TowerPublicationListener;
 import za.co.turton.eyeburst.TowerPublisher;
+import za.co.turton.eyeburst.config.Inject;
+import za.co.turton.eyeburst.config.InjectionConstructor;
 
 /**
  *
@@ -32,15 +34,18 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
     
     private boolean virgin;
     
+    private TowerPublisher towerPublisher;
+    
     /** Creates new form SampleGroupPanel */
-    public SampleGroupPanel(SampleGroup sampleGroup) {
+    public @InjectionConstructor SampleGroupPanel(
+            @Inject("TowerPublisher") TowerPublisher towerPublisher) {
+        
         initComponents();
-        this.sampleGroup = sampleGroup;
         sampleGroup.addListener(this);
         ((TitledBorder) getBorder()).setTitle(sampleGroup.getGroupName());
         setTransferHandler(new TowerTransferHandler());
         this.progressBars = new HashMap<String, JProgressBar>();
-        TowerPublisher.getInstance().addListener(this);
+        towerPublisher.addListener(this);
         this.virgin = true;
     }
     
@@ -70,7 +75,7 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
     
     public boolean addTower(String towerCode) {
         
-        Tower tower = TowerPublisher.getInstance().createTower(towerCode);
+        Tower tower = towerPublisher.createTower(towerCode);
         
         try {
             sampleGroup.add(tower);
@@ -122,6 +127,10 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
         progressBars.remove(towerCode);        
         repaint();
         ((JFrame) getTopLevelAncestor()).pack();
+    }
+
+    public void setSampleGroup(SampleGroup sampleGroup) {
+        this.sampleGroup = sampleGroup;
     }
     
 }

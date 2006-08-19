@@ -11,7 +11,7 @@ package za.co.turton.eyeburst.config;
  * Thrown when exceptional circumstances arise during configuration
  * @author james
  */
-public class ConfigurationException extends Exception {
+public class ConfigurationException extends RuntimeException {
     /**
      * 
      * @see Exception

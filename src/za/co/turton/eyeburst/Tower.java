@@ -7,11 +7,11 @@
 package za.co.turton.eyeburst;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeSet;
-import za.co.turton.eyeburst.config.Configuration;
+import java.util.Properties;
+import za.co.turton.eyeburst.config.Configure;
+import za.co.turton.eyeburst.config.Inject;
 import za.co.turton.eyeburst.monitor.Column;
 
 /**
@@ -36,19 +36,15 @@ public class Tower {
     
     private float load;
     
-    private List<TowerDatum> towerData;    
+    private List<TowerDatum> towerData;   
     
     /**
      * Creates a new instance of Tower
      * @param code The code of the tower
      */
-    public Tower(String code) {
+    public Tower(String code, String name) {
         this.code = code;
-        this.name = Configuration.getTowerNames().getProperty(code);
-        
-        if (this.name == null)
-            this.name = this.code + " (Unknown)";
-        
+        this.name = name;        
         towerData = new LinkedList<TowerDatum>();
         totalCost = totalSquaredCost = 0f;
         min = Float.POSITIVE_INFINITY;
@@ -162,30 +158,7 @@ public class Tower {
     //@Column(name = "Load", number = 9)
     public Float getLoad() {
         return load;
-    }
-    
-    /*
-    public Float getMedian() {
-        
-        int size = sortedTowerData.size();
-        
-        if (size == 0)
-            return Float.NaN;
-                
-        Iterator<TowerDatum> it = towerData.iterator();    
-        float firstMedian, secondMedian;
-        firstMedian = secondMedian = it.next().cost;
-        
-        for (int i = 0; i < size - 1; i++) {
-            if (i % 2 == 0)
-                secondMedian = it.next().cost;                
-            else
-                firstMedian = secondMedian;     
-        }
-        
-        return (firstMedian + secondMedian) / 2f;
-    }
-    */
+    }     
         
     public List<Float> getSignalData() {
         List<Float> signalData = new ArrayList();

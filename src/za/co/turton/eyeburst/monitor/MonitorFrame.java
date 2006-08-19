@@ -7,16 +7,17 @@
 package za.co.turton.eyeburst.monitor;
 
 import java.awt.Component;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import org.jfree.chart.JFreeChart;
 import za.co.turton.eyeburst.*;
+import za.co.turton.eyeburst.config.Inject;
+import za.co.turton.eyeburst.config.InjectionConstructor;
 import za.co.turton.eyeburst.sample.SampleFrame;
 import za.co.turton.eyeburst.config.Configuration;
 import za.co.turton.eyeburst.config.ConfigurationException;
@@ -27,35 +28,51 @@ import za.co.turton.eyeburst.config.ConfigurationException;
  */
 public class MonitorFrame extends javax.swing.JFrame implements ConnectionListener, CurrentTowerListener {
     
-    private MonitorThread monitorThread;
-    
-    private JFreeChart chart;
+    private TowerDataThread towerDataThread;
     
     private TowerTableModel towerTableModel;
     
+    private TowerPublisher towerPublisher;
+    
+    private TowerNameService towerNameService;
+    
     private ChartCanvas chartCanvas;
+    
+    private Logger logger;
     
     /**
      * Creates a new MonitorFrame
      */
-    public MonitorFrame() {
+    
+    public @InjectionConstructor MonitorFrame(
+            
+            @Inject("towerDataThread")  TowerDataThread towerDataThread,
+            @Inject("towerTableModel")  TowerTableModel towerTableModel,
+            @Inject("towerPublisher")   TowerPublisher towerPublisher,
+            @Inject("towerNameService") TowerNameService towerNameService,
+            @Inject("chartCanvas")      ChartCanvas chartCanvas,
+            @Inject("appTitle")         String appTitle,
+            @Inject("logger")           Logger logger) {
         
+        this.towerDataThread = towerDataThread;
+        this.towerTableModel = towerTableModel;
+        this.towerPublisher = towerPublisher;
+        this.towerNameService = towerNameService;
+        this.chartCanvas = chartCanvas;
+        setTitle(appTitle);
+        this.logger = logger;
         initComponents();
-//        settingsDialog.setContentPane(new SettingsPanel());
-//        settingsDialog.pack();
-        setTitle(Configuration.getAppTitle());
-        this.towerTableModel = new TowerTableModel();
+        
         TableSorter sorter = new TableSorter(towerTableModel);
         sorter.setSortingStatus(0, TableSorter.ASCENDING);
         sorter.setTableHeader(towerTable.getTableHeader());
         towerTable.getTableHeader().setToolTipText("Click to specify sorting; Control-Click to specify secondary sorting");
         towerTable.setModel(sorter);
-        towerTableModel.addTableModelListener(towerTable);
-        chartCanvas = new ChartCanvas();
-        graphPanel.add(chartCanvas);
         
-        TowerPublisher towerPublisher = TowerPublisher.getInstance();
+        towerTableModel.addTableModelListener(towerTable);
         towerPublisher.addListener(towerTableModel);
+        
+        graphPanel.add(chartCanvas);
         towerPublisher.addListener(chartCanvas);
     }
     
@@ -188,31 +205,20 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         
         try {
             int sampleSize = Integer.parseInt(input);
-            SampleFrame sampleFrame = new SampleFrame(sampleSize);
+            SampleFrame sampleFrame = (SampleFrame) Configuration.configure(SampleFrame.class);
+            sampleFrame.setSampleSize(sampleSize);
             sampleFrame.setLocationByPlatform(true);
             sampleFrame.setVisible(true);
             sampleButton.setEnabled(false);
             
-            sampleFrame.addWindowListener(new WindowListener() {
-                public void windowActivated(WindowEvent e) {
-                }
+            sampleFrame.addWindowListener(new WindowAdapter() {
                 public void windowClosed(WindowEvent e) {
                     sampleButton.setEnabled(true);
-                }
-                public void windowClosing(WindowEvent e) {
-                }
-                public void windowDeactivated(WindowEvent e) {
-                }
-                public void windowDeiconified(WindowEvent e) {
-                }
-                public void windowIconified(WindowEvent e) {
-                }
-                public void windowOpened(WindowEvent e) {
                 }
             });
             
         } catch (IllegalArgumentException e) {
-            Configuration.getLogger().log(Level.WARNING, "Could not parse sample size for accumulation frame", e);
+            logger.log(Level.WARNING, "Could not parse sample size for accumulation frame", e);
             JOptionPane.showMessageDialog(this, e.toString(), "Invalid Sample Size", JOptionPane.ERROR_MESSAGE);
         }
         
@@ -223,15 +229,22 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         String action = button.getText();
         
         if (action.equals("Connect")) {
+            
             button.setEnabled(false);
-            monitorThread = new MonitorThread();
-            monitorThread.addListener((ConnectionListener) this);
-            monitorThread.addListener((CurrentTowerListener) this);
-            monitorThread.start();
+            
+            try {
+                towerDataThread = (TowerDataThread) Configuration.configure(TowerDataThread.class);
+                towerDataThread.addListener((ConnectionListener) this);
+                towerDataThread.addListener((CurrentTowerListener) this);
+                towerDataThread.start();
+                
+            } catch (ConfigurationException e) {
+                logger.log(Level.SEVERE, "Could not obtain towerDataThread", e);
+            }
             
         } else if (action.equals("Disconnect")) {
             button.setEnabled(false);
-            monitorThread.requestStop();
+            towerDataThread.requestStop();
         }
     }//GEN-LAST:event_connectButtonActionPerformed
     
@@ -244,7 +257,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         chartCanvas.setSize(graphPanel.getSize());
         chartCanvas.repaint();
     }//GEN-LAST:event_graphPanelComponentResized
-        
+    
     
     public void disconnected(final ConnectionEvent e) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -258,7 +271,9 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
     public void currentTower(final DataEvent e) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                currentTower.setText(e.getCurrentTower().getName());                
+                String towerCode = e.getCurrentTowerCode();
+                String towerName = towerNameService.getTowerName(towerCode);
+                currentTower.setText(towerName);
             }
         });
     }
@@ -293,18 +308,25 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
      */
     public static void main(String args[]) {
         
+        final Logger logger = Logger.getLogger("Bootstrap");
+        
         try {
-            Configuration.configure();
+            Configuration.initialise();
             
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    MonitorFrame monitorFrame = new MonitorFrame();
-                    monitorFrame.setLocationByPlatform(true);
-                    monitorFrame.setVisible(true);
+                    try {
+                        MonitorFrame monitorFrame = (MonitorFrame) Configuration.configure(MonitorFrame.class);
+                        monitorFrame.setLocationByPlatform(true);
+                        monitorFrame.setVisible(true);
+                    } catch (ConfigurationException e) {
+                        logger.log(Level.SEVERE, "Could not create Monitor Frame", e);
+                    }
                 }
             });
+            
         } catch (ConfigurationException e) {
-            Configuration.getLogger().log(Level.SEVERE, "Could not configure eyeBurst", e);
+            logger.log(Level.SEVERE, "Could not configure eyeBurst", e);
         }
     }
     

@@ -16,9 +16,14 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import za.co.turton.eyeburst.config.Configuration;
+import za.co.turton.eyeburst.config.Configure;
+import za.co.turton.eyeburst.config.Inject;
+import za.co.turton.eyeburst.config.InjectionConstructor;
 
 /**
  * Line provider connected to a UTD through a TCP/IP socket
@@ -37,16 +42,46 @@ public class SocketMonitorLineProvider extends MonitorLineProvider {
     
     private boolean connected;
     
+    private Logger logger;
+    
+    private int readTimeout;
+    
+    private SocketAddress utdIPAddress;
+    
+    private int connectTimeout;
+    
+    private String utdDebugOn;
+    
+    private String utdDebugOff;
+    
+    private String utdCurrentTower;
+    
+    
     /** Creates a new instance of SocketDebugLineProvider */
-    public SocketMonitorLineProvider() {
-        super();
+    public @InjectionConstructor SocketMonitorLineProvider (
+            @Inject("logger") Logger logger,
+            @Inject("readTimeout") int readTimeout,
+            @Inject("utdIPAddress") SocketAddress utdIPAddress,
+            @Inject("connectTimeout") int connectTimeout,
+            @Inject("utdDebugOn") String utdDebugOn,
+            @Inject("utdDebugOff") String utdDebugOff,
+            @Inject("utdCurrentTower") String utdCurrentTower) {
+        
+        super(logger);
+        this.readTimeout = readTimeout;
+        this.utdIPAddress = utdIPAddress;
+        this.utdCurrentTower = utdCurrentTower;
+        this.utdDebugOff = utdDebugOff;
+        this.utdDebugOn = utdDebugOn;
+        this.connectTimeout = connectTimeout;
+        
         socket = new Socket();
         connected = false;
         
         try {
-            socket.setSoTimeout(Configuration.getReadTimeout());
+            socket.setSoTimeout(readTimeout);
         } catch (SocketException e) {
-            Configuration.getLogger().log(Level.WARNING, "Could not set read timeout on socket: ", e);
+            logger.log(Level.WARNING, "Could not set read timeout on socket: ", e);
         }
     }
     
@@ -55,17 +90,17 @@ public class SocketMonitorLineProvider extends MonitorLineProvider {
      * @see MonitorLineProvider#connect()
      */
     public void connect() throws IOException {
-        socket.connect(Configuration.getUtdIPAddress(), Configuration.getConnectTimeout());
+        socket.connect(utdIPAddress, connectTimeout);
         in = socket.getInputStream();
         reader = new InputStreamReader(in);
         lineReader = new LineNumberReader(reader);
         
         out = socket.getOutputStream();
         writer = new OutputStreamWriter(out);
-        writeLine(Configuration.getUtdDebugOn());
+        writeLine(utdDebugOn);
         
         connected = true;
-        Configuration.getLogger().info("Connection open");
+        logger.info("Connection open");
     }
     
     /**
@@ -74,7 +109,7 @@ public class SocketMonitorLineProvider extends MonitorLineProvider {
      */
     public void disconnect() throws IOException {
         
-        writeLine(Configuration.getUtdDebugOff());
+        writeLine(utdDebugOff);
         
         if (lineReader != null)
             lineReader.close();
@@ -95,7 +130,7 @@ public class SocketMonitorLineProvider extends MonitorLineProvider {
             socket.close();
         
         connected = false;
-        Configuration.getLogger().info("Connection closed");
+        logger.info("Connection closed");
     }
     
     /**
@@ -112,7 +147,7 @@ public class SocketMonitorLineProvider extends MonitorLineProvider {
      */
     public String readLine() throws IOException {
         String line = lineReader.readLine();
-        Configuration.getLogger().fine("Read: "+ line);
+        logger.fine("Read: "+ line);
         return line;
     }
     
@@ -122,7 +157,7 @@ public class SocketMonitorLineProvider extends MonitorLineProvider {
      */
     public void writeLine(String line) throws IOException {
         out.write((line+"\n").getBytes());
-        Configuration.getLogger().fine("Wrote: "+line);
+        logger.fine("Wrote: "+line);
     }
     
     /**
@@ -130,6 +165,6 @@ public class SocketMonitorLineProvider extends MonitorLineProvider {
      * @see MonitorLineProvider#requestCurrentTower()
      */
     public void requestCurrentTower() throws IOException {
-        writeLine(Configuration.getUtdCurrentTower());
+        writeLine(utdCurrentTower);
     }
 }

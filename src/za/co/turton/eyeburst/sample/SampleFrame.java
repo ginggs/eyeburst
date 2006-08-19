@@ -9,14 +9,15 @@ package za.co.turton.eyeburst.sample;
 import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.JOptionPane;
+import za.co.turton.eyeburst.config.Configuration;
+import za.co.turton.eyeburst.config.Inject;
+import za.co.turton.eyeburst.config.InjectionConstructor;
 
 /**
  *
  * @author  james
  */
-public class SampleFrame extends javax.swing.JFrame {    
-            
-    private TowerSampleDataSet tsds;
+public class SampleFrame extends javax.swing.JFrame {                
     
     private ChartCanvas chartCanvas;
     
@@ -25,17 +26,22 @@ public class SampleFrame extends javax.swing.JFrame {
     /**
      * Creates new form SampleFrame
      */
-    public SampleFrame(int sampleSize) {
+    public @InjectionConstructor SampleFrame(
+            @Inject("chartCanvas") ChartCanvas chartCanvas) {
         
         initComponents();
         
         if (sampleSize <= 0)
             throw new IllegalArgumentException("Sample size must be >= 1");
         
-        this.sampleSize = sampleSize;
-        chartCanvas = new ChartCanvas(sampleSize);
+        this.chartCanvas = chartCanvas;
         chartPanel.add(chartCanvas);               
     }    
+
+    public void setSampleSize(int sampleSize) {
+        this.sampleSize = sampleSize;
+        chartCanvas.setSampleSize(sampleSize);
+    }
         
     /** This method is called from within the constructor to
      * initialize the form.
@@ -106,12 +112,16 @@ public class SampleFrame extends javax.swing.JFrame {
             if (child.getName() != null && child.equals(groupName))
                 return;
         
-        SampleGroup sampleGroup = new SampleGroup(groupName, sampleSize);
+        SampleGroup sampleGroup = (SampleGroup) Configuration.configure(SampleGroup.class);
+        sampleGroup.setGroupName(groupName);
+        sampleGroup.setSampleSize(sampleSize);
         sampleGroup.addListener(chartCanvas);
         
-        SampleGroupPanel groupPanel = new SampleGroupPanel(sampleGroup);
+        SampleGroupPanel groupPanel = (SampleGroupPanel) Configuration.configure(SampleGroupPanel.class);
+        groupPanel.setSampleGroup(sampleGroup);
         pendingsPanel.add(groupPanel);
         groupPanel.setVisible(true);
+
         pack();
     }//GEN-LAST:event_createGroupItemActionPerformed
     

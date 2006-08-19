@@ -1,5 +1,5 @@
 /*
- * MonitorThread.java
+ * TowerDataThread.java
  *
  * Created on June 14, 2006, 5:37 PM
  *
@@ -13,18 +13,32 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
-import za.co.turton.eyeburst.config.Configuration;
+import java.util.logging.Logger;
+import za.co.turton.eyeburst.config.Configure;
+import za.co.turton.eyeburst.config.Inject;
+import za.co.turton.eyeburst.config.InjectionConstructor;
+import za.co.turton.eyeburst.config.Singleton;
 import za.co.turton.eyeburst.io.MonitorLineProvider;
 
 /**
  * Thread to read and parse debug data from a line provider
  * @author james
  */
-public class MonitorThread extends Thread {
+public @Singleton class TowerDataThread extends Thread {
     
     private MonitorLineProvider lineProvider;
     
     private TowerPublisher towerPublisher;
+    
+    private Logger logger;
+    
+    private String utdDebugMarker;
+    
+    private String alignedCode;
+    
+    private String dataCode;
+    
+    private int writerSleep;
     
     private Set<ConnectionListener> connectionListeners;
     
@@ -35,10 +49,24 @@ public class MonitorThread extends Thread {
     private static final String DELIM = " ";
     
     /**
-     * Creates a new instance of MonitorThread
+     * Creates a new instance of TowerDataThread
      */
-    public MonitorThread() {
-        this.towerPublisher = TowerPublisher.getInstance();
+    public @InjectionConstructor TowerDataThread(
+            @Inject("lineProvider") MonitorLineProvider lineProvider,
+            @Inject("towerPublisher") TowerPublisher towerPublisher,
+            @Inject("logger") Logger logger,
+            @Inject("utdDebugMarker") String utdDebugMarker,
+            @Inject("alignedCode") String alignedCode,
+            @Inject("dataCode") String dataCode,
+            @Inject("writerSleep") int writerSleep) {
+        
+        this.lineProvider = lineProvider;
+        this.towerPublisher = towerPublisher;
+        this.logger = logger;
+        this.utdDebugMarker = utdDebugMarker;
+        this.alignedCode = alignedCode;
+        this.dataCode = dataCode;
+        this.writerSleep = writerSleep;        
         this.setName("MonitorThread");
         this.setDaemon(true);
         this.connectionListeners = new HashSet<ConnectionListener>();
@@ -84,19 +112,13 @@ public class MonitorThread extends Thread {
         try {
             lineProvider.connect();
             fireConnected();
-            Configuration.getLogger().log(Level.FINE, this+" running");
+            logger.log(Level.FINE, this+" running");
             
             new LineWriterThread().start();
             
             while (this.mustRun) {
                 try {
                     String line = lineProvider.readLine();
-                    
-                    if (line == null) {
-                        this.mustRun = false;
-                        break;
-                    }
-                    
                     StringTokenizer tokeniser = new StringTokenizer(line, DELIM);
                     
                     try {
@@ -104,11 +126,11 @@ public class MonitorThread extends Thread {
                         
                         do {
                             token = tokeniser.nextToken().trim();
-                        } while (!token.equals(Configuration.getUtdDebugMarker()));
+                        } while (!token.equals(utdDebugMarker));
                         
                         String typeCode = tokeniser.nextToken().trim();
                         
-                        if (typeCode.equals(Configuration.getAlignedCode())) {
+                        if (typeCode.equals(alignedCode)) {
                             
                             tokeniser.nextToken();
                             tokeniser.nextToken();
@@ -117,7 +139,7 @@ public class MonitorThread extends Thread {
                             String currentTowerCode = tokeniser.nextToken().trim();
                             fireCurrentTower(currentTowerCode);
                             
-                        } else if (typeCode.equals(Configuration.getDataCode())) {
+                        } else if (typeCode.equals(dataCode)) {
                             
                             // "BScc"
                             tokeniser.nextToken();
@@ -132,25 +154,25 @@ public class MonitorThread extends Thread {
                             // "Load"
                             tokeniser.nextToken();
                             towerDatum.load = Integer.parseInt(tokeniser.nextToken().trim());
-                                                        
+                            
                             towerPublisher.take(towerDatum);
                         }
                     } catch (Exception e) {
-                        Configuration.getLogger().log(Level.FINE, "Could not parse "+line, e);
+                        logger.log(Level.FINE, "Could not parse "+line, e);
                     }
                 } catch (SocketTimeoutException e) {
                     if (this.mustRun)
-                        Configuration.getLogger().log(Level.INFO, "Socket read timed out", e);
+                        logger.log(Level.INFO, "Socket read timed out", e);
                     else
-                        Configuration.getLogger().log(Level.FINE, "Socket read timed out", e);
+                        logger.log(Level.FINE, "Socket read timed out", e);
                     
                 } catch (IOException e) {
-                    Configuration.getLogger().log(Level.WARNING, "Could not read data from UTD", e);
+                    logger.log(Level.WARNING, "Could not read data from UTD", e);
                 }
             }
             
         } catch (IOException e) {
-            Configuration.getLogger().log(Level.SEVERE, "Could not connect to UTD", e);
+            logger.log(Level.SEVERE, "Could not connect to UTD", e);
             fireConnectFailed(e);
             
         } finally {
@@ -159,10 +181,10 @@ public class MonitorThread extends Thread {
                     lineProvider.disconnect();
                 
             } catch (IOException e) {
-                Configuration.getLogger().log(Level.WARNING, "Error while trying to disconnect", e);
+                logger.log(Level.WARNING, "Error while trying to disconnect", e);
             }
             
-            Configuration.getLogger().log(Level.FINE, "Monitor thread finishing");
+            logger.log(Level.FINE, "Monitor thread finishing");
             fireDisconnected();
         }
     }
@@ -189,24 +211,13 @@ public class MonitorThread extends Thread {
     }
     
     private void fireCurrentTower(String towerCode) {
-        DataEvent event = new DataEvent(this, new Tower(towerCode));
+        DataEvent event = new DataEvent(this, towerCode);
         
         for (CurrentTowerListener listener : ctListeners)
             listener.currentTower(event);
     }
     
-    /**
-     * Configures this threads line provider, adds a JVM shutdown hook to disconnect
-     * the line provider and starts this thread.
-     */
     public void start() {
-        try {
-            this.lineProvider = (MonitorLineProvider) Configuration.getLineProvider().newInstance();
-        } catch (Exception e) {
-            Configuration.getLogger().log(Level.SEVERE, "Could not instantiate line provider: "+Configuration.getLineProvider(), e);
-            fireConnectFailed(e);
-        }
-        
         this.mustRun = true;
         super.start();
     }
@@ -235,20 +246,20 @@ public class MonitorThread extends Thread {
          * Periodically write the current tower prompt to the configured line provider
          */
         public void run() {
-            Configuration.getLogger().log(Level.FINE, this+" running");
+            logger.log(Level.FINE, this+" running");
             
             while (mustRun) {
                 try {
                     lineProvider.requestCurrentTower();
-                    Thread.sleep(Configuration.getWriterSleep());
+                    Thread.sleep(writerSleep);
                 } catch (IOException e) {
-                    Configuration.getLogger().log(Level.WARNING, "Could not write current tower prompt", e);
+                    logger.log(Level.WARNING, "Could not write current tower prompt", e);
                 } catch (InterruptedException e) {
-                    Configuration.getLogger().log(Level.FINE, "Interrupted while sleeping", e);
+                    logger.log(Level.FINE, "Interrupted while sleeping", e);
                 }
             }
             
-            Configuration.getLogger().log(Level.FINE, "Writer thread finishing");
+            logger.log(Level.FINE, "Writer thread finishing");
         }
     }
 }

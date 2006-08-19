@@ -20,7 +20,7 @@ public class ConnectionEvent extends EventObject {
     private Exception threadException;
     
     /** Creates a new instance of ConnectionEvent */
-    public ConnectionEvent(MonitorThread source) {
+    public ConnectionEvent(TowerDataThread source) {
         super(source);
     }
     
@@ -29,7 +29,7 @@ public class ConnectionEvent extends EventObject {
      * @param source 
      * @param threadException 
      */
-    public ConnectionEvent(MonitorThread source, Exception threadException) {
+    public ConnectionEvent(TowerDataThread source, Exception threadException) {
         super(source);
         this.threadException = threadException;
     }

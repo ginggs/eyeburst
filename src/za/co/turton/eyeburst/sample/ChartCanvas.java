@@ -18,7 +18,8 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 import za.co.turton.eyeburst.Tower;
-import za.co.turton.eyeburst.config.Configuration;
+import za.co.turton.eyeburst.config.Inject;
+import za.co.turton.eyeburst.config.InjectionConstructor;
 
 /**
  *
@@ -33,27 +34,34 @@ public class ChartCanvas extends java.awt.Canvas implements TowerCompletedListen
     private static final int PADDING_RIGHT = 20;
     
     /** Creates a new instance of ChartCanvas */
-    public ChartCanvas(int sampleSize) {
+    public @InjectionConstructor ChartCanvas(
+            @Inject("yAxisTitle") String yAxisTitle,
+            int sampleSize) {
+        
         dataset = new DefaultBoxAndWhiskerCategoryDataset();
         CategoryAxis setupAxis = new CategoryAxis("Sample");
-        NumberAxis valueAxis = new NumberAxis(Configuration.getYAxisTitle());
+        NumberAxis valueAxis = new NumberAxis(yAxisTitle);
         valueAxis.setAutoRangeIncludesZero(false);
         BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
         CategoryPlot plot = new CategoryPlot(dataset, setupAxis, valueAxis, renderer);
-        chart = new JFreeChart("Sampled Data (Readings = "+sampleSize+")", plot);        
+        chart = new JFreeChart(plot);
     }
-
+    
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) getGraphics();
         Dimension d = getSize();
         Rectangle rect = new Rectangle(d.width - PADDING_RIGHT, d.height);
         chart.draw(g2d, rect);
     }
-
+    
     public void towerCompleted(TowerCompletedEvent tc) {
         Tower tower = tc.getTower();
         SampleGroup sampleGroup = (SampleGroup) tc.getSource();
         dataset.add(tower.getSignalData(), tower.getName(), sampleGroup.getGroupName());
         repaint();
+    }
+
+    void setSampleSize(int sampleSize) {
+        chart.setTitle("Sampled Data (Readings = "+sampleSize+")");
     }
 }

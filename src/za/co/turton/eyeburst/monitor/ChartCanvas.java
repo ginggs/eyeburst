@@ -13,7 +13,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.swing.SwingUtilities;
@@ -25,7 +24,9 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.time.TimeSeriesDataItem;
 import za.co.turton.eyeburst.*;
-import za.co.turton.eyeburst.config.Configuration;
+import za.co.turton.eyeburst.config.Configure;
+import za.co.turton.eyeburst.config.Inject;
+import za.co.turton.eyeburst.config.InjectionConstructor;
 
 /**
  * Canvas onto which the signal strength chart is drawn
@@ -40,18 +41,30 @@ public class ChartCanvas extends Canvas implements TowerPublicationListener {
     
     private TimeSeriesCollection seriesCol;
     
-    // Padding on the right of the chart
-    private static final int PADDING_RIGHT = 20;
+    private static final int PADDING_RIGHT = 20;    
+    
+    private int chartDataExpiry;
+    
+    private TowerNameService towerNameService;
     
     /**
      * Creates a new instance of ChartCanvas
      * @param seriesCol the JFreeChart timeseries collection for the chart to be painted on this canvas
      *
      */
-    public ChartCanvas() {
+    public @InjectionConstructor ChartCanvas(
+            @Inject("chartTitle")       String chartTitle,
+            @Inject("xAxisTitle")       String xAxisTitle,
+            @Inject("yAxisTitle")       String yAxisTitle,
+            @Inject("chartDataExpiry")   int chartDataExpiry,
+            @Inject("towerNameService") TowerNameService towerNameService) {
+        
+        this.towerNameService = towerNameService;
+        this.chartDataExpiry = chartDataExpiry;
+        
         seriesCol = new TimeSeriesCollection();
         seriesMap = new HashMap<String, TimeSeries>();
-        chart = ChartFactory.createTimeSeriesChart(Configuration.getChartTitle(), Configuration.getXAxisTitle(), Configuration.getYAxisTitle(), seriesCol,
+        chart = ChartFactory.createTimeSeriesChart(chartTitle, xAxisTitle, yAxisTitle, seriesCol,
                 true, false, false);
         chart.getXYPlot().setRenderer(new XYLineAndShapeRenderer());
     }
@@ -75,12 +88,7 @@ public class ChartCanvas extends Canvas implements TowerPublicationListener {
         TimeSeries series = seriesMap.get(towerCode);
         
         if (series == null) {
-            String towerName = Configuration.getTowerNames().getProperty(towerCode);
-            
-            //@todo: extract the following?
-            if (towerName == null)
-                towerName = towerCode + " (Unknown)";
-            
+            String towerName = towerNameService.getTowerName(towerCode);            
             series = new TimeSeries(towerName, org.jfree.data.time.Second.class);
             seriesCol.addSeries(series);
             seriesMap.put(towerCode, series);
@@ -106,7 +114,7 @@ public class ChartCanvas extends Canvas implements TowerPublicationListener {
             int toCull = 0;
             
             for (TimeSeriesDataItem item : (List<TimeSeriesDataItem>) series.getItems())
-                if (item.getPeriod().getMiddleMillisecond() < now - Configuration.getChartDataExpiry())
+                if (item.getPeriod().getMiddleMillisecond() < now - chartDataExpiry)
                     toCull++;
             
             series.delete(0, toCull - 1);

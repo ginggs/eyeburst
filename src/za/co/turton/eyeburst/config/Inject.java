@@ -1,7 +1,7 @@
 /*
- * Configure.java
+ * Inject.java
  *
- * Created on August 16, 2006, 4:34 PM
+ * Created on August 16, 2006, 2:12 PM
  *
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
@@ -16,7 +16,8 @@ import java.lang.annotation.RetentionPolicy;
  *
  * @author james
  */
+
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Configure {
-    
+public @interface Inject {
+    String value();
 }

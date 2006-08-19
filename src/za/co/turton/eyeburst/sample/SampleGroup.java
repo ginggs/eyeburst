@@ -17,6 +17,8 @@ import za.co.turton.eyeburst.Tower;
 import za.co.turton.eyeburst.TowerPublicationEvent;
 import za.co.turton.eyeburst.TowerPublicationListener;
 import za.co.turton.eyeburst.TowerPublisher;
+import za.co.turton.eyeburst.config.Inject;
+import za.co.turton.eyeburst.config.InjectionConstructor;
 
 /**
  *
@@ -34,16 +36,19 @@ public class SampleGroup implements TowerPublicationListener {
     
     private Set<TowerCompletedListener> listeners;
     
+    private TowerPublisher towerPublisher;
+    
     /**
      * Creates a new instance of SampleGroup
      */
-    public SampleGroup(String groupName, int sampleSize) {
+    public @InjectionConstructor SampleGroup(
+            @Inject("towerPublisher") TowerPublisher towerPublisher) {
+        
         this.pendingTowers = new HashMap<String, Tower>();
         this.towers = new ArrayList<Tower>();
-        this.groupName = groupName;
-        this.sampleSize = sampleSize;
-        this.listeners = new HashSet<TowerCompletedListener>();
-        TowerPublisher.getInstance().addListener(this);
+        this.towerPublisher = towerPublisher;
+        towerPublisher.addListener(this);
+        this.listeners = new HashSet<TowerCompletedListener>();        
     }
     
     void add(Tower tower) throws TowerAlreadyPending {
@@ -97,5 +102,13 @@ public class SampleGroup implements TowerPublicationListener {
 
     public int getSampleSize() {
         return sampleSize;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public void setSampleSize(int sampleSize) {
+        this.sampleSize = sampleSize;
     }
 }

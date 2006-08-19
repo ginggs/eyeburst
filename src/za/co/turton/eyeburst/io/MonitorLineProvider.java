@@ -8,7 +8,10 @@ package za.co.turton.eyeburst.io;
 
 import java.io.IOException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import za.co.turton.eyeburst.config.Configuration;
+import za.co.turton.eyeburst.config.Inject;
+import za.co.turton.eyeburst.config.InjectionConstructor;
 
 /**
  * <code>MonitorLineProvider</code>s are able to connect to some source read debug lines from it
@@ -16,14 +19,20 @@ import za.co.turton.eyeburst.config.Configuration;
  */
 public abstract class MonitorLineProvider {
     
-    public MonitorLineProvider() {
+    protected Logger logger;
+    
+    public MonitorLineProvider(Logger logger) {
+        
+        this.logger = logger;
+        final Logger finalLogger = logger;
+        
         Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Hook Disconnect") {
             public void run() {
                 if (isConnected())
                     try {
                         disconnect();
                     } catch (IOException e) {
-                        Configuration.getLogger().log(Level.WARNING, "Could not disconnect", e);
+                        finalLogger.log(Level.WARNING, "Could not disconnect", e);
                     }
             }
         });

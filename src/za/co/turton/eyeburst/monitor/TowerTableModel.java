@@ -18,6 +18,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import za.co.turton.eyeburst.*;
+import za.co.turton.eyeburst.config.InjectionConstructor;
 
 /**
  * Implementation of javax.swing.TableModel to present tower data
@@ -34,7 +35,7 @@ public class TowerTableModel implements TableModel, TowerPublicationListener {
     private Map<Integer, Method> columnGetters;
     
     /** Creates a new instance of TowerTableModel */
-    public TowerTableModel() {
+    public @InjectionConstructor TowerTableModel() {
         this.towersMap = new TreeMap<String, Integer>();
         this.towers = new ArrayList<Tower>();
         this.listeners = new HashSet<TableModelListener>();

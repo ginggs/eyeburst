@@ -17,14 +17,14 @@ public class DataEvent extends EventObject {
     
     private TowerDatum datum;        
     
-    private Tower currentTower;
+    private String currentTowerCode;
     
     /**
      * Creates a new instance of DataEvent
      * 
      * @param source the monitor thread originator
      */
-    public DataEvent(MonitorThread source) {
+    public DataEvent(TowerDataThread source) {
         super(source);
     }
     
@@ -33,7 +33,7 @@ public class DataEvent extends EventObject {
      * @param source the monitor thread originator
      * @param datum A datum read by the monitor thread
      */
-    public DataEvent(MonitorThread source, TowerDatum datum) {
+    public DataEvent(TowerDataThread source, TowerDatum datum) {
         super(source);
         this.datum = datum;
     }        
@@ -43,9 +43,9 @@ public class DataEvent extends EventObject {
      * @param source the monitor thread originator
      * @param currentTower the current tower read by the monitor thread
      */
-    public DataEvent(MonitorThread source, Tower currentTower) {
+    public DataEvent(TowerDataThread source, String currentTowerCode) {
         super(source);
-        this.currentTower = currentTower;
+        this.currentTowerCode = currentTowerCode;
     }
     
     /**
@@ -60,7 +60,7 @@ public class DataEvent extends EventObject {
      * 
      * @return the tower carried on this event
      */
-    public Tower getCurrentTower() {
-        return currentTower;
+    public String getCurrentTowerCode() {
+        return currentTowerCode;
     }
 }

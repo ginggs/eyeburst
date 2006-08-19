@@ -12,8 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.util.logging.Level;
-import za.co.turton.eyeburst.config.Configuration;
+import java.util.logging.Logger;
+import za.co.turton.eyeburst.config.Inject;
+import za.co.turton.eyeburst.config.InjectionConstructor;
 
 /**
  * Provides debug data lines read from a file at regular intervals.
@@ -31,9 +32,22 @@ public class FileMonitorLineProvider extends MonitorLineProvider {
     
     private boolean connected;
     
+    private String resourcePath;
+    
+    private int lineProviderInterval;
+    
+    private Logger logger;
+            
     /** Creates a new instance of FileMonitorLineProvider */
-    public FileMonitorLineProvider() {
-        super();
+    public @InjectionConstructor FileMonitorLineProvider(
+            @Inject("resourcePath") String resourcePath,
+            @Inject("fileLineProviderInterval") int lineProviderInterval,
+            @Inject("logger") Logger logger) {
+        
+        super(logger);
+        this.resourcePath = resourcePath;
+        this.lineProviderInterval = lineProviderInterval;
+        this.logger = logger;
         connected = false;
     }
     
@@ -42,11 +56,11 @@ public class FileMonitorLineProvider extends MonitorLineProvider {
      * @see MonitorLineProvider#connect()
      */
     public void connect() throws IOException {
-        in = new FileInputStream(Configuration.getResourcePath());
+        in = new FileInputStream(resourcePath);
         reader = new InputStreamReader(in);
         lineReader = new LineNumberReader(reader);
         connected = true;
-        Configuration.getLogger().fine("Reading from "+in);
+        logger.fine("Reading from "+in);
     }
     
     /**
@@ -64,7 +78,7 @@ public class FileMonitorLineProvider extends MonitorLineProvider {
             in.close();
         
         connected = false;
-        Configuration.getLogger().fine(in+" closed");
+        logger.fine(in+" closed");
     }
     
     /**
@@ -81,11 +95,19 @@ public class FileMonitorLineProvider extends MonitorLineProvider {
      */
     public String readLine() throws IOException {
         try {
-            Thread.sleep(Configuration.getFileLineProviderInterval());
+            Thread.sleep(lineProviderInterval);
         } catch (InterruptedException e) {
         }
         
-        return lineReader.readLine();
+        String line = lineReader.readLine();
+        
+        if (line == null) {
+            disconnect();
+            connect();
+            line = lineReader.readLine();
+        }
+        
+        return line;
     }
     
     /**

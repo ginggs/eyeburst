@@ -10,7 +10,7 @@ package za.co.turton.eyeburst;
 import java.util.Date;
 
 /**
- * Represents a signal set of measured data for an iBurst tower
+ * Represents a single datum measured for an iBurst tower
  * @author james
  */
 public class TowerDatum {
