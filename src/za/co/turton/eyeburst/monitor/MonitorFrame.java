@@ -74,8 +74,11 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         towerTableModel.addTableModelListener(towerTable);
         towerPublisher.addListener(towerTableModel);
                 
-        chartPanel.setPreferredSize(chartPanelContainer.getSize());
-        chartPanelContainer.add(chartPanel);        
+        chartPanelContainer.add(chartPanel);
+        Dimension size = chartPanelContainer.getSize();
+        chartPanel.setPreferredSize(new Dimension(size.width - 50, size.height - 10));
+        chartPanel.setSize(new Dimension(size.width - 50, size.height - 10));        
+        
         towerPublisher.addListener(chartPanel);
     }
     
@@ -130,6 +133,16 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
             }
         });
 
+        org.jdesktop.layout.GroupLayout chartPanelContainerLayout = new org.jdesktop.layout.GroupLayout(chartPanelContainer);
+        chartPanelContainer.setLayout(chartPanelContainerLayout);
+        chartPanelContainerLayout.setHorizontalGroup(
+            chartPanelContainerLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 401, Short.MAX_VALUE)
+        );
+        chartPanelContainerLayout.setVerticalGroup(
+            chartPanelContainerLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 273, Short.MAX_VALUE)
+        );
         jSplitPane1.setLeftComponent(chartPanelContainer);
 
         towerTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -199,8 +212,9 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
     }// </editor-fold>//GEN-END:initComponents
 
     private void chartPanelContainerComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_chartPanelContainerComponentResized
-        chartPanel.setPreferredSize(chartPanelContainer.getSize());
-        chartPanel.setSize(chartPanelContainer.getSize());
+        Dimension size = chartPanelContainer.getSize();
+        chartPanel.setMaximumSize(new Dimension(size.width - 30, size.height - 10));
+        chartPanel.setSize(new Dimension(size.width - 30, size.height - 10));
     }//GEN-LAST:event_chartPanelContainerComponentResized
     
     private void sampleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleButtonActionPerformed
