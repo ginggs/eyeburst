@@ -73,10 +73,9 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         
         towerTableModel.addTableModelListener(towerTable);
         towerPublisher.addListener(towerTableModel);
-        
-        chartPanel.setPreferredSize(new Dimension(400, 400));
-        jSplitPane1.setLeftComponent(chartPanel);
-        jSplitPane1.setDividerLocation(0.6);
+                
+        chartPanel.setPreferredSize(chartPanelContainer.getSize());
+        chartPanelContainer.add(chartPanel);        
         towerPublisher.addListener(chartPanel);
     }
     
@@ -91,6 +90,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         errorLabel = new javax.swing.JLabel();
         displayPanel = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
+        chartPanelContainer = new javax.swing.JPanel();
         tableScrollPane = new javax.swing.JScrollPane();
         towerTable = new javax.swing.JTable();
         currentTowerPanel = new javax.swing.JPanel();
@@ -124,6 +124,14 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         displayPanel.setPreferredSize(new java.awt.Dimension(550, 500));
         jSplitPane1.setDividerLocation(320);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        chartPanelContainer.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                chartPanelContainerComponentResized(evt);
+            }
+        });
+
+        jSplitPane1.setLeftComponent(chartPanelContainer);
+
         towerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -189,6 +197,11 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void chartPanelContainerComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_chartPanelContainerComponentResized
+        chartPanel.setPreferredSize(chartPanelContainer.getSize());
+        chartPanel.setSize(chartPanelContainer.getSize());
+    }//GEN-LAST:event_chartPanelContainerComponentResized
     
     private void sampleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleButtonActionPerformed
         String input = JOptionPane.showInputDialog(this, "Number of readings per sample", 10);
@@ -326,6 +339,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
+    private javax.swing.JPanel chartPanelContainer;
     private javax.swing.JButton connectButton;
     private javax.swing.JLabel currentLabel;
     private javax.swing.JLabel currentTower;

@@ -31,7 +31,7 @@ public class SampleFrame extends javax.swing.JFrame {
         
         initComponents();                
         this.chartPanel = chartPanel;
-        this.jSplitPane1.setLeftComponent(chartPanel);
+        this.chartPanelContainer.add(chartPanel);
         pack();
     }    
 
@@ -40,7 +40,6 @@ public class SampleFrame extends javax.swing.JFrame {
             throw new IllegalArgumentException("Sample size must be >= 1");
         
         this.sampleSize = sampleSize;
-        chartPanel.setSampleSize(sampleSize);
     }
         
     /** This method is called from within the constructor to
@@ -53,6 +52,7 @@ public class SampleFrame extends javax.swing.JFrame {
         sampleGroupMenu = new javax.swing.JPopupMenu();
         createGroupItem = new javax.swing.JMenuItem();
         jSplitPane1 = new javax.swing.JSplitPane();
+        chartPanelContainer = new javax.swing.JPanel();
         pendingsPanel = new javax.swing.JPanel();
 
         sampleGroupMenu.setInvoker(pendingsPanel);
@@ -73,6 +73,15 @@ public class SampleFrame extends javax.swing.JFrame {
         setTitle("eyeBurst");
         jSplitPane1.setDividerLocation(400);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        chartPanelContainer.setOpaque(false);
+        chartPanelContainer.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                chartPanelContainerComponentResized(evt);
+            }
+        });
+
+        jSplitPane1.setLeftComponent(chartPanelContainer);
+
         pendingsPanel.setLayout(new javax.swing.BoxLayout(pendingsPanel, javax.swing.BoxLayout.Y_AXIS));
 
         pendingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1), "Pending Samples (right-click to create group)", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
@@ -89,6 +98,11 @@ public class SampleFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void chartPanelContainerComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_chartPanelContainerComponentResized
+        chartPanel.setPreferredSize(chartPanelContainer.getSize());
+        chartPanel.setSize(chartPanelContainer.getSize());
+    }//GEN-LAST:event_chartPanelContainerComponentResized
     
     private void createGroupItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createGroupItemActionPerformed
         String groupName = JOptionPane.showInputDialog(this, "Sample Group Name (e.g. Near Window)");
@@ -120,6 +134,7 @@ public class SampleFrame extends javax.swing.JFrame {
         
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel chartPanelContainer;
     private javax.swing.JMenuItem createGroupItem;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JPanel pendingsPanel;

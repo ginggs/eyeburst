@@ -11,6 +11,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import javax.swing.border.EmptyBorder;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -31,7 +32,7 @@ public class ChartPanel extends org.jfree.chart.ChartPanel implements TowerCompl
     private JFreeChart chart;
     
     private DefaultBoxAndWhiskerCategoryDataset dataset;
-        
+    
     /**
      * Creates a new instance of ChartPanel
      */
@@ -46,10 +47,11 @@ public class ChartPanel extends org.jfree.chart.ChartPanel implements TowerCompl
         BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
         renderer.setToolTipGenerator(new BoxAndWhiskerToolTipGenerator());
         CategoryPlot plot = new CategoryPlot(dataset, setupAxis, valueAxis, renderer);
-        chart = new JFreeChart(plot);
+        chart = new JFreeChart("Sampled Data", plot);
         setChart(chart);
         setPreferredSize(new Dimension(400, 400));
-    }
+        
+    }    
     
     public void towerCompleted(TowerCompletedEvent tc) {
         Tower tower = tc.getTower();
@@ -61,10 +63,6 @@ public class ChartPanel extends org.jfree.chart.ChartPanel implements TowerCompl
         int columnIndex = dataset.getColumnIndex(groupName);
         
         chart.getCategoryPlot().getRenderer().getToolTipGenerator().
-                generateToolTip(dataset, rowIndex, columnIndex);                
-    }
-    
-    void setSampleSize(int sampleSize) {
-        chart.setTitle("Sampled Data (Readings = "+sampleSize+")");
+                generateToolTip(dataset, rowIndex, columnIndex);
     }
 }
