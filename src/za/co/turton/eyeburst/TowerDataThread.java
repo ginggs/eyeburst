@@ -24,7 +24,7 @@ import za.co.turton.eyeburst.io.MonitorLineProvider;
  * Thread to read and parse debug data from a line provider
  * @author james
  */
-public @Singleton class TowerDataThread extends Thread {
+public class TowerDataThread extends Thread {
     
     private MonitorLineProvider lineProvider;
     

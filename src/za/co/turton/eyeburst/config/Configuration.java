@@ -14,20 +14,18 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import za.co.turton.eyeburst.TowerDataThread;
 import za.co.turton.eyeburst.TowerNameService;
 import za.co.turton.eyeburst.TowerPublisher;
 import za.co.turton.eyeburst.io.FileMonitorLineProvider;
-import za.co.turton.eyeburst.monitor.ChartCanvas;
 import za.co.turton.eyeburst.monitor.MonitorFrame;
 import za.co.turton.eyeburst.monitor.TowerTableModel;
 import za.co.turton.eyeburst.sample.SampleFrame;
@@ -51,71 +49,49 @@ public abstract class Configuration {
     
     private static final String DEV_CONFIG_PROPERTIES = "conf/dev.config.properties";
     
-    private static Map<Class, Map<String, Object>> loadDependencies() throws ConfigurationException {
-        Map<Class, Map<String, Object>> dependencies = new HashMap<Class, Map<String, Object>>();
-        Map<String, Object> classDeps;
+    private static void loadDependencies() throws ConfigurationException {
+        dependencies = new HashMap<Class, Map<String, Object>>();
+        Map classDeps;
         
-        classDeps = new HashMap<String, Object>();
-        dependencies.put(MonitorFrame.class, classDeps);
-        
+        classDeps = getDependencyMapFor(MonitorFrame.class);        
         classDeps.put("towerDataThread", TowerDataThread.class);
         classDeps.put("towerTableModel", TowerTableModel.class);
-        classDeps.put("chartCanvas", ChartCanvas.class);
+        classDeps.put("chartPanel", za.co.turton.eyeburst.monitor.ChartPanel.class);
         classDeps.put("towerPublisher", TowerPublisher.class);
         classDeps.put("towerNameService", TowerNameService.class);
         classDeps.put("logger", logger);
         
-        classDeps = new HashMap<String, Object>();
-        dependencies.put(TowerDataThread.class, classDeps);
-        
+        classDeps = getDependencyMapFor(TowerDataThread.class);        
         classDeps.put("lineProvider", FileMonitorLineProvider.class);
         classDeps.put("towerPublisher", TowerPublisher.class);
         classDeps.put("logger", logger);
         
-        classDeps = new HashMap<String, Object>();
-        dependencies.put(FileMonitorLineProvider.class, classDeps);
-        
+        classDeps = getDependencyMapFor(FileMonitorLineProvider.class);        
         classDeps.put("logger", logger);
         
-        classDeps = new HashMap<String, Object>();
-        dependencies.put(TowerPublisher.class, classDeps);
-        
+        classDeps = getDependencyMapFor(TowerPublisher.class);        
         classDeps.put("towerNameService", TowerNameService.class);
         
-        classDeps = new HashMap<String, Object>();
-        dependencies.put(TowerNameService.class, classDeps);
+        classDeps = getDependencyMapFor(TowerNameService.class);        
         
-        classDeps = new HashMap<String, Object>();
-        dependencies.put(TowerTableModel.class, classDeps);
+        classDeps = getDependencyMapFor(TowerTableModel.class);
         
-        classDeps = new HashMap<String, Object>();
-        dependencies.put(ChartCanvas.class, classDeps);
-        
+        classDeps = getDependencyMapFor(za.co.turton.eyeburst.monitor.ChartPanel.class);        
         classDeps.put("towerNameService", TowerNameService.class);
         
-        classDeps = new HashMap<String, Object>();
-        dependencies.put(SampleFrame.class, classDeps);
+        classDeps = getDependencyMapFor(SampleFrame.class);        
+        classDeps.put("chartPanel", za.co.turton.eyeburst.sample.ChartPanel.class);
         
-        classDeps.put("chartCanvas", za.co.turton.eyeburst.sample.ChartCanvas.class);
+        classDeps = getDependencyMapFor(za.co.turton.eyeburst.sample.ChartPanel.class);
         
-        classDeps = new HashMap<String, Object>();
-        dependencies.put(za.co.turton.eyeburst.sample.ChartCanvas.class, classDeps);
-        
-        classDeps = new HashMap<String, Object>();
-        dependencies.put(SampleGroup.class, classDeps);
-        
+        classDeps = getDependencyMapFor(SampleGroup.class);
         classDeps.put("towerPublisher", TowerPublisher.class);
         
-        classDeps = new HashMap<String, Object>();
-        dependencies.put(SampleGroupPanel.class, classDeps);
-        
+        classDeps = getDependencyMapFor(SampleGroupPanel.class);        
         classDeps.put("towerPublisher", TowerPublisher.class);
         
-        classDeps = new HashMap<String, Object>();
-        dependencies.put(TowerTransferHandler.class, classDeps);
-        
-        classDeps.put("logger", logger);
-        return dependencies;
+        classDeps = getDependencyMapFor(TowerTransferHandler.class);        
+        classDeps.put("logger", logger);        
     }
     
     public static void initialise() throws ConfigurationException {
@@ -123,16 +99,17 @@ public abstract class Configuration {
         logger.getParent().getHandlers()[0].setLevel(Level.FINEST);
         logger.setLevel(Level.CONFIG);
         
-        dependencies = loadDependencies();
-        adapters = loadAdapters();
-        config = loadConfig();
-        globals = new HashMap<Class, Object>();
+        loadDependencies();
+        loadAdapters();
+        loadConfig();
+        globals = new HashMap();
         
         logger.setLevel(Level.parse(config.getProperty("loggerLevel")));
     }
     
-    private static Map<Class, PropertyTypeAdapter> loadAdapters() {
-        Map<Class, PropertyTypeAdapter> adapters = new HashMap<Class, PropertyTypeAdapter>();
+    private static void loadAdapters() {
+        
+        adapters = new HashMap<Class, PropertyTypeAdapter>();
         
         adapters.put(String.class, new StringAdapter());
         adapters.put(Integer.class, new IntegerAdapter());
@@ -140,51 +117,49 @@ public abstract class Configuration {
         adapters.put(Class.class, new ClassAdapter());
         adapters.put(InetSocketAddress.class, new InetSocketAddressAdapter());
         adapters.put(Properties.class, new PropertiesAdapter());
-        adapters.put(Level.class, new LoggerLevelAdapter());
-        
-        return adapters;
+        adapters.put(Level.class, new LoggerLevelAdapter());                
     }
     
-    private static Properties loadConfig() throws ConfigurationException {
-        Properties config = new Properties();
+    private static void loadConfig() throws ConfigurationException {
         InputStream in = null;
+        config = new Properties();
         
         try {
             in = new FileInputStream(CONFIG_PROPERTIES);
             config.load(in);
             
             in = new FileInputStream(DEV_CONFIG_PROPERTIES);
-            config.load(in);
-            
-            return config;
+            config.load(in);                        
             
         } catch (FileNotFoundException e) {
-            throw new ConfigurationException("Could load configuration proeprties from disk", e);
+            throw new ConfigurationException("Could load configuration properties from disk", e);
         } catch (IOException e) {
             throw new ConfigurationException("Could not read configuration properties from "+in, e);
         }
     }
     
-    public static Object configure(Class clazz) throws ConfigurationException {
-        return configure(clazz, new HashSet<Class>());
+    public static <T> T configure(Class<T> clazz) throws ConfigurationException {
+        return configure(clazz, new LinkedList<Class>());
     }
     
-    private static Object configure(Class clazz, Set<Class> alreadySeen) throws ConfigurationException {
+    private static <T> T configure(Class<T> clazz, List<Class> classesAbove) throws ConfigurationException {
         
-//        if (alreadySeen.contains(clazz))
-//            throw new ConfigurationException("Traversed a cycle in the dependency graph");
+        if (classesAbove.contains(clazz))
+            throw new ConfigurationException("Traversed a cycle in the dependency graph, node = "+clazz);
         
-        alreadySeen.add(clazz);
+        classesAbove.add(clazz);
         
         if (clazz.isAnnotationPresent(Singleton.class)) {
-            Object instance = globals.get(clazz);
+            T instance = (T) globals.get(clazz);
             
-            if (instance != null)
+            if (instance != null) {
+                classesAbove.remove(clazz);            
                 return instance;
+            }
         }
         
         try {
-            Constructor constructor = getConstructorFrom(clazz);
+            Constructor<T> constructor = getConstructorFrom(clazz);
             Annotation[][] allAnnotations = constructor.getParameterAnnotations();
             Class[] argTypes = constructor.getParameterTypes();
             Object[] args = new Object[argTypes.length];
@@ -199,7 +174,7 @@ public abstract class Configuration {
                 
                 if (dependency != null) {
                     if (dependency instanceof Class)
-                        args[i] = configure((Class) dependency, alreadySeen);
+                        args[i] = configure((Class) dependency, classesAbove);
                     else
                         args[i] = dependency;
                     
@@ -223,14 +198,14 @@ public abstract class Configuration {
                 }
             }
             
-            Object instance = constructor.newInstance(args);
+            T instance = constructor.newInstance(args);
             
             if (clazz.isAnnotationPresent(Singleton.class))
                 globals.put(clazz, instance);
             
+            classesAbove.remove(clazz);
             return instance;
-            
-            
+                        
         } catch (IllegalAccessException e) {
             throw new ConfigurationException("Could not configure "+clazz, e);
         } catch (InstantiationException e) {
@@ -239,16 +214,9 @@ public abstract class Configuration {
             throw new ConfigurationException("Could not configure "+clazz, e);
         }
     }
-    
-    private static Method getSetter(Class clazz, String fieldName) throws NoSuchMethodException {
-        StringBuffer setterName = new StringBuffer("set");
-        setterName.append(Character.toUpperCase(fieldName.charAt(0)));
-        setterName.append(fieldName.substring(1));
-        return clazz.getMethod(setterName.toString());
-    }
-    
-    private static Constructor getConstructorFrom(Class clazz) throws ConfigurationException {
-        Constructor[] constructors = clazz.getConstructors();
+        
+    private static <T> Constructor<T> getConstructorFrom(Class<T> clazz) throws ConfigurationException {
+        Constructor<T>[] constructors = clazz.getConstructors();
         
         for (int i = 0; i < constructors.length; i++) {
             if (constructors[i].isAnnotationPresent(InjectionConstructor.class))
@@ -265,5 +233,11 @@ public abstract class Configuration {
                 return ((Inject) annotation).value();
         
         throw new ConfigurationException("No Inject annotation found");
+    }
+    
+    private static Map<String, ?> getDependencyMapFor(Class clazz) {
+        Map classDeps = new HashMap();
+        dependencies.put(clazz, classDeps);
+        return classDeps;
     }
 }

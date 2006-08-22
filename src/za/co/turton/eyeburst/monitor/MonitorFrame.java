@@ -7,6 +7,7 @@
 package za.co.turton.eyeburst.monitor;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.logging.Level;
@@ -15,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import za.co.turton.eyeburst.*;
 import za.co.turton.eyeburst.config.Inject;
 import za.co.turton.eyeburst.config.InjectionConstructor;
@@ -36,7 +38,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
     
     private TowerNameService towerNameService;
     
-    private ChartCanvas chartCanvas;
+    private ChartPanel chartPanel;
     
     private Logger logger;
     
@@ -50,7 +52,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
             @Inject("towerTableModel")  TowerTableModel towerTableModel,
             @Inject("towerPublisher")   TowerPublisher towerPublisher,
             @Inject("towerNameService") TowerNameService towerNameService,
-            @Inject("chartCanvas")      ChartCanvas chartCanvas,
+            @Inject("chartPanel")       ChartPanel chartPanel,
             @Inject("appTitle")         String appTitle,
             @Inject("logger")           Logger logger) {
         
@@ -58,7 +60,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         this.towerTableModel = towerTableModel;
         this.towerPublisher = towerPublisher;
         this.towerNameService = towerNameService;
-        this.chartCanvas = chartCanvas;
+        this.chartPanel = chartPanel;
         setTitle(appTitle);
         this.logger = logger;
         initComponents();
@@ -72,8 +74,10 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         towerTableModel.addTableModelListener(towerTable);
         towerPublisher.addListener(towerTableModel);
         
-        graphPanel.add(chartCanvas);
-        towerPublisher.addListener(chartCanvas);
+        chartPanel.setPreferredSize(new Dimension(400, 400));
+        jSplitPane1.setLeftComponent(chartPanel);
+        jSplitPane1.setDividerLocation(0.6);
+        towerPublisher.addListener(chartPanel);
     }
     
     /** This method is called from within the constructor to
@@ -87,10 +91,9 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         errorLabel = new javax.swing.JLabel();
         displayPanel = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
-        graphPanel = new javax.swing.JPanel();
         tableScrollPane = new javax.swing.JScrollPane();
         towerTable = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
+        currentTowerPanel = new javax.swing.JPanel();
         currentLabel = new javax.swing.JLabel();
         currentTower = new javax.swing.JLabel();
         buttonPanel = new javax.swing.JPanel();
@@ -111,7 +114,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Signal Data Overview");
+        setTitle("eyeBurst");
         setName("eyeBurst Frame");
         displayPanel.setLayout(new java.awt.BorderLayout());
 
@@ -121,16 +124,6 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         displayPanel.setPreferredSize(new java.awt.Dimension(550, 500));
         jSplitPane1.setDividerLocation(320);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        graphPanel.setLayout(new javax.swing.BoxLayout(graphPanel, javax.swing.BoxLayout.X_AXIS));
-
-        graphPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentResized(java.awt.event.ComponentEvent evt) {
-                graphPanelComponentResized(evt);
-            }
-        });
-
-        jSplitPane1.setLeftComponent(graphPanel);
-
         towerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -152,12 +145,12 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         getContentPane().add(displayPanel);
 
         currentLabel.setText("Currently aligned to");
-        jPanel1.add(currentLabel);
+        currentTowerPanel.add(currentLabel);
 
         currentTower.setText("?");
-        jPanel1.add(currentTower);
+        currentTowerPanel.add(currentTower);
 
-        getContentPane().add(jPanel1);
+        getContentPane().add(currentTowerPanel);
 
         connectButton.setMnemonic('c');
         connectButton.setText("Connect");
@@ -218,7 +211,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
             });
             
         } catch (IllegalArgumentException e) {
-            logger.log(Level.WARNING, "Could not parse sample size for accumulation frame", e);
+            logger.log(Level.WARNING, "Could not parse sample size", e);
             JOptionPane.showMessageDialog(this, e.toString(), "Invalid Sample Size", JOptionPane.ERROR_MESSAGE);
         }
         
@@ -233,7 +226,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
             button.setEnabled(false);
             
             try {
-                towerDataThread = (TowerDataThread) Configuration.configure(TowerDataThread.class);
+                towerDataThread = Configuration.configure(TowerDataThread.class);
                 towerDataThread.addListener((ConnectionListener) this);
                 towerDataThread.addListener((CurrentTowerListener) this);
                 towerDataThread.start();
@@ -250,13 +243,8 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
     
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         towerTableModel.clear();
-        chartCanvas.clear();
+        chartPanel.clear();
     }//GEN-LAST:event_resetButtonActionPerformed
-    
-    private void graphPanelComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_graphPanelComponentResized
-        chartCanvas.setSize(graphPanel.getSize());
-        chartCanvas.repaint();
-    }//GEN-LAST:event_graphPanelComponentResized
     
     
     public void disconnected(final ConnectionEvent e) {
@@ -311,12 +299,18 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         final Logger logger = Logger.getLogger("Bootstrap");
         
         try {
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "Could not set system look and feel", e);
+            }
+            
             Configuration.initialise();
             
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     try {
-                        MonitorFrame monitorFrame = (MonitorFrame) Configuration.configure(MonitorFrame.class);
+                        MonitorFrame monitorFrame = Configuration.configure(MonitorFrame.class);
                         monitorFrame.setLocationByPlatform(true);
                         monitorFrame.setVisible(true);
                     } catch (ConfigurationException e) {
@@ -335,11 +329,10 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
     private javax.swing.JButton connectButton;
     private javax.swing.JLabel currentLabel;
     private javax.swing.JLabel currentTower;
+    private javax.swing.JPanel currentTowerPanel;
     private javax.swing.JPanel displayPanel;
     private javax.swing.JDialog errorDialog;
     private javax.swing.JLabel errorLabel;
-    private javax.swing.JPanel graphPanel;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JButton resetButton;
     private javax.swing.JButton sampleButton;

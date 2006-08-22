@@ -1,5 +1,5 @@
 /*
- * ChartCanvas.java
+ * ChartPanel.java
  *
  * Created on August 8, 2006, 4:08 PM
  *
@@ -14,6 +14,7 @@ import java.awt.Rectangle;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.BoxAndWhiskerToolTipGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
@@ -25,41 +26,44 @@ import za.co.turton.eyeburst.config.InjectionConstructor;
  *
  * @author james
  */
-public class ChartCanvas extends java.awt.Canvas implements TowerCompletedListener {
+public class ChartPanel extends org.jfree.chart.ChartPanel implements TowerCompletedListener {
     
     private JFreeChart chart;
     
     private DefaultBoxAndWhiskerCategoryDataset dataset;
-    
-    private static final int PADDING_RIGHT = 20;
-    
-    /** Creates a new instance of ChartCanvas */
-    public @InjectionConstructor ChartCanvas(
+        
+    /**
+     * Creates a new instance of ChartPanel
+     */
+    public @InjectionConstructor ChartPanel(
             @Inject("yAxisTitle") String yAxisTitle) {
         
+        super(null);
         dataset = new DefaultBoxAndWhiskerCategoryDataset();
         CategoryAxis setupAxis = new CategoryAxis("Sample Group");
         NumberAxis valueAxis = new NumberAxis(yAxisTitle);
         valueAxis.setAutoRangeIncludesZero(false);
         BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
+        renderer.setToolTipGenerator(new BoxAndWhiskerToolTipGenerator());
         CategoryPlot plot = new CategoryPlot(dataset, setupAxis, valueAxis, renderer);
         chart = new JFreeChart(plot);
-    }
-    
-    public void paint(Graphics g) {
-        Graphics2D g2d = (Graphics2D) getGraphics();
-        Dimension d = getSize();
-        Rectangle rect = new Rectangle(d.width - PADDING_RIGHT, d.height);
-        chart.draw(g2d, rect);
+        setChart(chart);
+        setPreferredSize(new Dimension(400, 400));
     }
     
     public void towerCompleted(TowerCompletedEvent tc) {
         Tower tower = tc.getTower();
         SampleGroup sampleGroup = (SampleGroup) tc.getSource();
-        dataset.add(tower.getSignalData(), tower.getName(), sampleGroup.getGroupName());
-        repaint();
+        String towerName = tower.getName();
+        String groupName = sampleGroup.getGroupName();
+        dataset.add(tower.getSignalData(), towerName, groupName);
+        int rowIndex = dataset.getRowIndex(towerName);
+        int columnIndex = dataset.getColumnIndex(groupName);
+        
+        chart.getCategoryPlot().getRenderer().getToolTipGenerator().
+                generateToolTip(dataset, rowIndex, columnIndex);                
     }
-
+    
     void setSampleSize(int sampleSize) {
         chart.setTitle("Sampled Data (Readings = "+sampleSize+")");
     }
