@@ -89,6 +89,7 @@ public abstract class Configuration {
         
         classDeps = getDependencyMapFor(SampleGroupPanel.class);        
         classDeps.put("towerPublisher", TowerPublisher.class);
+        classDeps.put("towerTransferHandler", TowerTransferHandler.class);
         
         classDeps = getDependencyMapFor(TowerTransferHandler.class);        
         classDeps.put("logger", logger);        
@@ -182,7 +183,7 @@ public abstract class Configuration {
                     String strValue = config.getProperty(depName);
                     
                     if (strValue == null)
-                        throw new ConfigurationException("No configuration definition for "+depName+" in "+clazz);
+                        throw new ConfigurationException("No dependency or configuration definition for "+depName+" in "+clazz);
                     
                     try {
                         PropertyTypeAdapter adapter = adapters.get(argTypes[i]);
@@ -204,6 +205,7 @@ public abstract class Configuration {
                 globals.put(clazz, instance);
             
             classesAbove.remove(clazz);
+            logger.config("Configured "+instance);
             return instance;
                         
         } catch (IllegalAccessException e) {

@@ -23,6 +23,7 @@ import za.co.turton.eyeburst.config.InjectionConstructor;
 import za.co.turton.eyeburst.sample.SampleFrame;
 import za.co.turton.eyeburst.config.Configuration;
 import za.co.turton.eyeburst.config.ConfigurationException;
+import za.co.turton.eyeburst.sample.SampleSizeDialog;
 
 /**
  * This is the main Swing frame of the application
@@ -73,11 +74,11 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         
         towerTableModel.addTableModelListener(towerTable);
         towerPublisher.addListener(towerTableModel);
-                
+        
         chartPanelContainer.add(chartPanel);
         Dimension size = chartPanelContainer.getSize();
         chartPanel.setPreferredSize(new Dimension(size.width - 50, size.height - 10));
-        chartPanel.setSize(new Dimension(size.width - 50, size.height - 10));        
+        chartPanel.setSize(new Dimension(size.width - 50, size.height - 10));
         
         towerPublisher.addListener(chartPanel);
     }
@@ -210,7 +211,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
     private void chartPanelContainerComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_chartPanelContainerComponentResized
         Dimension size = chartPanelContainer.getSize();
         chartPanel.setMaximumSize(new Dimension(size.width - 30, size.height - 10));
@@ -218,30 +219,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
     }//GEN-LAST:event_chartPanelContainerComponentResized
     
     private void sampleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleButtonActionPerformed
-        String input = JOptionPane.showInputDialog(this, "Number of readings per sample", 10);
-        
-        if (input == null)
-            return;
-        
-        try {
-            int sampleSize = Integer.parseInt(input);
-            SampleFrame sampleFrame = (SampleFrame) Configuration.configure(SampleFrame.class);
-            sampleFrame.setSampleSize(sampleSize);
-            sampleFrame.setLocationByPlatform(true);
-            sampleFrame.setVisible(true);
-            sampleButton.setEnabled(false);
-            
-            sampleFrame.addWindowListener(new WindowAdapter() {
-                public void windowClosed(WindowEvent e) {
-                    sampleButton.setEnabled(true);
-                }
-            });
-            
-        } catch (IllegalArgumentException e) {
-            logger.log(Level.WARNING, "Could not parse sample size", e);
-            JOptionPane.showMessageDialog(this, e.toString(), "Invalid Sample Size", JOptionPane.ERROR_MESSAGE);
-        }
-        
+        new SampleSizeDialog(this, true).setVisible(true);
     }//GEN-LAST:event_sampleButtonActionPerformed
     
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
@@ -252,15 +230,10 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
             
             button.setEnabled(false);
             
-            try {
-                towerDataThread = Configuration.configure(TowerDataThread.class);
-                towerDataThread.addListener((ConnectionListener) this);
-                towerDataThread.addListener((CurrentTowerListener) this);
-                towerDataThread.start();
-                
-            } catch (ConfigurationException e) {
-                logger.log(Level.SEVERE, "Could not obtain towerDataThread", e);
-            }
+            towerDataThread = Configuration.configure(TowerDataThread.class);
+            towerDataThread.addListener((ConnectionListener) this);
+            towerDataThread.addListener((CurrentTowerListener) this);
+            towerDataThread.start();
             
         } else if (action.equals("Disconnect")) {
             button.setEnabled(false);
@@ -330,30 +303,21 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         final Logger logger = Logger.getLogger("Bootstrap");
         
         try {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 //                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            } catch (Exception e) {
-                logger.log(Level.WARNING, "Could not set system look and feel", e);
-            }
-            
-            Configuration.initialise();
-            
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    try {
-                        MonitorFrame monitorFrame = Configuration.configure(MonitorFrame.class);
-                        monitorFrame.setLocationByPlatform(true);
-                        monitorFrame.setVisible(true);
-                    } catch (ConfigurationException e) {
-                        logger.log(Level.SEVERE, "Could not create Monitor Frame", e);
-                    }
-                }
-            });
-            
-        } catch (ConfigurationException e) {
-            logger.log(Level.SEVERE, "Could not configure eyeBurst", e);
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Could not set system look and feel", e);
         }
+        
+        Configuration.initialise();
+        
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {                
+                MonitorFrame monitorFrame = Configuration.configure(MonitorFrame.class);
+                monitorFrame.setLocationByPlatform(true);
+                monitorFrame.setVisible(true);                
+            }
+        });
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -31,22 +31,23 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
     
     private SampleGroup sampleGroup;
     
-    private Map<String, JProgressBar> progressBars;
-    
-    private boolean virgin;
+    private Map<String, JProgressBar> progressBars;    
     
     private TowerPublisher towerPublisher;
+
+    private boolean isVirgin;
     
     /** Creates new form SampleGroupPanel */
     public @InjectionConstructor SampleGroupPanel(
-            @Inject("towerPublisher") TowerPublisher towerPublisher) {
+            @Inject("towerPublisher") TowerPublisher towerPublisher,
+            @Inject("towerTransferHandler") TowerTransferHandler towerTransferHandler) {
         
         initComponents();
-        setTransferHandler((TowerTransferHandler) Configuration.configure(TowerTransferHandler.class));
+        setTransferHandler(towerTransferHandler);
         this.progressBars = new HashMap<String, JProgressBar>();
         this.towerPublisher = towerPublisher;
         towerPublisher.addListener(this);
-        this.virgin = true;
+        this.isVirgin = true;
     }
     
     /** This method is called from within the constructor to
@@ -58,13 +59,14 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
     private void initComponents() {
         jLabel1 = new javax.swing.JLabel();
 
-        setLayout(new java.awt.GridLayout(0, 2, 10, 0));
+        setLayout(new java.awt.CardLayout());
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED)));
+        setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder()));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Drag towers here...");
         jLabel1.setEnabled(false);
-        add(jLabel1);
+        jLabel1.setName("dragPrompt");
+        add(jLabel1, "card2");
 
     }// </editor-fold>//GEN-END:initComponents
     
@@ -80,9 +82,10 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
         try {
             sampleGroup.add(tower);
             
-            if (this.virgin) {
+            if (this.isVirgin) {             
                 this.removeAll();
-                this.virgin = false;
+                setLayout(new GridLayout(0, 2));
+                this.isVirgin = false;
             }
             
             GridLayout layout = (GridLayout) getLayout();
@@ -125,7 +128,6 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
         GridLayout layout = (GridLayout) getLayout();
         layout.setRows(layout.getRows() - 1);
         progressBars.remove(towerCode);
-        repaint();
         ((JFrame) getTopLevelAncestor()).pack();
     }
     

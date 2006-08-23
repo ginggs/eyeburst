@@ -10,6 +10,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.BoxLayout;
 import javax.swing.JOptionPane;
+import javax.swing.border.TitledBorder;
 import za.co.turton.eyeburst.config.Configuration;
 import za.co.turton.eyeburst.config.Inject;
 import za.co.turton.eyeburst.config.InjectionConstructor;
@@ -23,6 +24,8 @@ public class SampleFrame extends javax.swing.JFrame {
     private ChartPanel chartPanel;
     
     private int sampleSize;
+
+    private boolean isVirgin;
     
     /**
      * Creates new form SampleFrame
@@ -33,6 +36,7 @@ public class SampleFrame extends javax.swing.JFrame {
         initComponents();                
         this.chartPanel = chartPanel;
         this.chartPanelContainer.add(chartPanel);
+        this.isVirgin = true;
         pack();
     }    
 
@@ -41,6 +45,8 @@ public class SampleFrame extends javax.swing.JFrame {
             throw new IllegalArgumentException("Sample size must be >= 1");
         
         this.sampleSize = sampleSize;
+        TitledBorder border = (TitledBorder) this.pendingsPanel.getBorder();
+        border.setTitle(border.getTitle() + " (Sample Size = " + sampleSize+")");
     }
         
     /** This method is called from within the constructor to
@@ -121,9 +127,10 @@ public class SampleFrame extends javax.swing.JFrame {
                 return;
         }
          
-        if (pendingsPanel.getComponents()[0].getName().equals("promptLabel")) {
+        if (this.isVirgin) {
             pendingsPanel.removeAll();
             pendingsPanel.setLayout(new BoxLayout(pendingsPanel, BoxLayout.Y_AXIS));
+            this.isVirgin = false;
         }
         
         SampleGroup sampleGroup = Configuration.configure(SampleGroup.class);
