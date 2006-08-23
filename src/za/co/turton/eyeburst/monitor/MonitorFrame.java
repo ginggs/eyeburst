@@ -8,8 +8,7 @@ package za.co.turton.eyeburst.monitor;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.Point;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -20,9 +19,8 @@ import javax.swing.UIManager;
 import za.co.turton.eyeburst.*;
 import za.co.turton.eyeburst.config.Inject;
 import za.co.turton.eyeburst.config.InjectionConstructor;
-import za.co.turton.eyeburst.sample.SampleFrame;
 import za.co.turton.eyeburst.config.Configuration;
-import za.co.turton.eyeburst.config.ConfigurationException;
+import za.co.turton.eyeburst.config.SettingsDialog;
 import za.co.turton.eyeburst.sample.SampleSizeDialog;
 
 /**
@@ -103,6 +101,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         buttonPanel = new javax.swing.JPanel();
         connectButton = new javax.swing.JButton();
         sampleButton = new javax.swing.JButton();
+        settingsButton = new javax.swing.JButton();
         resetButton = new javax.swing.JButton();
 
         errorDialog.getContentPane().setLayout(new java.awt.FlowLayout());
@@ -196,6 +195,16 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
 
         buttonPanel.add(sampleButton);
 
+        settingsButton.setMnemonic('s');
+        settingsButton.setText("Settings...");
+        settingsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                settingsButtonActionPerformed(evt);
+            }
+        });
+
+        buttonPanel.add(settingsButton);
+
         resetButton.setMnemonic('r');
         resetButton.setText("Reset");
         resetButton.setToolTipText("Clears all recorded data");
@@ -211,6 +220,10 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    private void settingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsButtonActionPerformed
+        new SettingsDialog(this, true).setVisible(true);
+    }//GEN-LAST:event_settingsButtonActionPerformed
     
     private void chartPanelContainerComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_chartPanelContainerComponentResized
         Dimension size = chartPanelContainer.getSize();
@@ -310,12 +323,20 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         }
         
         Configuration.initialise();
-        
+        launch(null);
+    }
+    
+    public static void launch(final Point location) {
         SwingUtilities.invokeLater(new Runnable() {
-            public void run() {                
+            public void run() {
                 MonitorFrame monitorFrame = Configuration.configure(MonitorFrame.class);
-                monitorFrame.setLocationByPlatform(true);
-                monitorFrame.setVisible(true);                
+                
+                if (location == null)
+                    monitorFrame.setLocationByPlatform(true);
+                else
+                    monitorFrame.setLocation(location);
+                
+                monitorFrame.setVisible(true);
             }
         });
     }
@@ -333,6 +354,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JButton resetButton;
     private javax.swing.JButton sampleButton;
+    private javax.swing.JButton settingsButton;
     private javax.swing.JScrollPane tableScrollPane;
     private javax.swing.JTable towerTable;
     // End of variables declaration//GEN-END:variables

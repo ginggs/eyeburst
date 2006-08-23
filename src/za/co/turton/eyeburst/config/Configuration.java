@@ -53,7 +53,7 @@ public abstract class Configuration {
         dependencies = new HashMap<Class, Map<String, Object>>();
         Map classDeps;
         
-        classDeps = getDependencyMapFor(MonitorFrame.class);        
+        classDeps = getDependencyMapFor(MonitorFrame.class);
         classDeps.put("towerDataThread", TowerDataThread.class);
         classDeps.put("towerTableModel", TowerTableModel.class);
         classDeps.put("chartPanel", za.co.turton.eyeburst.monitor.ChartPanel.class);
@@ -61,25 +61,25 @@ public abstract class Configuration {
         classDeps.put("towerNameService", TowerNameService.class);
         classDeps.put("logger", logger);
         
-        classDeps = getDependencyMapFor(TowerDataThread.class);        
+        classDeps = getDependencyMapFor(TowerDataThread.class);
         classDeps.put("lineProvider", FileMonitorLineProvider.class);
         classDeps.put("towerPublisher", TowerPublisher.class);
         classDeps.put("logger", logger);
         
-        classDeps = getDependencyMapFor(FileMonitorLineProvider.class);        
+        classDeps = getDependencyMapFor(FileMonitorLineProvider.class);
         classDeps.put("logger", logger);
         
-        classDeps = getDependencyMapFor(TowerPublisher.class);        
+        classDeps = getDependencyMapFor(TowerPublisher.class);
         classDeps.put("towerNameService", TowerNameService.class);
         
-        classDeps = getDependencyMapFor(TowerNameService.class);        
+        classDeps = getDependencyMapFor(TowerNameService.class);
         
         classDeps = getDependencyMapFor(TowerTableModel.class);
         
-        classDeps = getDependencyMapFor(za.co.turton.eyeburst.monitor.ChartPanel.class);        
+        classDeps = getDependencyMapFor(za.co.turton.eyeburst.monitor.ChartPanel.class);
         classDeps.put("towerNameService", TowerNameService.class);
         
-        classDeps = getDependencyMapFor(SampleFrame.class);        
+        classDeps = getDependencyMapFor(SampleFrame.class);
         classDeps.put("chartPanel", za.co.turton.eyeburst.sample.ChartPanel.class);
         
         classDeps = getDependencyMapFor(za.co.turton.eyeburst.sample.ChartPanel.class);
@@ -87,12 +87,12 @@ public abstract class Configuration {
         classDeps = getDependencyMapFor(SampleGroup.class);
         classDeps.put("towerPublisher", TowerPublisher.class);
         
-        classDeps = getDependencyMapFor(SampleGroupPanel.class);        
+        classDeps = getDependencyMapFor(SampleGroupPanel.class);
         classDeps.put("towerPublisher", TowerPublisher.class);
         classDeps.put("towerTransferHandler", TowerTransferHandler.class);
         
-        classDeps = getDependencyMapFor(TowerTransferHandler.class);        
-        classDeps.put("logger", logger);        
+        classDeps = getDependencyMapFor(TowerTransferHandler.class);
+        classDeps.put("logger", logger);
     }
     
     public static void initialise() throws ConfigurationException {
@@ -118,7 +118,7 @@ public abstract class Configuration {
         adapters.put(Class.class, new ClassAdapter());
         adapters.put(InetSocketAddress.class, new InetSocketAddressAdapter());
         adapters.put(Properties.class, new PropertiesAdapter());
-        adapters.put(Level.class, new LoggerLevelAdapter());                
+        adapters.put(Level.class, new LoggerLevelAdapter());
     }
     
     private static void loadConfig() throws ConfigurationException {
@@ -130,13 +130,31 @@ public abstract class Configuration {
             config.load(in);
             
             in = new FileInputStream(DEV_CONFIG_PROPERTIES);
-            config.load(in);                        
+            config.load(in);
             
         } catch (FileNotFoundException e) {
             throw new ConfigurationException("Could load configuration properties from disk", e);
         } catch (IOException e) {
             throw new ConfigurationException("Could not read configuration properties from "+in, e);
         }
+    }
+    
+    public static String getProperty(String propertyName) {
+        return config.getProperty(propertyName);
+    }
+    
+    public static <T> T getTransformedProperty(Class<T> targetType, String propertyName) {
+        try {
+            return (T) adapters.get(targetType).transform(config.getProperty(propertyName));
+        } catch (AdapterException e) {
+            //@todo fix me
+            logger.log(Level.WARNING, "Could not transform property", e);
+            return null;
+        }
+    }
+    
+    public static void setProperty(String propertyName, String propertyValue) {
+        config.setProperty(propertyName, propertyValue);
     }
     
     public static <T> T configure(Class<T> clazz) throws ConfigurationException {
@@ -154,7 +172,7 @@ public abstract class Configuration {
             T instance = (T) globals.get(clazz);
             
             if (instance != null) {
-                classesAbove.remove(clazz);            
+                classesAbove.remove(clazz);
                 return instance;
             }
         }
@@ -207,7 +225,7 @@ public abstract class Configuration {
             classesAbove.remove(clazz);
             logger.config("Configured "+instance);
             return instance;
-                        
+            
         } catch (IllegalAccessException e) {
             throw new ConfigurationException("Could not configure "+clazz, e);
         } catch (InstantiationException e) {
@@ -216,7 +234,7 @@ public abstract class Configuration {
             throw new ConfigurationException("Could not configure "+clazz, e);
         }
     }
-        
+    
     private static <T> Constructor<T> getConstructorFrom(Class<T> clazz) throws ConfigurationException {
         Constructor<T>[] constructors = clazz.getConstructors();
         
