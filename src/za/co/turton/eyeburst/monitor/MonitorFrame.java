@@ -293,6 +293,10 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         });
     }
     
+    /**
+     *
+     * @see MonitorThreadListener#connected
+     */
     public void connected(final ConnectionEvent e) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -328,6 +332,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         try {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             } catch (Exception e) {
                 logger.log(Level.WARNING, "Could not set system look and feel", e);
             }

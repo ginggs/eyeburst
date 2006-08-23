@@ -60,7 +60,7 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
 
         setLayout(new java.awt.GridLayout(0, 2, 10, 0));
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder("")));
+        setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED)));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Drag towers here...");
         jLabel1.setEnabled(false);
