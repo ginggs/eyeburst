@@ -16,10 +16,17 @@ import za.co.turton.eyeburst.monitor.MonitorFrame;
  */
 public class SettingsDialog extends javax.swing.JDialog {
     
+    private String towersFileLocation;
+    
     /** Creates new form SettingsDialog */
     public SettingsDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        towersFileLocation = Configuration.getProperty("towerNames");
+    }
+    
+    public void setTowersFileLocation(String towersFileLocation) {
+        this.towersFileLocation = towersFileLocation;
     }
     
     /** This method is called from within the constructor to
@@ -32,26 +39,26 @@ public class SettingsDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
+        loggerComboBox = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
-        jSpinner1 = new javax.swing.JSpinner();
+        currentTowerSpinner = new javax.swing.JSpinner();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jSpinner2 = new javax.swing.JSpinner();
+        signalLowerBoundSpinner = new javax.swing.JSpinner();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jSpinner3 = new javax.swing.JSpinner();
+        chartDataExpirySpinner = new javax.swing.JSpinner();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jSpinner4 = new javax.swing.JSpinner();
+        connectTimeoutSpinner = new javax.swing.JSpinner();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
-        jSpinner5 = new javax.swing.JSpinner();
+        readTimeoutSpinner = new javax.swing.JSpinner();
         jLabel12 = new javax.swing.JLabel();
         browseButton = new javax.swing.JButton();
         jLabel13 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        utdIPAddressField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("eyeBurst Settings");
@@ -60,6 +67,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         setName("settingsDialog");
         okButton.setMnemonic('o');
         okButton.setText("OK");
+        okButton.setToolTipText("Applies new settings - be warned that the entire application will be reset!");
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
@@ -76,30 +84,30 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         jLabel1.setText("Logger Level");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "OFF", "SEVERE", "WARNING", "INFO", "CONFIG", "FINEST" }));
-        jComboBox1.setSelectedItem(Configuration.getProperty("loggerLevel"));
+        loggerComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "OFF", "SEVERE", "WARNING", "INFO", "CONFIG", "FINEST" }));
+        loggerComboBox.setSelectedItem(Configuration.getProperty("loggerLevel"));
 
         jLabel2.setText("Current Tower Prompt Interval");
 
-        jSpinner1.setValue(Configuration.getTransformedProperty(Integer.class, "writerSleep"));
+        currentTowerSpinner.setValue(Configuration.getTransformedProperty(Integer.class, "writerSleep"));
 
         jLabel3.setText("ms");
 
         jLabel4.setText("Signal Lower Bound");
 
-        jSpinner2.setValue(Configuration.getTransformedProperty(Integer.class, "signalLowerBound"));
+        signalLowerBoundSpinner.setValue(Configuration.getTransformedProperty(Integer.class, "signalLowerBound"));
 
         jLabel5.setText("dB");
 
         jLabel6.setText("Chart Data Expiry");
 
-        jSpinner3.setValue(Configuration.getTransformedProperty(Integer.class, "chartDataExpiry"));
+        chartDataExpirySpinner.setValue(Configuration.getTransformedProperty(Integer.class, "chartDataExpiry"));
 
         jLabel7.setText("ms");
 
         jLabel8.setText("Socket Connect Timeout");
 
-        jSpinner4.setValue(Configuration.getTransformedProperty(Integer.class, "connectTimeout"));
+        connectTimeoutSpinner.setValue(Configuration.getTransformedProperty(Integer.class, "connectTimeout"));
 
         jLabel9.setText("ms");
 
@@ -107,7 +115,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         jLabel11.setText("ms");
 
-        jSpinner5.setValue(Configuration.getTransformedProperty(Integer.class, "readTimeout"));
+        readTimeoutSpinner.setValue(Configuration.getTransformedProperty(Integer.class, "readTimeout"));
 
         jLabel12.setText("Tower Codes / Locations");
 
@@ -121,7 +129,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         jLabel13.setText("Device IP Address");
 
-        jTextField1.setText(Configuration.getProperty("utdIPAddress"));
+        utdIPAddressField.setText(Configuration.getProperty("utdIPAddress"));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -143,15 +151,15 @@ public class SettingsDialog extends javax.swing.JDialog {
                     .add(jLabel12))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jComboBox1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(loggerComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(cancelButton)
                     .add(layout.createSequentialGroup()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(jSpinner5)
-                            .add(jSpinner4)
-                            .add(jSpinner3)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jSpinner2)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jSpinner1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE))
+                            .add(readTimeoutSpinner)
+                            .add(connectTimeoutSpinner)
+                            .add(chartDataExpirySpinner)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, signalLowerBoundSpinner)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, currentTowerSpinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jLabel9)
@@ -159,7 +167,7 @@ public class SettingsDialog extends javax.swing.JDialog {
                             .add(jLabel7)
                             .add(jLabel5)
                             .add(jLabel11)))
-                    .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(utdIPAddressField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(browseButton))
                 .addContainerGap(92, Short.MAX_VALUE))
         );
@@ -169,36 +177,36 @@ public class SettingsDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel1)
-                    .add(jComboBox1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(loggerComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel2)
-                    .add(jSpinner1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(currentTowerSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel3))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel4)
                     .add(jLabel5)
-                    .add(jSpinner2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(signalLowerBoundSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel6)
-                    .add(jSpinner3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(chartDataExpirySpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel7))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel8)
-                    .add(jSpinner4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(connectTimeoutSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel9))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel10)
                     .add(jLabel11)
-                    .add(jSpinner5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(readTimeoutSpinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel13)
-                    .add(jTextField1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(utdIPAddressField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel12)
@@ -211,20 +219,25 @@ public class SettingsDialog extends javax.swing.JDialog {
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
-        new FileChooserDialog((JFrame) getParent(), true).setVisible(true);
+        new FileChooserDialog(this, true).setVisible(true);
     }//GEN-LAST:event_browseButtonActionPerformed
-
+    
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
-
+    
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        MonitorFrame monitorFrame = (MonitorFrame) getParent();
-        Point location = monitorFrame.getLocation();
-        monitorFrame.dispose();
-        monitorFrame.launch(location);
+        Configuration.setProperty("loggerLevel", loggerComboBox.getSelectedItem().toString());
+        Configuration.setProperty("writerSleep", currentTowerSpinner.getValue().toString());
+        Configuration.setProperty("signalLowerBound", signalLowerBoundSpinner.getValue().toString());
+        Configuration.setProperty("chartDataExpiry", chartDataExpirySpinner.getValue().toString());
+        Configuration.setProperty("connectTimeout", connectTimeoutSpinner.getValue().toString());
+        Configuration.setProperty("readTimeout", readTimeoutSpinner.getValue().toString());
+        Configuration.setProperty("utdIPAddress", utdIPAddressField.getText());
+        Configuration.setProperty("towerNames", towersFileLocation);
+        Configuration.fireConfigurationChanged();        
     }//GEN-LAST:event_okButtonActionPerformed
     
     /**
@@ -241,7 +254,9 @@ public class SettingsDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JSpinner chartDataExpirySpinner;
+    private javax.swing.JSpinner connectTimeoutSpinner;
+    private javax.swing.JSpinner currentTowerSpinner;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -255,13 +270,11 @@ public class SettingsDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JSpinner jSpinner1;
-    private javax.swing.JSpinner jSpinner2;
-    private javax.swing.JSpinner jSpinner3;
-    private javax.swing.JSpinner jSpinner4;
-    private javax.swing.JSpinner jSpinner5;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JComboBox loggerComboBox;
     private javax.swing.JButton okButton;
+    private javax.swing.JSpinner readTimeoutSpinner;
+    private javax.swing.JSpinner signalLowerBoundSpinner;
+    private javax.swing.JTextField utdIPAddressField;
     // End of variables declaration//GEN-END:variables
     
 }

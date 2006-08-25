@@ -12,19 +12,23 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import za.co.turton.eyeburst.TowerDataThread;
 import za.co.turton.eyeburst.TowerNameService;
 import za.co.turton.eyeburst.TowerPublisher;
+import za.co.turton.eyeburst.config.ConfigurationChangedListener;
 import za.co.turton.eyeburst.io.FileMonitorLineProvider;
 import za.co.turton.eyeburst.monitor.MonitorFrame;
 import za.co.turton.eyeburst.monitor.TowerTableModel;
@@ -35,7 +39,7 @@ import za.co.turton.eyeburst.sample.TowerTransferHandler;
 
 public abstract class Configuration {
     
-    private static final Logger logger = Logger.getLogger("eyeBurst");
+    private static Logger logger;
     
     private static Map<Class, Map<String, Object>> dependencies;
     
@@ -44,6 +48,8 @@ public abstract class Configuration {
     private static Properties config;
     
     private static Map<Class, Object> globals;
+    
+    private static Set<WeakReference<Object>> instantiateds;
     
     private static final String CONFIG_PROPERTIES = "conf/config.properties";
     
@@ -93,19 +99,21 @@ public abstract class Configuration {
         
         classDeps = getDependencyMapFor(TowerTransferHandler.class);
         classDeps.put("logger", logger);
+        
+        logger.config("Loaded dependency graph");
     }
     
     public static void initialise() throws ConfigurationException {
         
+        logger = Logger.getLogger("Bootstrap");
         logger.getParent().getHandlers()[0].setLevel(Level.FINEST);
-        logger.setLevel(Level.CONFIG);
         
         loadDependencies();
         loadAdapters();
         loadConfig();
-        globals = new HashMap();
+        flushGlobals();
         
-        logger.setLevel(Level.parse(config.getProperty("loggerLevel")));
+        instantiateds = new HashSet<WeakReference<Object>>();        
     }
     
     private static void loadAdapters() {
@@ -119,6 +127,8 @@ public abstract class Configuration {
         adapters.put(InetSocketAddress.class, new InetSocketAddressAdapter());
         adapters.put(Properties.class, new PropertiesAdapter());
         adapters.put(Level.class, new LoggerLevelAdapter());
+        
+        logger.config("Loaded adapters");
     }
     
     private static void loadConfig() throws ConfigurationException {
@@ -131,6 +141,8 @@ public abstract class Configuration {
             
             in = new FileInputStream(DEV_CONFIG_PROPERTIES);
             config.load(in);
+            
+            logger.config("Loaded config properties files");
             
         } catch (FileNotFoundException e) {
             throw new ConfigurationException("Could load configuration properties from disk", e);
@@ -218,12 +230,13 @@ public abstract class Configuration {
             }
             
             T instance = constructor.newInstance(args);
+            instantiateds.add(new WeakReference(instance));
             
             if (clazz.isAnnotationPresent(Singleton.class))
                 globals.put(clazz, instance);
             
             classesAbove.remove(clazz);
-            logger.config("Configured "+instance);
+            logger.fine("Configured "+instance);
             return instance;
             
         } catch (IllegalAccessException e) {
@@ -259,5 +272,36 @@ public abstract class Configuration {
         Map classDeps = new HashMap();
         dependencies.put(clazz, classDeps);
         return classDeps;
+    }
+    
+    public static void flushGlobals() {
+        
+        if (globals == null)
+            globals = new HashMap<Class, Object>();
+        else
+            globals.clear();
+        
+        logger = Logger.getLogger("eyeBurst");
+        logger.setLevel(Level.parse(config.getProperty("loggerLevel")));
+    }
+    
+    static void fireConfigurationChanged() {
+        
+        flushGlobals();
+        
+        Set<WeakReference<Object>> deadRefs = new HashSet<WeakReference<Object>>();
+        
+        for (WeakReference<Object> ref : instantiateds) {
+            Object instance = ref.get();
+            
+            if (instance != null) {
+                if (instance instanceof ConfigurationChangedListener)
+                    ((ConfigurationChangedListener) instance).configurationChanged();
+            } else
+                deadRefs.add(ref);
+        }
+        
+        for (WeakReference<Object> deadRef : deadRefs)
+            instantiateds.remove(deadRef);
     }
 }

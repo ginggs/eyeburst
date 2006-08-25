@@ -17,6 +17,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import za.co.turton.eyeburst.*;
+import za.co.turton.eyeburst.config.ConfigurationChangedListener;
 import za.co.turton.eyeburst.config.Inject;
 import za.co.turton.eyeburst.config.InjectionConstructor;
 import za.co.turton.eyeburst.config.Configuration;
@@ -27,7 +28,8 @@ import za.co.turton.eyeburst.sample.SampleSizeDialog;
  * This is the main Swing frame of the application
  * @author james
  */
-public class MonitorFrame extends javax.swing.JFrame implements ConnectionListener, CurrentTowerListener {
+public class MonitorFrame extends javax.swing.JFrame implements ConnectionListener,
+        CurrentTowerListener, ConfigurationChangedListener {
     
     private TowerDataThread towerDataThread;
     
@@ -339,6 +341,12 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
                 monitorFrame.setVisible(true);
             }
         });
+    }
+
+    public void configurationChanged() {        
+        Point location = getLocation();        
+        dispose();
+        launch(location);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -12,6 +12,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JOptionPane;
 import javax.swing.border.TitledBorder;
 import za.co.turton.eyeburst.config.Configuration;
+import za.co.turton.eyeburst.config.ConfigurationChangedListener;
 import za.co.turton.eyeburst.config.Inject;
 import za.co.turton.eyeburst.config.InjectionConstructor;
 
@@ -19,7 +20,7 @@ import za.co.turton.eyeburst.config.InjectionConstructor;
  *
  * @author  james
  */
-public class SampleFrame extends javax.swing.JFrame {                
+public class SampleFrame extends javax.swing.JFrame implements ConfigurationChangedListener {
     
     private ChartPanel chartPanel;
     
@@ -150,6 +151,10 @@ public class SampleFrame extends javax.swing.JFrame {
     private void pendingsPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pendingsPanelMouseClicked
         // Dummy method necessary for popup menu
     }//GEN-LAST:event_pendingsPanelMouseClicked
+
+    public void configurationChanged() {
+        dispose();
+    }
         
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

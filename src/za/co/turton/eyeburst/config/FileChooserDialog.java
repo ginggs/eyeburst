@@ -6,6 +6,7 @@
 
 package za.co.turton.eyeburst.config;
 
+import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -22,7 +23,7 @@ public class FileChooserDialog extends javax.swing.JDialog {
     private FileFilter fileFilter;
     
     /** Creates new form FileChooserDialog */
-    public FileChooserDialog(java.awt.Frame parent, boolean modal) {
+    public FileChooserDialog(Dialog parent, boolean modal) {
         super(parent, modal);
         initComponents();
         
@@ -36,7 +37,7 @@ public class FileChooserDialog extends javax.swing.JDialog {
             }
         };
         
-        fileChooser.setFileFilter(fileFilter);        
+        fileChooser.setFileFilter(fileFilter);
     }
     
     /** This method is called from within the constructor to
@@ -70,26 +71,16 @@ public class FileChooserDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
     private void fileChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileChooserActionPerformed
-        if (evt.getActionCommand().equals(JFileChooser.CANCEL_SELECTION)) {
-            dispose();
-        } else if (evt.getActionCommand().equals(JFileChooser.APPROVE_SELECTION)) {
-            
+        if (evt.getActionCommand().equals(JFileChooser.APPROVE_SELECTION)) {
+            String path = fileChooser.getSelectedFile().getPath();
+            ((SettingsDialog) getParent()).setTowersFileLocation(path);
         }
+        
+        dispose();
     }//GEN-LAST:event_fileChooserActionPerformed
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FileChooserDialog(new javax.swing.JFrame(), true).setVisible(true);
-            }
-        });
-    }
-    
+            
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFileChooser fileChooser;
     // End of variables declaration//GEN-END:variables
