@@ -342,11 +342,13 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
             }
         });
     }
-
-    public void configurationChanged() {        
-        Point location = getLocation();        
-        dispose();
-        launch(location);
+    
+    public void configurationChanged() {
+        if (this.isVisible()) {
+            Point location = getLocation();
+            dispose();
+            launch(location);
+        }
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

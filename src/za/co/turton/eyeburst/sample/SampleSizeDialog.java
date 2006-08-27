@@ -45,6 +45,7 @@ public class SampleSizeDialog extends javax.swing.JDialog {
 
         sizeSpinner.setValue(10);
 
+        okButton.setMnemonic('o');
         okButton.setText("OK");
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -52,6 +53,7 @@ public class SampleSizeDialog extends javax.swing.JDialog {
             }
         });
 
+        cancelButton.setMnemonic('c');
         cancelButton.setText("Cancel");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
