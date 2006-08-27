@@ -1,3 +1,5 @@
+Version 1.1
+
 Cosmetic improvements
 Added settings dialog
 Added tooltips to box and whisker plot
