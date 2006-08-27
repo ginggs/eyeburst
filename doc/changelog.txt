@@ -1,3 +1,5 @@
+Cosmetic improvements
+Added settings dialog
 Added tooltips to box and whisker plot
 Moved from AWT Canvases to JPanels for charts
 Introduced depedency injection

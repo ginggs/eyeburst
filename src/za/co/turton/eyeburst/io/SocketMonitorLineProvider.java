@@ -15,13 +15,11 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import za.co.turton.eyeburst.config.Configuration;
-import za.co.turton.eyeburst.config.Configure;
 import za.co.turton.eyeburst.config.Inject;
 import za.co.turton.eyeburst.config.InjectionConstructor;
 
@@ -46,7 +44,7 @@ public class SocketMonitorLineProvider extends MonitorLineProvider {
     
     private int readTimeout;
     
-    private SocketAddress utdIPAddress;
+    private InetSocketAddress utdIPAddress;
     
     private int connectTimeout;
     
@@ -61,7 +59,7 @@ public class SocketMonitorLineProvider extends MonitorLineProvider {
     public @InjectionConstructor SocketMonitorLineProvider (
             @Inject("logger") Logger logger,
             @Inject("readTimeout") int readTimeout,
-            @Inject("utdIPAddress") SocketAddress utdIPAddress,
+            @Inject("utdIPAddress") InetSocketAddress utdIPAddress,
             @Inject("connectTimeout") int connectTimeout,
             @Inject("utdDebugOn") String utdDebugOn,
             @Inject("utdDebugOff") String utdDebugOff,

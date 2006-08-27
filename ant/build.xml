@@ -15,6 +15,7 @@
             <classpath>            
                 <pathelement location="${basedir}/lib/${jcommon.name}-${jcommon.version}.jar"/>
                 <pathelement location="${basedir}/lib/${jfreechart.name}-${jfreechart.version}.jar"/>
+                <pathelement location="${basedir}/lib/swing-layout-1.0.jar"/>
             </classpath>
             <include name="**"/>
         </javac>
@@ -29,7 +30,7 @@
         <jar jarfile="${basedir}/dist/${eyeburst.name}.jar"
             basedir="${basedir}/build">
             <manifest>
-                <attribute name="Class-Path" value="lib/${jcommon.name}-${jcommon.version}.jar lib/${jfreechart.name}-${jfreechart.version}.jar"/>
+                <attribute name="Class-Path" value="lib/${jcommon.name}-${jcommon.version}.jar lib/${jfreechart.name}-${jfreechart.version}.jar lib/swing-layout-1.0.jar"/>
                 <attribute name="Main-Class" value="za.co.turton.eyeburst.monitor.MonitorFrame"/>
             </manifest>
         </jar>

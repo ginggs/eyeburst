@@ -30,6 +30,8 @@ import za.co.turton.eyeburst.TowerNameService;
 import za.co.turton.eyeburst.TowerPublisher;
 import za.co.turton.eyeburst.config.ConfigurationChangedListener;
 import za.co.turton.eyeburst.io.FileMonitorLineProvider;
+import za.co.turton.eyeburst.io.SocketMonitorLineProvider;
+import za.co.turton.eyeburst.io.SocketMonitorLineProvider;
 import za.co.turton.eyeburst.monitor.MonitorFrame;
 import za.co.turton.eyeburst.monitor.TowerTableModel;
 import za.co.turton.eyeburst.sample.SampleFrame;
@@ -68,11 +70,11 @@ public abstract class Configuration {
         classDeps.put("logger", logger);
         
         classDeps = getDependencyMapFor(TowerDataThread.class);
-        classDeps.put("lineProvider", FileMonitorLineProvider.class);
+        classDeps.put("lineProvider", SocketMonitorLineProvider.class);
         classDeps.put("towerPublisher", TowerPublisher.class);
         classDeps.put("logger", logger);
         
-        classDeps = getDependencyMapFor(FileMonitorLineProvider.class);
+        classDeps = getDependencyMapFor(SocketMonitorLineProvider.class);
         classDeps.put("logger", logger);
         
         classDeps = getDependencyMapFor(TowerPublisher.class);
@@ -155,13 +157,11 @@ public abstract class Configuration {
         return config.getProperty(propertyName);
     }
     
-    public static <T> T getTransformedProperty(Class<T> targetType, String propertyName) {
+    public static <T> T getTransformedProperty(Class<T> targetType, String propertyName) throws ConfigurationException{
         try {
             return (T) adapters.get(targetType).transform(config.getProperty(propertyName));
         } catch (AdapterException e) {
-            //@todo fix me
-            logger.log(Level.WARNING, "Could not transform property", e);
-            return null;
+            throw new ConfigurationException("Could not transform property "+propertyName, e);
         }
     }
     

@@ -119,7 +119,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("eyeBurst");
+        setTitle("eyeBurst 1.1");
         setName("eyeBurst Frame");
         displayPanel.setLayout(new java.awt.BorderLayout());
 
