@@ -69,7 +69,7 @@ public abstract class Configuration {
         classDeps.put("logger", logger);
         
         classDeps = getDependencyMapFor(TowerDataThread.class);
-        classDeps.put("lineProvider", FileMonitorLineProvider.class);
+        classDeps.put("lineProvider", SocketMonitorLineProvider.class);
         classDeps.put("towerPublisher", TowerPublisher.class);
         classDeps.put("logger", logger);
         
