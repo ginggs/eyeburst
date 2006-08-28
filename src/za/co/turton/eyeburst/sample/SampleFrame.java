@@ -47,7 +47,7 @@ public class SampleFrame extends javax.swing.JFrame implements ConfigurationChan
         
         this.sampleSize = sampleSize;
         TitledBorder border = (TitledBorder) this.pendingsPanel.getBorder();
-        border.setTitle(border.getTitle() + " (Sample Size = " + sampleSize+")");
+        pendingsPanel.setToolTipText("Sample Size = " + sampleSize);
     }
         
     /** This method is called from within the constructor to

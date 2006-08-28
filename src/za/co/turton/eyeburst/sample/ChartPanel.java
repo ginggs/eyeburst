@@ -45,7 +45,7 @@ public class ChartPanel extends org.jfree.chart.ChartPanel implements TowerCompl
         NumberAxis valueAxis = new NumberAxis(yAxisTitle);
         valueAxis.setAutoRangeIncludesZero(false);
         BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
-//        renderer.setToolTipGenerator(new BoxAndWhiskerToolTipGenerator());
+        renderer.setToolTipGenerator(new BoxAndWhiskerToolTipGenerator());
         CategoryPlot plot = new CategoryPlot(dataset, setupAxis, valueAxis, renderer);
         chart = new JFreeChart(plot);
         setChart(chart);
@@ -58,6 +58,6 @@ public class ChartPanel extends org.jfree.chart.ChartPanel implements TowerCompl
         SampleGroup sampleGroup = (SampleGroup) tc.getSource();
         String towerName = tower.getName();
         String groupName = sampleGroup.getGroupName();
-        dataset.add(tower.getSignalData(), towerName, groupName);
+        dataset.add(tower.getSignalData(), towerName, groupName);               
     }
 }

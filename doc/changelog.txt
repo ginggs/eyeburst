@@ -1,5 +1,6 @@
 Version 1.1
 
+Fixed 'non-rectangular dataset' bug/feature in box and whisker plot in JFreeChart
 Cosmetic improvements
 Added settings dialog
 Added tooltips to box and whisker plot
