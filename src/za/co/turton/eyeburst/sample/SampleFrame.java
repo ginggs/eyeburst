@@ -79,8 +79,8 @@ public class SampleFrame extends javax.swing.JFrame implements ConfigurationChan
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("eyeBurst");
-        jSplitPane1.setDividerLocation(400);
+        setTitle("eyeBurst 1.1 - Sampled Data");
+        jSplitPane1.setDividerLocation(500);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         chartPanelContainer.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -90,7 +90,9 @@ public class SampleFrame extends javax.swing.JFrame implements ConfigurationChan
 
         jSplitPane1.setLeftComponent(chartPanelContainer);
 
-        pendingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED), "Pending Samples", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
+        pendingsPanel.setLayout(new java.awt.CardLayout());
+
+        pendingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1), "Pending Samples", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
         pendingsPanel.setComponentPopupMenu(sampleGroupMenu);
         pendingsPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -99,10 +101,11 @@ public class SampleFrame extends javax.swing.JFrame implements ConfigurationChan
         });
 
         promptLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        promptLabel.setText("Right-click to create a sample group");
+        promptLabel.setText("Right-click to create sample groups...");
+        promptLabel.setToolTipText("You must create a sample group in order to create a sample");
         promptLabel.setEnabled(false);
         promptLabel.setName("promptLabel");
-        pendingsPanel.add(promptLabel);
+        pendingsPanel.add(promptLabel, "card2");
 
         jSplitPane1.setRightComponent(pendingsPanel);
 
@@ -118,7 +121,7 @@ public class SampleFrame extends javax.swing.JFrame implements ConfigurationChan
     }//GEN-LAST:event_chartPanelContainerComponentResized
     
     private void createGroupItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createGroupItemActionPerformed
-        String groupName = JOptionPane.showInputDialog(this, "Sample Group Name (e.g. Near Window)");
+        String groupName = JOptionPane.showInputDialog(this, "Sample Group Name");
         
         if (groupName == null)
             return;

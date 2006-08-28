@@ -7,11 +7,10 @@
 package za.co.turton.eyeburst.config;
 
 import java.awt.Dialog;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
-import javax.swing.JDialog;
+import java.util.logging.Level;
 import javax.swing.JFileChooser;
+import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
 /**
@@ -57,6 +56,12 @@ public class FileChooserDialog extends javax.swing.JDialog {
         setModal(true);
         setName("fileChooserDialog");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
+
         fileChooser.setApproveButtonText("Load");
         fileChooser.setApproveButtonToolTipText("");
         fileChooser.setCurrentDirectory(new java.io.File("/conf"));
@@ -72,6 +77,18 @@ public class FileChooserDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        // Hack to work around JTable column header bug in Aqua L&F JFileChooser
+        
+        if (UIManager.getLookAndFeel().getName().equals("Mac OS X Aqua")) {            
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception e) {
+                
+            }
+        }
+    }//GEN-LAST:event_formWindowClosed
+    
     private void fileChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileChooserActionPerformed
         if (evt.getActionCommand().equals(JFileChooser.APPROVE_SELECTION)) {
             String path = fileChooser.getSelectedFile().getPath();
@@ -80,7 +97,7 @@ public class FileChooserDialog extends javax.swing.JDialog {
         
         dispose();
     }//GEN-LAST:event_fileChooserActionPerformed
-            
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFileChooser fileChooser;
     // End of variables declaration//GEN-END:variables

@@ -39,9 +39,7 @@ public class SocketMonitorLineProvider extends MonitorLineProvider {
     private Writer writer;
     
     private boolean connected;
-    
-    private Logger logger;
-    
+        
     private int readTimeout;
     
     private InetSocketAddress utdIPAddress;

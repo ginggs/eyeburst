@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import za.co.turton.eyeburst.config.ConfigurationChangedListener;
 import za.co.turton.eyeburst.config.Configure;
 import za.co.turton.eyeburst.config.Inject;
 import za.co.turton.eyeburst.config.InjectionConstructor;
@@ -24,7 +25,7 @@ import za.co.turton.eyeburst.io.MonitorLineProvider;
  * Thread to read and parse debug data from a line provider
  * @author james
  */
-public class TowerDataThread extends Thread {
+public class TowerDataThread extends Thread implements ConfigurationChangedListener {
     
     private MonitorLineProvider lineProvider;
     
@@ -112,13 +113,14 @@ public class TowerDataThread extends Thread {
         try {
             lineProvider.connect();
             fireConnected();
-            logger.log(Level.FINE, this+" running");
+            logger.fine(this+" running");
             
             new LineWriterThread().start();
             
             while (this.mustRun) {
                 try {
                     String line = lineProvider.readLine();
+                    logger.finest("Read "+line);
                     StringTokenizer tokeniser = new StringTokenizer(line, DELIM);
                     
                     try {
@@ -227,6 +229,10 @@ public class TowerDataThread extends Thread {
      */
     public void requestStop() {
         mustRun = false;
+    }
+
+    public void configurationChanged() {
+        requestStop();
     }
     
     /**

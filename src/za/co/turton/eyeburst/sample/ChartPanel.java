@@ -45,11 +45,11 @@ public class ChartPanel extends org.jfree.chart.ChartPanel implements TowerCompl
         NumberAxis valueAxis = new NumberAxis(yAxisTitle);
         valueAxis.setAutoRangeIncludesZero(false);
         BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
-        renderer.setToolTipGenerator(new BoxAndWhiskerToolTipGenerator());
+//        renderer.setToolTipGenerator(new BoxAndWhiskerToolTipGenerator());
         CategoryPlot plot = new CategoryPlot(dataset, setupAxis, valueAxis, renderer);
-        chart = new JFreeChart("Sampled Data", plot);
+        chart = new JFreeChart(plot);
         setChart(chart);
-        setPreferredSize(new Dimension(400, 400));
+        setPreferredSize(new Dimension(400, 500));
         
     }    
     
@@ -59,10 +59,5 @@ public class ChartPanel extends org.jfree.chart.ChartPanel implements TowerCompl
         String towerName = tower.getName();
         String groupName = sampleGroup.getGroupName();
         dataset.add(tower.getSignalData(), towerName, groupName);
-        int rowIndex = dataset.getRowIndex(towerName);
-        int columnIndex = dataset.getColumnIndex(groupName);
-        
-        chart.getCategoryPlot().getRenderer().getToolTipGenerator().
-                generateToolTip(dataset, rowIndex, columnIndex);
     }
 }

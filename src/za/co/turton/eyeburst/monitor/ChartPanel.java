@@ -67,9 +67,11 @@ public class ChartPanel extends org.jfree.chart.ChartPanel implements TowerPubli
         seriesMap = new HashMap<String, TimeSeries>();
         chart = ChartFactory.createTimeSeriesChart(chartTitle, xAxisTitle, yAxisTitle, seriesCol,
                 true, false, false);
+
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
         chart.getXYPlot().setRenderer(renderer);
-        setChart(chart);        
+        setChart(chart);
+        chart.setTitle((String) null);
     }
         
     public void towerPublication(TowerPublicationEvent evt) {

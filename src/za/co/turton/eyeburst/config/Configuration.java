@@ -16,6 +16,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -28,9 +29,7 @@ import java.util.logging.Logger;
 import za.co.turton.eyeburst.TowerDataThread;
 import za.co.turton.eyeburst.TowerNameService;
 import za.co.turton.eyeburst.TowerPublisher;
-import za.co.turton.eyeburst.config.ConfigurationChangedListener;
 import za.co.turton.eyeburst.io.FileMonitorLineProvider;
-import za.co.turton.eyeburst.io.SocketMonitorLineProvider;
 import za.co.turton.eyeburst.io.SocketMonitorLineProvider;
 import za.co.turton.eyeburst.monitor.MonitorFrame;
 import za.co.turton.eyeburst.monitor.TowerTableModel;
@@ -70,11 +69,14 @@ public abstract class Configuration {
         classDeps.put("logger", logger);
         
         classDeps = getDependencyMapFor(TowerDataThread.class);
-        classDeps.put("lineProvider", SocketMonitorLineProvider.class);
+        classDeps.put("lineProvider", FileMonitorLineProvider.class);
         classDeps.put("towerPublisher", TowerPublisher.class);
         classDeps.put("logger", logger);
         
         classDeps = getDependencyMapFor(SocketMonitorLineProvider.class);
+        classDeps.put("logger", logger);
+        
+        classDeps = getDependencyMapFor(FileMonitorLineProvider.class);
         classDeps.put("logger", logger);
         
         classDeps = getDependencyMapFor(TowerPublisher.class);
@@ -281,7 +283,6 @@ public abstract class Configuration {
         else
             globals.clear();
         
-        logger = Logger.getLogger("eyeBurst");
         logger.setLevel(Level.parse(config.getProperty("loggerLevel")));
     }
     
@@ -289,19 +290,16 @@ public abstract class Configuration {
         
         flushGlobals();
         
-        Set<WeakReference<Object>> deadRefs = new HashSet<WeakReference<Object>>();
+        Set<WeakReference<Object>> snapshot = new HashSet<WeakReference<Object>>(instantiateds);
         
-        for (WeakReference<Object> ref : instantiateds) {
+        for (WeakReference<Object> ref : snapshot) {
             Object instance = ref.get();
             
             if (instance != null) {
                 if (instance instanceof ConfigurationChangedListener)
                     ((ConfigurationChangedListener) instance).configurationChanged();
             } else
-                deadRefs.add(ref);
-        }
-        
-        for (WeakReference<Object> deadRef : deadRefs)
-            instantiateds.remove(deadRef);
+                instantiateds.remove(ref);
+        }                
     }
 }

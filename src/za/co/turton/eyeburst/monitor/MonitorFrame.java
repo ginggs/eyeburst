@@ -6,6 +6,7 @@
 
 package za.co.turton.eyeburst.monitor;
 
+import apple.laf.AquaLookAndFeel;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -49,7 +50,6 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
     
     public @InjectionConstructor MonitorFrame(
             
-            @Inject("towerDataThread")  TowerDataThread towerDataThread,
             @Inject("towerTableModel")  TowerTableModel towerTableModel,
             @Inject("towerPublisher")   TowerPublisher towerPublisher,
             @Inject("towerNameService") TowerNameService towerNameService,
@@ -57,7 +57,6 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
             @Inject("appTitle")         String appTitle,
             @Inject("logger")           Logger logger) {
         
-        this.towerDataThread = towerDataThread;
         this.towerTableModel = towerTableModel;
         this.towerPublisher = towerPublisher;
         this.towerNameService = towerNameService;
@@ -68,6 +67,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         
         TableSorter sorter = new TableSorter(towerTableModel);
         sorter.setSortingStatus(0, TableSorter.ASCENDING);
+//        JTableHeader tableHEa
         sorter.setTableHeader(towerTable.getTableHeader());
         towerTable.getTableHeader().setToolTipText("Click to specify sorting; Control-Click to specify secondary sorting");
         towerTable.setModel(sorter);
@@ -119,7 +119,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("eyeBurst 1.1");
+        setTitle("eyeBurst 1.1 - Live Data");
         setName("eyeBurst Frame");
         displayPanel.setLayout(new java.awt.BorderLayout());
 
@@ -129,6 +129,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         displayPanel.setPreferredSize(new java.awt.Dimension(550, 500));
         jSplitPane1.setDividerLocation(320);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        chartPanelContainer.setToolTipText("");
         chartPanelContainer.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 chartPanelContainerComponentResized(evt);
@@ -168,6 +169,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         getContentPane().add(displayPanel);
 
         currentLabel.setText("Currently aligned to");
+        currentLabel.setToolTipText("The last tower that your device reported that it was aligned to");
         currentTowerPanel.add(currentLabel);
 
         currentTower.setText("?");
@@ -199,6 +201,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
 
         settingsButton.setMnemonic('s');
         settingsButton.setText("Settings...");
+        settingsButton.setToolTipText("Configure various eyeBurst settings");
         settingsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 settingsButtonActionPerformed(evt);
@@ -319,7 +322,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+//           UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
             logger.log(Level.WARNING, "Could not set system look and feel", e);
         }
@@ -330,7 +333,8 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
     
     public static void launch(final Point location) {
         SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
+            
+            public void run() {                
                 MonitorFrame monitorFrame = Configuration.configure(MonitorFrame.class);
                 
                 if (location == null)

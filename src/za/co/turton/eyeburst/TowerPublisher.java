@@ -72,19 +72,16 @@ public @Singleton class TowerPublisher {
         Set<WeakReference<Tower>> towerSet = towers.get(datum.code);
         
         if (towerSet != null) {
-            Set<WeakReference<Tower>> deadRefs = new HashSet();
+            Set<WeakReference<Tower>> snapshot = new HashSet<WeakReference<Tower>>(towerSet);
             
-            for (WeakReference<Tower> towerRef : towerSet) {
+            for (WeakReference<Tower> towerRef : snapshot) {
                 Tower tower = towerRef.get();
                 
                 if (tower != null)
                     tower.addDatum(datum);
                 else
-                    deadRefs.add(towerRef);
-            }
-            
-            for (WeakReference<Tower> deadRef : deadRefs)
-                towerSet.remove(deadRef);
+                    towerSet.remove(towerRef);
+            }                        
         }
         
         for (TowerPublicationListener listener : listeners)

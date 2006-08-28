@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import za.co.turton.eyeburst.config.Configuration;
+import za.co.turton.eyeburst.config.ConfigurationChangedListener;
 import za.co.turton.eyeburst.config.Inject;
 import za.co.turton.eyeburst.config.InjectionConstructor;
 
@@ -21,19 +22,13 @@ public abstract class MonitorLineProvider {
     
     protected Logger logger;
     
-    public MonitorLineProvider(Logger logger) {
+    public MonitorLineProvider(final Logger logger) {
         
         this.logger = logger;
-        final Logger finalLogger = logger;
         
         Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Hook Disconnect") {
             public void run() {
-                if (isConnected())
-                    try {
-                        disconnect();
-                    } catch (IOException e) {
-                        finalLogger.log(Level.WARNING, "Could not disconnect", e);
-                    }
+                checkDisconnected();
             }
         });
     }
@@ -68,4 +63,21 @@ public abstract class MonitorLineProvider {
      * @throws java.io.IOException if an exceptional circumstance arises while trying to prompt the underlying data source
      */
     public abstract void requestCurrentTower() throws IOException;
+    
+//    public void configurationChanged() {
+//        checkDisconnected();
+//    }
+//
+//    protected void finalize() throws Throwable {
+//        checkDisconnected();
+//    }
+    
+    private void checkDisconnected() {
+        if (isConnected())
+            try {
+                disconnect();
+            } catch (IOException e) {
+                logger.log(Level.WARNING, "Could not disconnect", e);
+            }
+    }
 }

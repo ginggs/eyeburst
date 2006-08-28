@@ -35,9 +35,7 @@ public class FileMonitorLineProvider extends MonitorLineProvider {
     private String resourcePath;
     
     private int lineProviderInterval;
-    
-    private Logger logger;
-            
+                
     /** Creates a new instance of FileMonitorLineProvider */
     public @InjectionConstructor FileMonitorLineProvider(
             @Inject("resourcePath") String resourcePath,
@@ -46,8 +44,7 @@ public class FileMonitorLineProvider extends MonitorLineProvider {
         
         super(logger);
         this.resourcePath = resourcePath;
-        this.lineProviderInterval = lineProviderInterval;
-        this.logger = logger;
+        this.lineProviderInterval = lineProviderInterval;        
         connected = false;
     }
     

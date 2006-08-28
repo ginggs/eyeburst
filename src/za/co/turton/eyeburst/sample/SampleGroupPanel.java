@@ -84,15 +84,17 @@ public class SampleGroupPanel extends javax.swing.JPanel implements TowerPublica
             
             if (this.isVirgin) {             
                 this.removeAll();
-                setLayout(new GridLayout(0, 2));
+                GridLayout layout = new GridLayout(0, 2);
+                setLayout(layout);
+                layout.setHgap(10);
                 this.isVirgin = false;
             }
             
             GridLayout layout = (GridLayout) getLayout();
-            layout.setRows(layout.getRows()+1);
+            layout.setRows(layout.getRows()+1);            
             
             JLabel towerLabel = new JLabel(tower.getName());
-            towerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            towerLabel.setHorizontalAlignment(SwingConstants.TRAILING);
             add(towerLabel);
             
             JProgressBar towerProgress = new JProgressBar(0, sampleGroup.getSampleSize());
