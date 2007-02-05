@@ -155,7 +155,7 @@ public class Tower {
      *
      * @return This tower's reported load
      */
-    //@Column(name = "Load", number = 9)
+    @Column(name = "Load", number = 8)
     public Float getLoad() {
         return load;
     }     
