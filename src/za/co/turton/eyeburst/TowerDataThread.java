@@ -49,6 +49,8 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
     
     private static final String DELIM = " ";
     
+    private static final String DUMMY_LOAD_STR = "us";
+    
     /**
      * Creates a new instance of TowerDataThread
      */
@@ -155,7 +157,13 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
                             towerDatum.distance = Integer.parseInt(tokeniser.nextToken().trim());
                             // "Load"
                             tokeniser.nextToken();
-                            towerDatum.load = Integer.parseInt(tokeniser.nextToken().trim());
+                            // Possibly the load value and possibly DUMMY_LOAD_STR
+                            String loadStr = tokeniser.nextToken().trim();
+                            
+                            if (loadStr.equals(DUMMY_LOAD_STR))
+                                loadStr = tokeniser.nextToken().trim();
+                            
+                            towerDatum.load = Integer.parseInt(loadStr);
                             
                             towerPublisher.take(towerDatum);
                         }
