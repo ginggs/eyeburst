@@ -1,3 +1,8 @@
+Version 1.1.1
+
+Added support for longer debug strings produced by some devices
+Added load column to display
+
 Version 1.1
 
 Fixed 'non-rectangular dataset' bug/feature in box and whisker plot in JFreeChart
