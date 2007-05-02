@@ -34,5 +34,11 @@ public interface ConnectionListener extends EventListener {
      * Called when the monitor thread's line provider fails to connect
      * @param e event object carrying any relevant information
      */
-    public void connectFailed(ConnectionEvent e);        
+    public void connectFailed(ConnectionEvent e);
+    
+    /**
+     * Called when a line with a recognised marker was not parseable
+     * @param e event object carrying any relevant information
+     */
+    public void unparseableLine(ConnectionEvent e);
 }

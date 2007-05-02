@@ -1,0 +1,28 @@
+>------ ut02 shell restart ------<
+?ut02Kd1-A201C0C7::: rfScan debug 2
+rfScan debug level is 0
+rfScan debug level set to 2
+?ut02Kd1-A201C0C7::: 83978.965 rfScanGpp 1 Bscc 4 Cost -90 Distance 10 us Load 3
+83978.965 rfScanGpp 1 Bscc 3 Cost -104 Distance 20 us Load 2
+83989.210 rfScanGpp 1 Bscc 4 Cost -90 Distance 10 us Load 3
+83989.210 rfScanGpp 1 Bscc 3 Cost -102 Distance 19 us Load 2
+83999.460 rfScanGpp 1 Bscc 4 Cost -93 Distance 10 us Load 3
+83999.460 rfScanGpp 1 Bscc 3 Cost -102 Distance 20 us Load 2
+84009.650 rfScanGpp 1 Bscc 4 Cost -90 Distance 10 us Load 3
+84009.650 rfScanGpp 1 Bscc 3 Cost -104 Distance 19 us Load 2
+84009.650 rfScanGpp 1 Bscc 23 Cost -121 Distance 33 us Load 0
+84009.650 rfScanGpp 1 Bscc 54 Cost -122 Distance 31 us Load 0
+84019.860 rfScanGpp 1 Bscc 4 Cost -89 Distance 10 us Load 3
+84019.860 rfScanGpp 1 Bscc 3 Cost -103 Distance 19 us Load 2
+84030.105 rfScanGpp 1 Bscc 4 Cost -90 Distance 10 us Load 3
+84030.105 rfScanGpp 1 Bscc 3 Cost -104 Distance 20 us Load 2
+84040.355 rfScanGpp 1 Bscc 4 Cost -93 Distance 10 us Load 3
+84040.355 rfScanGpp 1 Bscc 3 Cost -103 Distance 20 us Load 2
+rfscan 84050.605 rfScanGpp 1 Bscc 4 Cost -89 Distance 10 us Load 3
+84050.605 rfScanGpp 1 Bscc 3 Cost -103 Distance 20 us Load 2
+Scan debug 0
+rfScan debug level is 2
+rfScan debug level set to 0
+?ut02Kd1-A201C0C7::: quit
+
+>------ ut02 shell restart ------<

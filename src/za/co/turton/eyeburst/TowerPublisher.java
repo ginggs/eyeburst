@@ -64,7 +64,7 @@ public @Singleton class TowerPublisher {
         return tower;
     }
     
-    public void take(TowerDatum datum) {
+    public void publish(TowerDatum datum) {
         
         if (datum.cost < signalLowerBound)
             return;

@@ -354,6 +354,17 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
             launch(location);
         }
     }
+
+    public void unparseableLine(final ConnectionEvent e) {
+        final Component dialogParent = this;
+        
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                JOptionPane.showMessageDialog(dialogParent, e.getThreadException(), "Connect Failed", JOptionPane.ERROR_MESSAGE);
+                towerDataThread.requestStop();
+            }
+        });
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;

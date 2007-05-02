@@ -49,19 +49,19 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
     
     private static final String DELIM = " ";
     
-    private static final String DUMMY_LOAD_STR = "us";
+    private static final String DUMMY_STR = "us";
     
     /**
      * Creates a new instance of TowerDataThread
      */
     public @InjectionConstructor TowerDataThread(
             @Inject("lineProvider") MonitorLineProvider lineProvider,
-            @Inject("towerPublisher") TowerPublisher towerPublisher,
-            @Inject("logger") Logger logger,
-            @Inject("utdDebugMarker") String utdDebugMarker,
-            @Inject("alignedCode") String alignedCode,
-            @Inject("dataCode") String dataCode,
-            @Inject("writerSleep") int writerSleep) {
+    @Inject("towerPublisher") TowerPublisher towerPublisher,
+    @Inject("logger") Logger logger,
+    @Inject("utdDebugMarker") String utdDebugMarker,
+    @Inject("alignedCode") String alignedCode,
+    @Inject("dataCode") String dataCode,
+    @Inject("writerSleep") int writerSleep) {
         
         this.lineProvider = lineProvider;
         this.towerPublisher = towerPublisher;
@@ -69,7 +69,7 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
         this.utdDebugMarker = utdDebugMarker;
         this.alignedCode = alignedCode;
         this.dataCode = dataCode;
-        this.writerSleep = writerSleep;        
+        this.writerSleep = writerSleep;
         this.setName("MonitorThread");
         this.setDaemon(true);
         this.connectionListeners = new HashSet<ConnectionListener>();
@@ -122,15 +122,18 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
             while (this.mustRun) {
                 try {
                     String line = lineProvider.readLine();
-                    logger.finest("Read "+line);
                     StringTokenizer tokeniser = new StringTokenizer(line, DELIM);
                     
                     try {
-                        String token;
+                        String token = null;
                         
-                        do {
+                        while (!utdDebugMarker.equals(token) && tokeniser.hasMoreTokens()) {
                             token = tokeniser.nextToken().trim();
-                        } while (!token.equals(utdDebugMarker));
+                        } 
+                        
+                        if (!tokeniser.hasMoreTokens())
+                            // This line is not of interest
+                            continue;
                         
                         String typeCode = tokeniser.nextToken().trim();
                         
@@ -149,30 +152,34 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
                             tokeniser.nextToken();
                             String towerCode = tokeniser.nextToken().trim();
                             TowerDatum towerDatum = new TowerDatum(towerCode);
+                            
                             // "Cost"
                             tokeniser.nextToken();
                             towerDatum.cost = Float.parseFloat(tokeniser.nextToken().trim());
+                            
                             // "Distance"
                             tokeniser.nextToken();
                             towerDatum.distance = Integer.parseInt(tokeniser.nextToken().trim());
-                            // "Load"
-                            tokeniser.nextToken();
-                            // Possibly the load value and possibly DUMMY_LOAD_STR
+                            
+                            // Possibly "Load" and possibly DUMMY_STR
                             String loadStr = tokeniser.nextToken().trim();
                             
-                            if (loadStr.equals(DUMMY_LOAD_STR))
+                            if (loadStr.equals(DUMMY_STR))
                                 loadStr = tokeniser.nextToken().trim();
                             
+                            loadStr = tokeniser.nextToken().trim();                                                        
                             towerDatum.load = Integer.parseInt(loadStr);
                             
-                            towerPublisher.take(towerDatum);
+                            towerPublisher.publish(towerDatum);
                         }
                     } catch (Exception e) {
-                        logger.log(Level.FINE, "Could not parse "+line, e);
+                        logger.log(Level.SEVERE, "Could not parse "+line, e);
+                        fireUnparseableLine(e);
+                        
                     }
                 } catch (SocketTimeoutException e) {
                     if (this.mustRun)
-                        logger.log(Level.INFO, "Socket read timed out", e);
+                        logger.log(Level.WARNING, "Socket read timed out", e);
                     else
                         logger.log(Level.FINE, "Socket read timed out", e);
                     
@@ -197,6 +204,13 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
             logger.log(Level.FINE, "Monitor thread finishing");
             fireDisconnected();
         }
+    }
+    
+    private void fireUnparseableLine(Exception e) {
+        ConnectionEvent event = new ConnectionEvent(this, e);
+        
+        for (ConnectionListener listener : connectionListeners)
+            listener.unparseableLine(event);
     }
     
     private void fireConnectFailed(Exception e) {
@@ -238,7 +252,7 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
     public void requestStop() {
         mustRun = false;
     }
-
+    
     public void configurationChanged() {
         requestStop();
     }

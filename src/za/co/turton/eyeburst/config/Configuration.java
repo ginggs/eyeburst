@@ -69,7 +69,7 @@ public abstract class Configuration {
         classDeps.put("logger", logger);
         
         classDeps = getDependencyMapFor(TowerDataThread.class);
-        classDeps.put("lineProvider", SocketMonitorLineProvider.class);
+        classDeps.put("lineProvider", FileMonitorLineProvider.class);
         classDeps.put("towerPublisher", TowerPublisher.class);
         classDeps.put("logger", logger);
         
@@ -251,7 +251,7 @@ public abstract class Configuration {
     }
     
     private static <T> Constructor<T> getConstructorFrom(Class<T> clazz) throws ConfigurationException {
-        Constructor<T>[] constructors = clazz.getConstructors();
+        Constructor<T>[] constructors = (Constructor[]) clazz.getConstructors();
         
         for (int i = 0; i < constructors.length; i++) {
             if (constructors[i].isAnnotationPresent(InjectionConstructor.class))
