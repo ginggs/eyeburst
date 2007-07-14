@@ -360,8 +360,8 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                JOptionPane.showMessageDialog(dialogParent, e.getThreadException(), "Connect Failed", JOptionPane.ERROR_MESSAGE);
-                towerDataThread.requestStop();
+//                JOptionPane.showMessageDialog(dialogParent, e.getThreadException(), "Connect Failed", JOptionPane.ERROR_MESSAGE);
+//                towerDataThread.requestStop();
             }
         });
     }

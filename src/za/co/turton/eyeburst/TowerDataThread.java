@@ -146,7 +146,7 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
                             
                         } else if (typeCode.equals(dataCode)) {
                             
-                            parseUntil("BScc", tokeniser);
+                            parseUntil("Bscc", tokeniser);
                             String towerCode = tokeniser.nextToken().trim();
                             TowerDatum towerDatum = new TowerDatum(towerCode);
                             
@@ -197,7 +197,7 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
     
     private void parseUntil(String token, StringTokenizer tokeniser) {
         
-        while (!tokeniser.nextToken().equals(token));
+        while (tokeniser.hasMoreTokens() && !tokeniser.nextToken().equalsIgnoreCase(token));
     }
     
     private void fireUnparseableLine(Exception e) {

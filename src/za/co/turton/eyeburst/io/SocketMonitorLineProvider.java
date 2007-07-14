@@ -107,22 +107,22 @@ public class SocketMonitorLineProvider extends MonitorLineProvider {
         
         writeLine(utdDebugOff);
         
-        if (lineReader != null)
-            lineReader.close();
+//        if (lineReader != null)
+//            lineReader.close();
+//        
+//        if (reader != null)
+//            reader.close();
+//        
+//        if (in != null)
+//            in.close();
+//        
+//        if (writer != null)
+//            writer.close();
+//        
+//        if (out != null)
+//            out.close();
         
-        if (reader != null)
-            reader.close();
-        
-        if (in != null)
-            in.close();
-        
-        if (writer != null)
-            writer.close();
-        
-        if (out != null)
-            out.close();
-        
-        if (socket != null)
+        if (socket != null && socket.isClosed())
             socket.close();
         
         connected = false;
