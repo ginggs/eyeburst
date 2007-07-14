@@ -15,10 +15,8 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import za.co.turton.eyeburst.config.ConfigurationChangedListener;
-import za.co.turton.eyeburst.config.Configure;
 import za.co.turton.eyeburst.config.Inject;
 import za.co.turton.eyeburst.config.InjectionConstructor;
-import za.co.turton.eyeburst.config.Singleton;
 import za.co.turton.eyeburst.io.MonitorLineProvider;
 
 /**
@@ -56,12 +54,12 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
      */
     public @InjectionConstructor TowerDataThread(
             @Inject("lineProvider") MonitorLineProvider lineProvider,
-    @Inject("towerPublisher") TowerPublisher towerPublisher,
-    @Inject("logger") Logger logger,
-    @Inject("utdDebugMarker") String utdDebugMarker,
-    @Inject("alignedCode") String alignedCode,
-    @Inject("dataCode") String dataCode,
-    @Inject("writerSleep") int writerSleep) {
+            @Inject("towerPublisher") TowerPublisher towerPublisher,
+            @Inject("logger") Logger logger,
+            @Inject("utdDebugMarker") String utdDebugMarker,
+            @Inject("alignedCode") String alignedCode,
+            @Inject("dataCode") String dataCode,
+            @Inject("writerSleep") int writerSleep) {
         
         this.lineProvider = lineProvider;
         this.towerPublisher = towerPublisher;
@@ -129,7 +127,7 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
                         
                         while (!utdDebugMarker.equals(token) && tokeniser.hasMoreTokens()) {
                             token = tokeniser.nextToken().trim();
-                        } 
+                        }
                         
                         if (!tokeniser.hasMoreTokens())
                             // This line is not of interest
@@ -148,27 +146,18 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
                             
                         } else if (typeCode.equals(dataCode)) {
                             
-                            // "BScc"
-                            tokeniser.nextToken();
+                            parseUntil("BScc", tokeniser);
                             String towerCode = tokeniser.nextToken().trim();
                             TowerDatum towerDatum = new TowerDatum(towerCode);
                             
-                            // "Cost"
-                            tokeniser.nextToken();
+                            parseUntil("Cost", tokeniser);
                             towerDatum.cost = Float.parseFloat(tokeniser.nextToken().trim());
                             
-                            // "Distance"
-                            tokeniser.nextToken();
+                            parseUntil("Distance", tokeniser);
                             towerDatum.distance = Integer.parseInt(tokeniser.nextToken().trim());
                             
-                            // Possibly "Load" and possibly DUMMY_STR
-                            String loadStr = tokeniser.nextToken().trim();
-                            
-                            if (loadStr.equals(DUMMY_STR))
-                                loadStr = tokeniser.nextToken().trim();
-                            
-                            loadStr = tokeniser.nextToken().trim();                                                        
-                            towerDatum.load = Integer.parseInt(loadStr);
+                            parseUntil("Load", tokeniser);
+                            towerDatum.load = Integer.parseInt(tokeniser.nextToken().trim());
                             
                             towerPublisher.publish(towerDatum);
                         }
@@ -204,6 +193,11 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
             logger.log(Level.FINE, "Monitor thread finishing");
             fireDisconnected();
         }
+    }
+    
+    private void parseUntil(String token, StringTokenizer tokeniser) {
+        
+        while (!tokeniser.nextToken().equals(token));
     }
     
     private void fireUnparseableLine(Exception e) {
