@@ -1,3 +1,8 @@
+Version 1.1.3
+
+Changed line reader thread to accept more line formats
+Small fixes
+
 Version 1.1.2
 
 Corrected "support for longer debug strings produced by some devices" added in 1.1.1
