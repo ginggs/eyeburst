@@ -18,6 +18,7 @@
                 <pathelement location="${basedir}/lib/swing-layout-1.0.jar"/>
             </classpath>
             <include name="**"/>
+            <compilerarg line="-target 5"/>
         </javac>
     </target>
     
