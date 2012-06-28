@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="eyeBurst" default="default" basedir="..">
+<project name="eyeBurst" default="build" basedir=".">
     <description>Builds, tests, and runs the project eyeBurst.</description>
     
     <property name="eyeburst.name" value="eyeBurst" />
