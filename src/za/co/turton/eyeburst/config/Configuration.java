@@ -68,6 +68,8 @@ public abstract class Configuration {
         classDeps.put("logger", logger);
         
         classDeps = getDependencyMapFor(TowerDataThread.class);
+        // Edit the following line to to use FileMonitorLineProvider
+        // instead of SocketMonitorLineProvider for debugging
         classDeps.put("lineProvider", SocketMonitorLineProvider.class);
         classDeps.put("towerPublisher", TowerPublisher.class);
         classDeps.put("logger", logger);

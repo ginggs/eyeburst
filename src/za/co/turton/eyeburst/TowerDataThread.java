@@ -134,6 +134,11 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
                             continue;
                         
                         String typeCode = tokeniser.nextToken().trim();
+
+                        // Skip the "M" output by UTW
+                        if(typeCode.equals("M")) {
+                            typeCode = tokeniser.nextToken().trim();
+                        }
                         
                         if (typeCode.equals(alignedCode)) {
                             
@@ -146,20 +151,24 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
                             
                         } else if (typeCode.equals(dataCode)) {
                             
-                            parseUntil("Bscc", tokeniser);
-                            String towerCode = tokeniser.nextToken().trim();
-                            TowerDatum towerDatum = new TowerDatum(towerCode);
-                            
-                            parseUntil("Cost", tokeniser);
-                            towerDatum.cost = Float.parseFloat(tokeniser.nextToken().trim());
-                            
-                            parseUntil("Distance", tokeniser);
-                            towerDatum.distance = Integer.parseInt(tokeniser.nextToken().trim());
-                            
-                            parseUntil("Load", tokeniser);
-                            towerDatum.load = Integer.parseInt(tokeniser.nextToken().trim());
-                            
-                            towerPublisher.publish(towerDatum);
+                            typeCode = tokeniser.nextToken().trim();
+                            // Ignore "numBsccFound" output by UTW
+                            if (typeCode.equals("Bscc")) {
+
+                                String towerCode = tokeniser.nextToken().trim();
+                                TowerDatum towerDatum = new TowerDatum(towerCode);
+                                
+                                parseUntil("Cost", tokeniser);
+                                towerDatum.cost = Float.parseFloat(tokeniser.nextToken().trim());
+                                
+                                parseUntil("Distance", tokeniser);
+                                towerDatum.distance = Integer.parseInt(tokeniser.nextToken().trim());
+                                
+                                parseUntil("Load", tokeniser);
+                                towerDatum.load = Integer.parseInt(tokeniser.nextToken().trim());
+                                
+                                towerPublisher.publish(towerDatum);
+                            }
                         }
                     } catch (Exception e) {
                         logger.log(Level.SEVERE, "Could not parse "+line, e);

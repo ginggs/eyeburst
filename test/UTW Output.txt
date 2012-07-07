@@ -1,0 +1,18 @@
+>------ ut02 shell restart ------<
+?ut02Ms03MainBoot-C1::: rfScan debug 2
+rfScan debug level is 0
+rfScan debug level set to 2
+?ut02Ms03MainBoot-C1::: 1126.810 rfScanGpp M   1   numBsccFound = 1
+1126.810 rfScanGpp M   1   Bscc 17   Cost -82     Distance 8     Load 1
+1137.055 rfScanGpp M   1   numBsccFound = 2
+1137.055 rfScanGpp M   1   Bscc 17   Cost -81     Distance 8     Load 2
+1137.055 rfScanGpp M   1   Bscc 3   Cost -109     Distance 10     Load 3
+1147.305 rfScanGpp M   1   numBsccFound = 2
+1147.305 rfScanGpp M   1   Bscc 17   Cost -82     Distance 8     Load 1
+1147.305 rfScanGpp M   1   Bscc 10   Cost -115     Distance 17     Load 2
+1157.555 rfScanGpp M   1   numBsccFound = 1
+1157.555 rfScanGpp M   1   Bscc 17   Cost -82     Distance 8     Load 2
+rfScan debug 0
+rfScan debug level is 2
+rfScan debug level set to 0
+
