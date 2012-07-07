@@ -11,6 +11,7 @@ import java.awt.Dimension;
 import javax.swing.BoxLayout;
 import javax.swing.JOptionPane;
 import javax.swing.border.TitledBorder;
+import javax.swing.ImageIcon;
 import za.co.turton.eyeburst.config.Configuration;
 import za.co.turton.eyeburst.config.ConfigurationChangedListener;
 import za.co.turton.eyeburst.config.Inject;
@@ -34,7 +35,8 @@ public class SampleFrame extends javax.swing.JFrame implements ConfigurationChan
     public @InjectionConstructor SampleFrame(
             @Inject("chartPanel") ChartPanel chartPanel) {
         
-        initComponents();                
+        initComponents();
+        setIconImage(new ImageIcon("eyeBurst.png").getImage());
         this.chartPanel = chartPanel;
         this.chartPanelContainer.add(chartPanel);
         this.isVirgin = true;

@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.ImageIcon;
 import za.co.turton.eyeburst.*;
 import za.co.turton.eyeburst.config.ConfigurationChangedListener;
 import za.co.turton.eyeburst.config.Inject;
@@ -63,6 +64,7 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         setTitle(appTitle);
         this.logger = logger;
         initComponents();
+        setIconImage(new ImageIcon("eyeBurst.png").getImage());
         
         TableSorter sorter = new TableSorter(towerTableModel);
         sorter.setSortingStatus(0, TableSorter.ASCENDING);

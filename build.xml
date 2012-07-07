@@ -47,6 +47,10 @@
         <copy todir="${basedir}/dist/lib">
             <fileset dir="lib"/>
         </copy>
+        
+        <copy todir="${basedir}/dist">
+            <fileset dir="images"/>
+        </copy>
     </target>
 
     <target name="clean">
