@@ -45,7 +45,7 @@ public class ChartPanel extends org.jfree.chart.ChartPanel implements TowerCompl
         NumberAxis valueAxis = new NumberAxis(yAxisTitle);
         valueAxis.setAutoRangeIncludesZero(false);
         BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
-        renderer.setToolTipGenerator(new BoxAndWhiskerToolTipGenerator());
+        renderer.setBaseToolTipGenerator(new BoxAndWhiskerToolTipGenerator());
         CategoryPlot plot = new CategoryPlot(dataset, setupAxis, valueAxis, renderer);
         chart = new JFreeChart(plot);
         setChart(chart);

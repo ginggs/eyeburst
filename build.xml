@@ -3,19 +3,19 @@
     <description>Builds, tests, and runs the project eyeBurst.</description>
     
     <property name="eyeburst.name" value="eyeBurst" />
-    <property name="eyeburst.version" value="0.9" />
-    <property name="jfreechart.name" value="jfreechart"/>
-    <property name="jfreechart.version" value="1.0.1"/>
-    <property name="jcommon.name" value="jcommon"/>
-    <property name="jcommon.version" value="1.0.0"/>
+    <property name="jfreechartjar" value="jfreechart-1.0.13.jar"/>
+    <property name="jcommonjar" value="jcommon-1.0.16.jar"/>
+    <property name="swinglayoutjar" value="swing-layout-1.0.4.jar"/>
+    <property name="buildlibdir" value="${basedir}/lib"/>
+    <property name="runtimelibdir" value="lib"/>
     
     <target name="compile" description="Compile eyeBurst">
         <mkdir dir="${basedir}/build"/>
         <javac srcdir="${basedir}/src" destdir="${basedir}/build" debug="true" deprecation="true">
             <classpath>            
-                <pathelement location="${basedir}/lib/${jcommon.name}-${jcommon.version}.jar"/>
-                <pathelement location="${basedir}/lib/${jfreechart.name}-${jfreechart.version}.jar"/>
-                <pathelement location="${basedir}/lib/swing-layout-1.0.jar"/>
+                <pathelement location="${buildlibdir}/${jcommonjar}"/>
+                <pathelement location="${buildlibdir}/${jfreechartjar}"/>
+                <pathelement location="${buildlibdir}/${swinglayoutjar}"/>
             </classpath>
             <include name="**"/>
             <compilerarg line="-target 5"/>
@@ -31,7 +31,7 @@
         <jar jarfile="${basedir}/dist/${eyeburst.name}.jar"
             basedir="${basedir}/build">
             <manifest>
-                <attribute name="Class-Path" value="lib/${jcommon.name}-${jcommon.version}.jar lib/${jfreechart.name}-${jfreechart.version}.jar lib/swing-layout-1.0.jar"/>
+                <attribute name="Class-Path" value="${runtimelibdir}/${jcommonjar} ${runtimelibdir}/${jfreechartjar} ${runtimelibdir}/${swinglayoutjar}"/>
                 <attribute name="Main-Class" value="za.co.turton.eyeburst.monitor.MonitorFrame"/>
             </manifest>
         </jar>
@@ -47,8 +47,6 @@
         <copy todir="${basedir}/dist/lib">
             <fileset dir="lib"/>
         </copy>
-        
-        <delete file="${basedir}/dist/**/.DS_Store"/>
     </target>
 
     <target name="clean">

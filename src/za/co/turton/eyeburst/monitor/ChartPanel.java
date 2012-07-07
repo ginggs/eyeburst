@@ -82,7 +82,7 @@ public class ChartPanel extends org.jfree.chart.ChartPanel implements TowerPubli
         
         if (series == null) {
             String towerName = towerNameService.getTowerName(towerCode);            
-            series = new TimeSeries(towerName, org.jfree.data.time.Second.class);
+            series = new TimeSeries(towerName);
             seriesCol.addSeries(series);
             seriesMap.put(towerCode, series);
         }
@@ -104,7 +104,8 @@ public class ChartPanel extends org.jfree.chart.ChartPanel implements TowerPubli
                 if (item.getPeriod().getMiddleMillisecond() < now - chartDataExpiry)
                     toCull++;
             
-            series.delete(0, toCull - 1);
+            if (toCull > 0)
+                series.delete(0, toCull - 1);
         }
     }
     
