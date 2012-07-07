@@ -64,7 +64,7 @@ public class FileChooserDialog extends javax.swing.JDialog {
 
         fileChooser.setApproveButtonText("Load");
         fileChooser.setApproveButtonToolTipText("");
-        fileChooser.setCurrentDirectory(new java.io.File("/conf"));
+        fileChooser.setCurrentDirectory(new java.io.File("conf"));
         fileChooser.setDialogTitle("Load a tower codes / locations properties file");
         fileChooser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
