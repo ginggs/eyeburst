@@ -29,7 +29,7 @@ public class TowerDatum {
     /**
      * The reported distance
      */
-    public int distance;
+    public float distance;
     
     /**
      * The reported load

@@ -146,16 +146,18 @@ public class Tower {
      *
      * @return This tower's reported distance
      */
-    //@Column(name = "Distance", number = 8)
+    @Column(name = "Distance", number = 8)
     public Float getDistance() {
-        return distance;
+        // speed of light in a vacuum / refractive index of air at STP
+        // 299792458 / 1.000293 / 10^9 (km/us) * 10 (for rounding)
+        return Math.round(distance * 2.997046445f) / 10f;
     }
     
     /**
      *
      * @return This tower's reported load
      */
-    @Column(name = "Load", number = 8)
+    @Column(name = "Load", number = 9)
     public Float getLoad() {
         return load;
     }     
