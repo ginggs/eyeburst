@@ -122,7 +122,7 @@ public class SocketMonitorLineProvider extends MonitorLineProvider {
 //        if (out != null)
 //            out.close();
         
-        if (socket != null && socket.isClosed())
+        if (socket != null && !socket.isClosed())
             socket.close();
         
         connected = false;
