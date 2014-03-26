@@ -1,3 +1,10 @@
+Version 1.1.5 - 2014/03/26  Graham Inggs <graham@nerve.org.za>
+
+Filter out basestations where signal < -115dBm or BSCC > 31
+Set Java compiler source and target release to version 1.5
+Connect automatically at startup
+Fix bug preventing socket being closed when Disconnect button pressed
+
 Version 1.1.4 - 2012/07/07 Graham Inggs <graham@nerve.org.za>
 
 Update libs and JFreeChart function calls for 1.0.13 and newer

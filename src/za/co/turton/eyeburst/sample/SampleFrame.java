@@ -81,7 +81,7 @@ public class SampleFrame extends javax.swing.JFrame implements ConfigurationChan
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("eyeBurst 1.1.4 - Sampled Data");
+        setTitle("eyeBurst 1.1.5 - Sampled Data");
         jSplitPane1.setDividerLocation(500);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         chartPanelContainer.addComponentListener(new java.awt.event.ComponentAdapter() {

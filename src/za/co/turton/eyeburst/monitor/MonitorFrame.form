@@ -25,7 +25,7 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
-    <Property name="title" type="java.lang.String" value="eyeBurst 1.1.4 - Live Data"/>
+    <Property name="title" type="java.lang.String" value="eyeBurst 1.1.5 - Live Data"/>
     <Property name="name" type="java.lang.String" value="eyeBurst Frame" noResource="true"/>
   </Properties>
   <SyntheticProperties>
