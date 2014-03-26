@@ -152,10 +152,12 @@ public class TowerDataThread extends Thread implements ConfigurationChangedListe
                         } else if (typeCode.equals(dataCode)) {
                             
                             typeCode = tokeniser.nextToken().trim();
-                            // Ignore "numBsccFound" output by UTW
-                            if (typeCode.equals("Bscc")) {
+                            String towerCode = tokeniser.nextToken().trim();
 
-                                String towerCode = tokeniser.nextToken().trim();
+                            // Ignore "numBsccFound" output by UTW
+                            // and "ghost" basestations, where BSCC > 31
+                            if (typeCode.equals("Bscc") && Integer.parseInt(towerCode) <= 31) {
+
                                 TowerDatum towerDatum = new TowerDatum(towerCode);
                                 
                                 parseUntil("Cost", tokeniser);
