@@ -82,6 +82,9 @@ public class MonitorFrame extends javax.swing.JFrame implements ConnectionListen
         chartPanel.setSize(new Dimension(size.width - 50, size.height - 10));
         
         towerPublisher.addListener(chartPanel);
+
+        // Connect automatically on startup
+        connectButton.doClick();
     }
     
     /** This method is called from within the constructor to
